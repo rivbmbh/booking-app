@@ -1,4 +1,4 @@
-import Card from "./card/Card";
+import Card from "./ui/card/Card";
 
 const Main = () => {
   return (
