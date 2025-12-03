@@ -10,25 +10,55 @@ import { IoClose, IoMenu } from "react-icons/io5";
 const NavLink = () => {
   const [open, setOpen] = useState(false);
   const { data: session } = useSession();
+  const [openDropdown, setOpenDropdown] = useState(false);
+
+  function handleOpenDropdown() {
+    setOpenDropdown((prev) => !prev);
+  }
+  console.info(openDropdown);
   return (
     <>
       {session?.user ? (
         <div className="flex items-center justify-end md:order-2">
-          <div className="hidden text-sm bg-gray-50 border rounded-full md:me-0 md:block focus:ring-4 focus:ring-gray-300">
+          <button
+            onClick={handleOpenDropdown}
+            className={`hidden text-sm bg-gray-50 border rounded-full md:me-0 md:block ${
+              openDropdown ? "focus:ring-2 focus:ring-gray-400" : ""
+            } `}
+          >
             <Image
-              src={session.user.image || `/user-profile.webp`}
-              width={64}
-              height={64}
+              src={session.user.image || `/user-profile.png`}
+              width={43}
+              height={43}
               alt="Photo"
+              className="object-cover rounded-full"
             />
-          </div>
-          <div className="flex items-center">
-            <button
-              onClick={() => signOut()}
-              className="md:block hidden py-2 px-4 bg-gray-50 text-gray-700 hover:bg-gray-100 rounded-sm cursor-pointer"
-            >
-              Sign Out
-            </button>
+          </button>
+          <div
+            className={`${
+              openDropdown
+                ? "absolute -bottom-32 w-max h-max bg-white shadow-md pl-3 pr-8 py-5 hidden md:block"
+                : "hidden"
+            }`}
+          >
+            <ul className="list-item space-y-4">
+              <li>
+                <a
+                  href="#"
+                  className="md:block hidden px-6 text-gray-900 hover:font-semibold "
+                >
+                  Account Settings
+                </a>
+              </li>
+              <li>
+                <button
+                  onClick={() => signOut()}
+                  className="md:block hidden py-2 px-6 bg-gray-50 text-gray-900 hover:bg-red-500 hover:text-white transition-colors duration-300 ease-in-out rounded-sm cursor-pointer"
+                >
+                  Sign Out
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
       ) : null}
