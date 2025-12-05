@@ -4,7 +4,7 @@ import Navbar from "./components/layout/navbar/Navbar";
 import Footer from "./components/layout/footer/Footer";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
-import { auth } from "../../auth";
+import { auth } from "../auth";
 // import { auth } from "";
 
 const raleway = Raleway({

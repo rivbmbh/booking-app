@@ -1,4 +1,4 @@
-import { signIn } from "../../../../../auth";
+import { signIn } from "../../../../auth";
 import { FaG } from "react-icons/fa6";
 
 export const LoginGoogleButton = () => {
