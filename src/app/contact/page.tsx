@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "Contact",
 };
 
-const Contact = () => {
+const ContactPage = () => {
   return (
     <div>
       <HeaderSection
@@ -67,4 +67,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default ContactPage;

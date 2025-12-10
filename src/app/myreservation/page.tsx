@@ -1,7 +1,7 @@
 import React from "react";
 
-const MyReservation = () => {
-  return <div className="py-20 mt-10">MyReservation</div>;
+const MyReservationPage = () => {
+  return <div className="py-20 mt-10">MyReservationPage</div>;
 };
 
-export default MyReservation;
+export default MyReservationPage;

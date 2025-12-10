@@ -1,7 +1,7 @@
 import React from "react";
 
-const Dashboard = () => {
-  return <div className="py-20 mt-10">Dashboard</div>;
+const DashboardPage = () => {
+  return <div className="py-20 mt-10">DashboardPage</div>;
 };
 
-export default Dashboard;
+export default DashboardPage;

@@ -1,7 +1,7 @@
 import React from "react";
 
-const Checkout = () => {
-  return <div className="py-20 mt-10">Checkout</div>;
+const CheckoutPage = () => {
+  return <div className="py-20 mt-10">CheckoutPage</div>;
 };
 
-export default Checkout;
+export default CheckoutPage;
