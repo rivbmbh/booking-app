@@ -9,7 +9,7 @@ export const saveRoom = async (
   prevState: unknown,
   formData: FormData
 ) => {
-  if (!image) return { message: "Image is required!" };
+  if (!image) return { message: "Please upload an image file" };
 
   const rawData = {
     name: formData.get("name"),

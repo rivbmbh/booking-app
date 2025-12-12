@@ -7,11 +7,17 @@ export const PUT = async (request: Request) => {
 
   //validasi jika input kosong
   if (file.size === 0 || file.size === undefined) {
-    return NextResponse.json({ message: "File is required" }, { status: 400 });
+    console.info("gambar belum diupload");
+    return NextResponse.json(
+      { message: "Please upload an image file" },
+      { status: 400 }
+    );
   }
 
   //validasi img tidak boleh > 4MB
   if (file.size > 4000000) {
+    console.info("gambar berukuran lebih dari 4MB");
+
     return NextResponse.json(
       { message: "File must be less than 4MB" },
       { status: 400 }
@@ -20,6 +26,8 @@ export const PUT = async (request: Request) => {
 
   //cek type img apakah sesuai
   if (!file.type.startsWith("image/")) {
+    console.info("yang diupload bukan gambar");
+
     return NextResponse.json(
       { message: "File must be an image" },
       { status: 400 }
@@ -30,6 +38,8 @@ export const PUT = async (request: Request) => {
     access: "public",
     multipart: true,
   });
+
+  console.info("gambar berhasil");
 
   return NextResponse.json(blob);
 };

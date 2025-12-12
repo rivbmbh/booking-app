@@ -111,10 +111,8 @@ const CreateForm = ({ amenities }: { amenities: Amenities[] }) => {
         <div className="col-span-4 bg-white p-4">
           {/* general message */}
           {state?.message ? (
-            <div className="mb-4 bg-red-500 p-2">
-              <span className="text-sm text-gray-100 mt-3">
-                {state.message}
-              </span>
+            <div className="mb-4 bg-red-500 p-2 rounded-l-sm rounded-br-sm">
+              <span className="text-sm text-gray-100">{state.message}</span>
             </div>
           ) : null}
           <label
