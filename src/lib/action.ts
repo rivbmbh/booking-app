@@ -3,6 +3,8 @@
 import { ContactShecma, RoomSchema } from "@/lib/zod";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { del } from "@vercel/blob";
+import { revalidatePath } from "next/cache";
 
 export const saveRoom = async (
   image: string,
@@ -76,4 +78,18 @@ export const ContactMessage = async (
   } catch (error) {
     console.info(error);
   }
+};
+
+export const deleteRoom = async (id: string, image: string) => {
+  try {
+    await del(image); //hapus gambar dari storage vercel blob
+
+    //hapus data room by id
+    await prisma.room.delete({
+      where: { id },
+    });
+  } catch (error) {
+    console.info(error);
+  }
+  revalidatePath("/admin/room"); //auto refresh halaman agar data yang dihapus segera hilang dari UI
 };
