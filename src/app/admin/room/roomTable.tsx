@@ -1,4 +1,7 @@
-import DeleteButton from "@/app/components/ui/common/room/DeleteButton";
+import {
+  DeleteButton,
+  EditButton,
+} from "@/app/components/ui/common/room/Button";
 import { getRooms } from "@/lib/data";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import Image from "next/image";
@@ -48,7 +51,10 @@ const RoomTable = async () => {
                 {formatDate(room.createdAt.toDateString())}
               </td>
               <td className="px-6 py-4 text-right">
-                <DeleteButton id={room.id} image={room.image} />
+                <div className="flex justify-center items-center gap-1.5">
+                  <EditButton id={room.id} />
+                  <DeleteButton id={room.id} image={room.image} />
+                </div>
               </td>
             </tr>
           ))}
