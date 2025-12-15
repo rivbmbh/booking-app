@@ -51,6 +51,73 @@ export const saveRoom = async (
   redirect("/admin/room");
 };
 
+export const updateRoom = async (
+  image: string,
+  roomId: string,
+  prevState: unknown,
+  formData: FormData
+) => {
+  if (!image) return { message: "Please upload an image file" };
+
+  const rawData = {
+    name: formData.get("name"),
+    description: formData.get("description"),
+    capacity: formData.get("capacity"),
+    price: formData.get("price"),
+    amenities: formData.getAll("amenities"),
+  };
+
+  const validateFields = RoomSchema.safeParse(rawData);
+  if (!validateFields.success) {
+    return { error: validateFields.error.flatten().fieldErrors };
+  }
+
+  const { name, description, capacity, price, amenities } = validateFields.data;
+
+  try {
+    await prisma.$transaction([
+      prisma.room.update({
+        where: { id: roomId },
+        data: {
+          name,
+          description,
+          capacity,
+          price,
+          image,
+          RoomAmenities: {
+            deleteMany: {}, // hapus semua data amenities yang berelasi
+          },
+        },
+      }),
+      // dan masukan data baru
+      prisma.roomAmenities.createMany({
+        data: amenities.map((item) => ({
+          roomId,
+          amenitiesId: item,
+        })),
+      }),
+    ]);
+  } catch (error) {
+    console.info(error);
+  }
+  revalidatePath("/admin/room");
+  redirect("/admin/room");
+};
+
+export const deleteRoom = async (id: string, image: string) => {
+  try {
+    await del(image); //hapus gambar dari storage vercel blob
+
+    //hapus data room by id
+    await prisma.room.delete({
+      where: { id },
+    });
+  } catch (error) {
+    console.info(error);
+  }
+  revalidatePath("/admin/room"); //auto refresh halaman agar data yang dihapus segera hilang dari UI
+};
+
 export const ContactMessage = async (
   previewState: unknown,
   formData: FormData
@@ -78,18 +145,4 @@ export const ContactMessage = async (
   } catch (error) {
     console.info(error);
   }
-};
-
-export const deleteRoom = async (id: string, image: string) => {
-  try {
-    await del(image); //hapus gambar dari storage vercel blob
-
-    //hapus data room by id
-    await prisma.room.delete({
-      where: { id },
-    });
-  } catch (error) {
-    console.info(error);
-  }
-  revalidatePath("/admin/room"); //auto refresh halaman agar data yang dihapus segera hilang dari UI
 };

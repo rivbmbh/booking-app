@@ -1,5 +1,5 @@
 "use client";
-import { saveRoom } from "@/lib/action";
+import { updateRoom } from "@/lib/action";
 import { RoomProps } from "@/types/room";
 import { Amenities } from "@prisma/client";
 import { type PutBlobResult } from "@vercel/blob";
@@ -58,7 +58,7 @@ const EditForm = ({
   };
 
   const [state, formAction, isPending] = useActionState(
-    saveRoom.bind(null, image),
+    updateRoom.bind(null, image, room.id),
     null
   );
 
@@ -170,7 +170,7 @@ const EditForm = ({
               />
             ) : (
               <Image
-                src={room.image}
+                src={image}
                 alt="image"
                 width={640}
                 height={360}
