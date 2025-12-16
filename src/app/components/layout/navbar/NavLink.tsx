@@ -88,7 +88,7 @@ const NavLink = () => {
           </li>
           <li>
             <Link
-              href="/rooms"
+              href="/room"
               className="block py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline"
             >
               Rooms
@@ -106,7 +106,7 @@ const NavLink = () => {
             <>
               <li>
                 <Link
-                  href="/my-reservation"
+                  href="/myreservation"
                   className="block py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline"
                 >
                   My Reservation
@@ -124,7 +124,7 @@ const NavLink = () => {
                   </li>
                   <li>
                     <Link
-                      href="/manage-room"
+                      href="/admin/room"
                       className="block py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline"
                     >
                       Manage Room
