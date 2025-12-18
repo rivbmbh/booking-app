@@ -23,6 +23,25 @@ export const RoomSchema = object({
   ),
 });
 
+export const ReserveSchema = object({
+  name: string()
+    .trim()
+    .nonempty("Name is required")
+    .min(6, "Name must be at least 6 characters long")
+    .max(100, "Name cannot exceed 100 characters")
+    .regex(/^[A-Za-z\s]+$/, "Name must contain letters only"),
+
+  phone: string()
+    .nonempty("Phone number is required")
+    .transform((val) => val.replace(/\s+/g, ""))
+    .refine((val) => val.length >= 10, {
+      message: "Phone number must be at least 10 digits long",
+    })
+    .refine((val) => val.length <= 20, {
+      message: "Phone number cannot exceed 20 digits",
+    }),
+});
+
 export const ContactShecma = object({
   name: string()
     .min(6, "Name must be at least 6 characters long")

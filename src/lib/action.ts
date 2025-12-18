@@ -1,10 +1,12 @@
 "use server";
 
-import { ContactShecma, RoomSchema } from "@/lib/zod";
+import { ContactShecma, ReserveSchema, RoomSchema } from "@/lib/zod";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
+import { differenceInCalendarDays } from "date-fns";
 
 export const saveRoom = async (
   image: string,
@@ -116,6 +118,69 @@ export const deleteRoom = async (id: string, image: string) => {
     console.info(error);
   }
   revalidatePath("/admin/room"); //auto refresh halaman agar data yang dihapus segera hilang dari UI
+};
+
+export const createReserve = async (
+  roomId: string,
+  price: number,
+  startDate: Date,
+  endDate: Date,
+  prevState: unknown,
+  formData: FormData
+) => {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id)
+    redirect(`/signin?redirect_url=room/${roomId}`);
+
+  const rawData = {
+    name: formData.get("name"),
+    phone: formData.get("phone"),
+  };
+
+  const validateFields = ReserveSchema.safeParse(rawData);
+
+  if (!validateFields.success) {
+    return {
+      error: validateFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { name, phone } = validateFields.data;
+
+  //validasi agar user tidak memilih tanggal check-out sama dengan tanggal check-in
+  const night = differenceInCalendarDays(endDate, startDate);
+  if (night <= 0) return { messageDate: "Date must be at leats 1 night" };
+  const total = night * price;
+
+  let reservationId;
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        data: { name, phone },
+        where: { id: session.user.id },
+      });
+
+      const reservation = await tx.reservation.create({
+        data: {
+          startDate: startDate,
+          endDate: endDate,
+          price: price,
+          roomId: roomId,
+          userId: session.user.id as string,
+          Payment: {
+            create: {
+              amount: total,
+            },
+          },
+        },
+      });
+      reservationId = reservation.id;
+    });
+  } catch (error) {
+    console.info(error);
+  }
+
+  redirect(`/checkout/${reservationId}`);
 };
 
 export const ContactMessage = async (
