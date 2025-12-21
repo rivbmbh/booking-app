@@ -1,5 +1,6 @@
 import CheckoutDetail from "@/app/components/ui/common/checkout/CheckoutDetail";
 import { Metadata } from "next";
+import Script from "next/script";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -18,6 +19,11 @@ const CheckoutPage = async ({
       <Suspense fallback={<p>Loading...</p>}>
         <CheckoutDetail reservationId={reservationId} />
       </Suspense>
+      <Script
+        src="https://app.sandbox.midtrans.com/snap/snap.js"
+        data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+        strategy="lazyOnload"
+      />
     </div>
   );
 };
