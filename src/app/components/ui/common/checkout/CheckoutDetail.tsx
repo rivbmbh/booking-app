@@ -59,7 +59,7 @@ const CheckoutDetail = async ({ reservationId }: { reservationId: string }) => {
             </tr>
             <tr>
               <td className="py-2">Email</td>
-              <td className="py-2 text-right truncate">
+              <td className="py-2 text-right lowercase truncate">
                 {reservation.User.email}
               </td>
             </tr>

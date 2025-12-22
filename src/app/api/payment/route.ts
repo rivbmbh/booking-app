@@ -19,7 +19,7 @@ export const POST = async (request: Request) => {
     credit_card: {
       secure: true,
     },
-    customer_detail: {
+    customer_details: {
       first_name: reservation.User.name,
       email: reservation.User.email,
     },
