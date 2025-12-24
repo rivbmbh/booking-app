@@ -2,8 +2,8 @@
 import { createReserve } from "@/lib/action";
 import { DisabledDateProps, RoomDetailProps } from "@/types/room";
 import clsx from "clsx";
-import { addDays } from "date-fns";
-import { useActionState, useState } from "react";
+import { addDays, isAfter, isEqual, subDays } from "date-fns";
+import { useActionState, useMemo, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -20,10 +20,16 @@ const ReserveForm = ({
   const [startDate, setStartDate] = useState(StartDate);
   const [endDate, setEndDate] = useState(EndDate);
 
-  function handleDateChange(dates: any) {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
+  function handleStartDateChange(date: any) {
+    setStartDate(date);
+
+    //pastikan tanggal check-out setelah tanggal check-in
+    if (date >= endDate) {
+      setEndDate(addDays(date, 1));
+    }
+  }
+  function handleEndDateChange(date: any) {
+    setEndDate(date);
   }
 
   const [state, formAction, isPending] = useActionState(
@@ -32,34 +38,80 @@ const ReserveForm = ({
   );
 
   // console.info(disabledDate);
-  const excludeDates = disabledDate.map((item) => {
-    return {
-      start: item.startDate,
-      end: item.endDate,
-    };
-  });
+  const excludeDates = useMemo(
+    () =>
+      disabledDate.map((item) => ({
+        start: item.startDate,
+        end: item.endDate,
+      })),
+    [disabledDate]
+  );
+
+  function getMaxEndDate(
+    startDate: Date,
+    disabledDate: DisabledDateProps[]
+  ): Date | null {
+    const futureDisabled = disabledDate
+      .map((item) => new Date(item.startDate))
+      .filter((date) => isAfter(date, startDate) || isEqual(date, startDate))
+      .sort((a, b) => a.getTime() - b.getTime());
+
+    if (futureDisabled.length === 0) return null;
+
+    // maksimal check-out = 1 hari sebelum disabled date terdekat
+    return subDays(futureDisabled[0], 1);
+  }
+
+  const maxEndDate = useMemo(
+    () => getMaxEndDate(startDate, disabledDate),
+    [startDate, disabledDate]
+  );
 
   return (
     <div>
       <form action={formAction}>
-        <div className="mb-4">
-          <label className="block mb-2 text-sm font-medium text-gray-900 capitalize">
-            Arrival - Deparature
-          </label>
-          <DatePicker
-            selected={startDate}
-            startDate={startDate}
-            endDate={endDate}
-            minDate={new Date()}
-            selectsRange={true}
-            onChange={handleDateChange}
-            excludeDateIntervals={excludeDates}
-            dateFormat={"dd-MM-YYYY"}
-            wrapperClassName="w-full"
-            className="py-2 px-4 rounded-md border border-gray-300 w-full"
-          />
-          <div aria-live="polite" aria-atomic="true">
-            <p className="text-sm text-red-500 mt-2">{state?.messageDate}</p>
+        <div className="flex justify-between gap-3">
+          <div className="mb-4 w-full">
+            <label className="block mb-2 text-sm font-semibold text-gray-900 capitalize text-center">
+              Arrival
+            </label>
+            <DatePicker
+              selected={startDate}
+              onChange={handleStartDateChange}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              excludeDateIntervals={excludeDates}
+              dateFormat={"dd-MM-YYYY"}
+              inline
+              wrapperClassName="w-full"
+              className="py-2 px-4 rounded-md border border-gray-300 w-full"
+            />
+            <div aria-live="polite" aria-atomic="true">
+              <p className="text-sm text-red-500 mt-2">{state?.messageDate}</p>
+            </div>
+          </div>
+          <div className="mb-4 w-full">
+            <label className="block mb-2 text-sm font-semibold text-center text-gray-900 capitalize">
+              Departure
+            </label>
+            <DatePicker
+              selected={endDate}
+              onChange={handleEndDateChange}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={addDays(startDate, 1)}
+              maxDate={maxEndDate ?? undefined}
+              excludeDateIntervals={excludeDates}
+              dateFormat={"dd-MM-YYYY"}
+              inline
+              wrapperClassName="w-full"
+              className="py-2 px-4 rounded-md border border-gray-300 w-full"
+            />
+            <div aria-live="polite" aria-atomic="true">
+              <p className="text-sm text-red-500 mt-2">{state?.messageDate}</p>
+            </div>
           </div>
         </div>
         <div className="mb-4">
