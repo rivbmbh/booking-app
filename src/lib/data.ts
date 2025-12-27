@@ -102,3 +102,39 @@ export const getDisabledRoomById = async (roomId: string) => {
     console.info(error);
   }
 };
+
+export const getReservationByUserId = async () => {
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    throw new Error("Unauthorized Access");
+  }
+
+  try {
+    const result = await prisma.reservation.findMany({
+      where: {
+        userId: session.user.id,
+      },
+      include: {
+        Room: {
+          select: {
+            name: true,
+            image: true,
+            price: true,
+          },
+        },
+        User: {
+          select: {
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+        Payment: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    return result;
+  } catch (error) {
+    console.info(error);
+  }
+};
