@@ -1,6 +1,6 @@
+import RoomTable from "@/app/components/ui/common/room/roomTable";
 import Link from "next/link";
 import React, { Suspense } from "react";
-import RoomTable from "./roomTable";
 
 const RoomPage = () => {
   return (

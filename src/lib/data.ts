@@ -168,3 +168,41 @@ export const getTotalCustomers = async () => {
     console.info(error);
   }
 };
+
+export const getReservation = async () => {
+  const session = await auth();
+  if (
+    !session ||
+    !session.user ||
+    !session.user.id ||
+    session.user.role !== "admin"
+  ) {
+    throw new Error("Untauthorized Access");
+  }
+
+  try {
+    const result = await prisma.reservation.findMany({
+      include: {
+        Room: {
+          select: {
+            name: true,
+            image: true,
+            price: true,
+          },
+        },
+        User: {
+          select: {
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+        Payment: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    return result;
+  } catch (error) {
+    console.info(error);
+  }
+};
