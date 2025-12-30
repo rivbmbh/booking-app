@@ -4,12 +4,17 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900">
+    <footer className="bg-zinc-900">
       <div className="max-w-screen-2xl mx-auto px-4 w-full py-10 md:py-16">
         <div className="grid md:grid-cols-3 gap-7 ">
           <div>
             <Link href="/" className="mb-10 block">
-              <Image src="/logo.png" width={128} height={49} alt="logo" />
+              <Image
+                src="/logo/small-bg-black.png"
+                width={128}
+                height={49}
+                alt="logo"
+              />
             </Link>
             <p className="text-gray-400">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus
@@ -96,7 +101,7 @@ const Footer = () => {
                   className="w-full p-3 rounded-sm bg-white text-slate-800"
                   placeholder="jhondoe@example.com"
                 />
-                <button className="bg-orange-400 p-3 mt-3 font-bold text-white w-full text-center rounded-sm hover:bg-orange-500">
+                <button className="bg-primary p-3 mt-3 font-bold text-white w-full text-center rounded-sm hover:bg-primary-hover">
                   Subscribe
                 </button>
               </div>

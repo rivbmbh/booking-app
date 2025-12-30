@@ -23,13 +23,13 @@ const NavLink = () => {
           <button
             onClick={handleOpenDropdown}
             className={`hidden text-sm bg-gray-50 border rounded-full md:me-0 md:block ${
-              openDropdown ? "focus:ring-2 focus:ring-gray-400" : ""
+              openDropdown ? "focus:ring focus:ring-zinc-900" : ""
             } `}
           >
             <Image
               src={session.user.image || `/user-profile.png`}
-              width={43}
-              height={43}
+              width={36}
+              height={36}
               alt="Photo"
               className="object-cover rounded-full"
             />
@@ -45,7 +45,7 @@ const NavLink = () => {
               <li>
                 <a
                   href="#"
-                  className="md:block hidden px-6 text-gray-900 hover:font-semibold "
+                  className="md:block hidden px-6 w-44 text-gray-900 hover:font-semibold transition-all duration-200 ease-in-out"
                 >
                   Account Settings
                 </a>
@@ -53,7 +53,7 @@ const NavLink = () => {
               <li>
                 <button
                   onClick={() => signOut()}
-                  className="md:block hidden py-2 px-6 bg-gray-50 text-gray-900 hover:bg-red-500 hover:text-white transition-colors duration-300 ease-in-out rounded-sm cursor-pointer"
+                  className="md:block hidden py-2 px-6 text-gray-900 hover:text-red-500 hover:font-bold cursor-pointer "
                 >
                   Sign Out
                 </button>

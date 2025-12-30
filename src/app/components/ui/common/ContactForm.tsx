@@ -71,7 +71,7 @@ const ContactForm = () => {
         <button
           type="submit"
           className={clsx(
-            "px-10 py-4 text-center font-semibold text-white w-full bg-orange-400 rounded-sm hover:bg-orange-500 cursor-pointer",
+            "px-10 py-4 text-center font-semibold text-white w-full bg-primary rounded-sm hover:bg-primary-hover cursor-pointer",
             { "opacity-50 cursor-progress animate-pulse": isPending }
           )}
           disabled={isPending}
