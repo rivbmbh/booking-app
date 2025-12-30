@@ -20,16 +20,16 @@ const ReserveForm = ({
   const [startDate, setStartDate] = useState(StartDate);
   const [endDate, setEndDate] = useState(EndDate);
 
-  function handleStartDateChange(date: any) {
-    setStartDate(date);
+  function handleStartDateChange(date: Date | null) {
+    setStartDate(date ?? StartDate);
 
     //pastikan tanggal check-out setelah tanggal check-in
-    if (date >= endDate) {
-      setEndDate(addDays(date, 1));
+    if (date! >= endDate) {
+      setEndDate(addDays(date!, 1));
     }
   }
-  function handleEndDateChange(date: any) {
-    setEndDate(date);
+  function handleEndDateChange(date: Date | null) {
+    setEndDate(date ?? EndDate);
   }
 
   const [state, formAction, isPending] = useActionState(
