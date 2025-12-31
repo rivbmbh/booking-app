@@ -22,22 +22,22 @@ const RoomDetailUser = async ({ roomId }: { roomId: string }) => {
           priority
           className="w-full rounded-sm mb-8"
         />
-        <h1 className="text-5xl font-semibold text-gray-900 mb-8">
-          {room.name}
-        </h1>
+        <h1 className="text-5xl font-bold text-gray-900 mb-8">{room.name}</h1>
         <p>{room.description}</p>
-        <h5 className="text-lg font-bold py-1 mt-1">Amenities:</h5>
+        <h5 className="text-[20px] font-semibold py-1 mt-1">Amenities :</h5>
         <div className="grid md:grid-cols-3">
           {room.RoomAmenities.map((item) => (
             <div key={item.id} className="flex gap-1 py-1">
-              <IoCheckmark className="size-5" />
+              <div className=" bg-emerald-400 rounded-full p-1 text-white">
+                <IoCheckmark className="size-4" />
+              </div>
               <span>{item.Amenities.name}</span>
             </div>
           ))}
         </div>
       </div>
       <div className="md:col-span-4">
-        <div className="border-2 border-gray-300 border-dashed px-3 py-5 bg-slate-50 rounded-md">
+        <div className="border-2 border-gray-200 border-dashed px-3 py-5 bg-old-paper rounded-md">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center space-x-2">
               <IoPeopleOutline className="size-4" />

@@ -70,8 +70,9 @@ const ReserveForm = ({
   return (
     <div>
       <form action={formAction}>
-        <div className="flex justify-between gap-3">
-          <div className="mb-4 w-full">
+        {/* input date */}
+        <div className="flex flex-wrap justify-center gap-3">
+          <div className="mb-4 w-max">
             <label className="block mb-2 text-sm font-semibold text-gray-900 capitalize text-center">
               Arrival
             </label>
@@ -91,7 +92,7 @@ const ReserveForm = ({
               <p className="text-sm text-red-500 mt-2">{state?.messageDate}</p>
             </div>
           </div>
-          <div className="mb-4 w-full">
+          <div className="mb-4 w-max">
             <label className="block mb-2 text-sm font-semibold text-center text-gray-900 capitalize">
               Departure
             </label>
@@ -114,6 +115,7 @@ const ReserveForm = ({
             </div>
           </div>
         </div>
+        {/* end input date */}
         <div className="mb-4">
           <label className="block mb-2 text-sm font-medium text-gray-900 capitalize">
             Your Name
@@ -121,7 +123,7 @@ const ReserveForm = ({
           <input
             type="text"
             name="name"
-            className="py-2 px-4 rounded-md border border-gray-300 w-full"
+            className="py-2 px-4 rounded-md border bg-white border-gray-300 w-full"
             placeholder="Full name"
           />
           <div aria-live="polite" aria-atomic="true">
@@ -135,7 +137,7 @@ const ReserveForm = ({
           <input
             type="number"
             name="phone"
-            className="py-2 px-4 rounded-md border border-gray-300 w-full"
+            className="py-2 px-4 rounded-md border border-gray-300 bg-white w-full"
             placeholder="ex: 081003234543"
           />
           <div aria-live="polite" aria-atomic="true">
@@ -145,7 +147,7 @@ const ReserveForm = ({
         <button
           type="submit"
           className={clsx(
-            "px-10 py-3 text-center font-semibold text-white w-full bg-orange-400 rounded-sm cursor-pointer hover:bg-orange-500",
+            "px-10 py-3 text-center font-semibold text-white w-full bg-primary rounded-sm cursor-pointer hover:bg-primary-hover",
             {
               "opacity-50 cursor-progress": isPending,
             }

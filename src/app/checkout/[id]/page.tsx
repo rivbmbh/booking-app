@@ -1,4 +1,5 @@
 import CheckoutDetail from "@/app/components/ui/common/checkout/CheckoutDetail";
+import ReservationSummarySkeleton from "@/app/components/ui/skeletons/reservation/ReservationSummarySkeleton";
 import { Metadata } from "next";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -14,9 +15,11 @@ const CheckoutPage = async ({
 }) => {
   const reservationId = (await params).id;
   return (
-    <div className="max-w-screen-2xl px-4 mx-auto py-20 mt-12">
-      <h1 className="text-3xl font-semibold mb-8">Reservation Summary</h1>
-      <Suspense fallback={<p>Loading...</p>}>
+    <div className="max-w-screen-2xl px-4 mx-auto py-20 mt-9">
+      <h1 className="text-4xl font-bold mb-4 text-center md:text-start">
+        Reservation Summary
+      </h1>
+      <Suspense fallback={<ReservationSummarySkeleton />}>
         <CheckoutDetail reservationId={reservationId} />
       </Suspense>
       <Script

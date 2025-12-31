@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import HeaderSection from "../components/layout/header/HeaderSection";
 import Main from "../components/Main";
 import { Suspense } from "react";
-import RoomSkeleton from "../components/ui/skeletons/RoomSkeleton";
+import RoomSkeleton from "../components/ui/skeletons/room/RoomSkeleton";
 
 export const metadata: Metadata = {
   title: "Rooms & Rates",

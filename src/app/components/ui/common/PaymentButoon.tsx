@@ -36,7 +36,7 @@ function PaymentButoon({ reservation }: { reservation: reservationProps }) {
   return (
     <button
       onClick={handlePayment}
-      className="px-10 py-4 mt-2 text-center font-semibold text-white w-full bg-orange-400 rounded-sm hover:bg-orange-600 cursor-pointer"
+      className="px-10 py-3 mt-2 text-center font-semibold text-white w-full bg-primary rounded-lg hover:bg-primary-hover cursor-pointer"
     >
       {isPending ? "Processing..." : "Process Payment"}
     </button>
