@@ -53,7 +53,7 @@ const NavLink = () => {
               <li>
                 <button
                   onClick={() => signOut()}
-                  className="md:block hidden py-2 px-6 text-gray-900 hover:text-red-500 hover:font-bold cursor-pointer "
+                  className="md:block hidden py-2 px-6 text-gray-900 hover:text-red-500 hover:font-bold"
                 >
                   Sign Out
                 </button>
@@ -139,7 +139,7 @@ const NavLink = () => {
             <li className="pt-2 md:pt-0">
               <button
                 onClick={() => signOut()}
-                className="md:hidden py-2.5 px-4 bg-red-400 text-white hover:bg-red-600 rounded-sm cursor-pointer"
+                className="md:hidden py-2 px-3 uppercase text-gray-900 hover:text-red-500 hover:font-bold active:text-red-500 active:font-bold"
               >
                 Sign Out
               </button>
@@ -148,7 +148,7 @@ const NavLink = () => {
             <li className="pt-2 md:pt-0">
               <Link
                 href="/signin"
-                className="py-2.5 px-6 bg-orange-400 text-white hover:bg-orange-500 rounded-sm"
+                className="py-2.5 px-6 bg-primary text-white hover:bg-primary-hover rounded-sm"
               >
                 Sign In
               </Link>
