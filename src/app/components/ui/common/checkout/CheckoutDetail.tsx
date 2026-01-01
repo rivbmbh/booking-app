@@ -3,9 +3,11 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { differenceInCalendarDays } from "date-fns";
 import Image from "next/image";
 import PaymentButoon from "@/app/components/ui/common/PaymentButoon";
+import ImagesCardInput from "../ImagesCardInput";
 
 const CheckoutDetail = async ({ reservationId }: { reservationId: string }) => {
   const reservation = await getReservationById(reservationId);
+  console.info(reservation);
   if (!reservation || !reservation.Payment) {
     return <h1>No Reservation Found</h1>;
   }
@@ -17,35 +19,7 @@ const CheckoutDetail = async ({ reservationId }: { reservationId: string }) => {
   return (
     <div className="w-full 2xl:w-5/6 flex flex-col md:flex-row justify-center gap-2">
       <div className="w-full lg:w-[80%]">
-        <div className="aspect-video relative w-full mb-2">
-          <Image
-            src={reservation.Room.image}
-            alt="Room Image"
-            width={200}
-            height={100}
-            className="object-cover w-full rounded-2xl aspect-video"
-          />
-          <div className="absolute left-3 bottom-3 object-cover flex gap-4 justify-evenly">
-            <div className="cursor-pointer">
-              <Image
-                src={reservation.Room.image}
-                alt="Room Image"
-                width={50}
-                height={30}
-                className="object-cover w-full rounded-md border border-dashed border-gray-300 aspect-video hover:scale-110 transition-all duration-200 ease-in-out"
-              />
-            </div>
-            <div className=" cursor-pointer">
-              <Image
-                src={reservation.Room.image}
-                alt="Room Image"
-                width={50}
-                height={30}
-                className="object-cover w-full rounded-md border border-dashed border-gray-300 aspect-video hover:scale-110 transition-all duration-200 ease-in-out"
-              />
-            </div>
-          </div>
-        </div>
+        <ImagesCardInput image={reservation.Room.image} />
         <div className="flex flex-col items-start rounded-2xl bg-white border border-gray-200 md:flex-row md:w-full">
           <div className="flex flex-col justify-between p-4 leading-normal w-full">
             <h5 className="mb-1 text-3xl font-bold tracking-tight text-gray-900">
