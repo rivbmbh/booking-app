@@ -22,11 +22,11 @@ const MyReserveList = async () => {
               <p className="font-normal">#{item.id}</p>
             </div>
             <div className="flex gap-1 px-3 py-2 text-sm font-normal">
-              <span>Status:</span>
+              <span>Status :</span>
               <span
                 className={`font-bold uppercase ${
                   item.Payment?.status === "unpaid"
-                    ? "text-red-400"
+                    ? "text-red-500"
                     : "text-gray-900"
                 }`}
               >
@@ -81,14 +81,14 @@ const MyReserveList = async () => {
             {item.Payment?.status === "unpaid" ? (
               <Link
                 href={`/checkout/${item.id}`}
-                className="px-6 py-1 bg-orange-400 text-white rounded-md hover:bg-orange-500"
+                className="px-6 py-1 bg-primary text-white rounded-md hover:bg-primary-hover"
               >
                 Pay Now
               </Link>
             ) : (
               <Link
                 href={`/myreservation/${item.id}`}
-                className="px-5 py-1 bg-orange-400 text-white rounded-md hover:bg-orange-500"
+                className="px-5 py-1 bg-primary text-white rounded-md hover:bg-primary-hover"
               >
                 View Detail
               </Link>
