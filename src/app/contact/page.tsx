@@ -21,9 +21,9 @@ const ContactPage = () => {
       <div className="max-w-screen-2xl mx-auto py-20 px-4">
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <h1 className="text-lg text-gray-500 mb-3">Contact us</h1>
+            <h1 className="text-lg text-gray-500 mb-3">Contact Us</h1>
             <h1 className="text-5xl font-semibold text-gray-900 mb-4">
-              Get in touch today
+              Get in Touch Today
             </h1>
             <p className="text-gray-700 py-5">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe

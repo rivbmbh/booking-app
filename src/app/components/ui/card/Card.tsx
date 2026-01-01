@@ -6,7 +6,7 @@ import { IoPeopleOutline } from "react-icons/io5";
 
 const Card = ({ room }: { room: Room }) => {
   return (
-    <div className="bg-white shadow-lg rounded-sm transition duration-100 hover:shadow-sm">
+    <div className="bg-white shadow-lg rounded-2xl transition duration-100 hover:shadow-sm">
       <div className="h-[260px] w-auto rounded-t-sm relative">
         <Image
           src={room.image}
@@ -26,7 +26,7 @@ const Card = ({ room }: { room: Room }) => {
           </Link>
         </h4>
         <h4 className="text-2xl mb-7">
-          <span className="font-semibold text-gray-600">
+          <span className="font-semibold text-slate-600">
             {formatCurrency(room.price)}
           </span>
           <span className="text-gray-400 text-sm">/Night</span>

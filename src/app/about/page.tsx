@@ -22,8 +22,15 @@ const AboutPage = () => {
           />
           <div>
             <h1 className="text-5xl font-semibold text-gray-900 mb-4">
-              Who we are
+              Who We Are
             </h1>
+            <Image
+              src="/line-heading.svg"
+              alt="Line"
+              width={10}
+              height={10}
+              className="text-primary"
+            />
             <p className="text-gray-700 py-5">
               Lorem ipsum dolor sit, amet consectetur adipisicing elit. Alias
               natus expedita necessitatibus nemo quae, eius asperiores quasi
