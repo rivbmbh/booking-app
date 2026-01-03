@@ -12,8 +12,8 @@ const RoomDetailUser = async ({ roomId }: { roomId: string }) => {
   ]);
   if (!room || !disabledDate) return notFound();
   return (
-    <div className="max-w-screen-2xl py-16 px-4 grid lg:grid-cols-12 gap-8 mx-auto">
-      <div className="md:col-span-8">
+    <div className="max-w-screen-2xl py-16 px-4 grid lg:grid-cols-12 gap-8 mx-auto  ">
+      <div className="sm:col-span-6 md:col-span-7">
         <ImageGallery image={room.image} />
         <h1 className="text-5xl font-bold text-gray-900 mb-8 pt-3">
           {room.name}
@@ -31,8 +31,8 @@ const RoomDetailUser = async ({ roomId }: { roomId: string }) => {
           ))}
         </div>
       </div>
-      <div className="md:col-span-4">
-        <div className="border-2 border-gray-200 border-dashed px-3 py-5 bg-old-paper rounded-none">
+      <div className="w-auto xs:mx-auto sm:col-span-6 md:w-auto md:col-span-5">
+        <div className="border-2 border-gray-300 border-dashed px-3 2xl:px-4 py-5 bg-old-paper rounded-none">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center space-x-2">
               <IoPeopleOutline className="size-4" />
