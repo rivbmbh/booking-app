@@ -3,7 +3,7 @@ import { formatCurrency } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { IoCheckmark, IoPeopleOutline } from "react-icons/io5";
 import ReserveForm from "../ReserveForm";
-import ImagesCardInput from "../ImagesCardInput";
+import ImageGallery from "../ImageGallery";
 
 const RoomDetailUser = async ({ roomId }: { roomId: string }) => {
   const [room, disabledDate] = await Promise.all([
@@ -14,7 +14,7 @@ const RoomDetailUser = async ({ roomId }: { roomId: string }) => {
   return (
     <div className="max-w-screen-2xl py-16 px-4 grid lg:grid-cols-12 gap-8 mx-auto">
       <div className="md:col-span-8">
-        <ImagesCardInput image={room.image} />
+        <ImageGallery image={room.image} />
         <h1 className="text-5xl font-bold text-gray-900 mb-8 pt-3">
           {room.name}
         </h1>

@@ -3,7 +3,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { differenceInCalendarDays } from "date-fns";
 import Image from "next/image";
 import PaymentButoon from "@/app/components/ui/common/PaymentButoon";
-import ImagesCardInput from "../ImagesCardInput";
+import ImagesCardInput from "../ImageGallery";
 
 const CheckoutDetail = async ({ reservationId }: { reservationId: string }) => {
   const reservation = await getReservationById(reservationId);

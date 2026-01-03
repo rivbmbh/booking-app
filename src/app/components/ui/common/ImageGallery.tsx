@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
-const ImagesCardInput = ({ image }: { image: string }) => {
+const ImageGallery = ({ image }: { image: string }) => {
   const [imageList, setImageList] = useState<string[]>([
     image,
     "/hero3.jpg",
@@ -51,4 +51,4 @@ const ImagesCardInput = ({ image }: { image: string }) => {
   );
 };
 
-export default ImagesCardInput;
+export default ImageGallery;
