@@ -17,7 +17,7 @@ export const LoginGoogleButton = ({ redirectUrl }: { redirectUrl: string }) => {
           width={38}
           height={38}
           alt="google icon"
-          className="absolute mt-1 left-1/2 -translate-x-1/2 min-[283px]:translate-x-0  min-[283px]:left-0.5 inset-y-0"
+          className="absolute left-2 top-1/2 -translate-y-1/2"
         />
         <p className="hidden min-[283px]:inline-block">Sign in with google</p>
       </button>
