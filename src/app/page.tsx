@@ -1,5 +1,5 @@
 import Hero from "./components/layout/hero/Hero";
-import Main from "./components/Main";
+import Main from "./components/ui/skeletons/Main";
 
 export default function Home() {
   return (

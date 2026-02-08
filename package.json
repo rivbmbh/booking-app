@@ -10,6 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@archilogic/floor-plan-sdk": "^5.1.17",
     "@auth/prisma-adapter": "^2.7.2",
     "@prisma/client": "^6.5.0",
     "@vercel/blob": "^2.0.0",
