@@ -21,6 +21,7 @@ model Room {
   image String
   price Int
   capacity Int @default(1)
+  status RoomStatus @default(AVAILABLE)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   RoomAmenities RoomAmenities[]
@@ -111,4 +112,10 @@ model Contact{
   message String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum RoomStatus {
+  AVAILABLE
+  BOOKED
+  MAINTENANCE
 }

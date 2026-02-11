@@ -5,7 +5,7 @@ import Card from "../card/Card";
 import FloorPlans from "./sketch/FloorPlans";
 
 const RoomContent = ({rooms}) => {
-    const [view, setView] = useState("card")
+    const [view, setView] = useState("denah")
   return (
    <>
     <div className="flex mb-10">
