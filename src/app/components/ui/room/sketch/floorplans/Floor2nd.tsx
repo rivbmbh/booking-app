@@ -67,7 +67,7 @@ export default function FloorPlan2nd() {
     <div
       id="svg-container"
       dangerouslySetInnerHTML={{ __html: svg }}//dan disini diubah menjadi HTML tag biasanya
-      className="w-full h-[600px] cursor-pointer"
+      className="w-full h-full cursor-pointer"
     />
   );
 }
