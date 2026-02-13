@@ -1,4 +1,4 @@
-import RoomTable from "@/app/components/ui/common/room/roomTable";
+import RoomTable from "@/app/components/ui/common/room/RoomTable";
 import Link from "next/link";
 import React, { Suspense } from "react";
 
