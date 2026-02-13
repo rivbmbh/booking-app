@@ -16,32 +16,42 @@ datasource db {
 
 model Room {
   id            String          @id @default(cuid())
-  name String
-  description String @db.Text
-  image String
-  price Int
-  capacity Int @default(1)
+  roomNumber String @unique
+  floor Int
   status RoomStatus @default(AVAILABLE)
+  roomTypeId String
+  RoomType RoomType @relation(fields: [roomTypeId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  RoomAmenities RoomAmenities[]
   Reservation Reservation[]
 }
 
+model RoomType {
+  id String @id @default(cuid())
+  name String 
+  description String @db.Text
+  image String
+  price Int 
+  capacity Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  RoomAmenities RoomAmenities[]
+  rooms Room[]
+}
+
+model RoomAmenities{
+  id String @id @default(cuid())
+  roomTypeId String
+  RoomType RoomType @relation(fields: [roomTypeId], references: [id])
+  amenitiesId String
+  Amenities Amenities @relation(fields: [amenitiesId], references: [id])
+}
 model Amenities {
   id            String          @id @default(cuid())
   name String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   RoomAmenities RoomAmenities[]
-}
-
-model RoomAmenities {
-  id String @id @default(cuid())
-  roomId String 
-  Room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  amenitiesId String
-  Amenities Amenities @relation(fields: [amenitiesId], references: [id], onDelete: Cascade)
 }
 
 model Reservation{
