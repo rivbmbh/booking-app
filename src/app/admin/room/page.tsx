@@ -7,12 +7,20 @@ const RoomPage = () => {
     <div className="max-w-screen-2xl px-4 py-16 mt-10 mx-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-4xl font-bold text-gray-800">Room List</h1>
+        <div className="flex gap-7 justify-between">
+        <Link
+          href={`/admin/room/create/roomtype`}
+          className="bg-orange-400 px-6 py-2.5 hover:bg-orange-500 text-white font-semibold active:scale-105"
+        >
+          Create Room Type
+        </Link>
         <Link
           href={`/admin/room/create`}
           className="bg-orange-400 px-6 py-2.5 hover:bg-orange-500 text-white font-semibold active:scale-105"
         >
           Create New
         </Link>
+        </div>
       </div>
       <Suspense fallback={<p>Loading data...</p>}>
         <RoomTable />

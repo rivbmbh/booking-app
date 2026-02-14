@@ -1,5 +1,5 @@
 import { getAmenities } from "@/lib/data";
-import CreateForm from "./CreateForm";
+import CreateRoomForm from "./CreateRoomForm";
 
 const CreateRoom = async () => {
   const amenities = await getAmenities();
@@ -7,7 +7,7 @@ const CreateRoom = async () => {
   return (
     <div>
       <h1 className="text-3xl font-bold text-gray-800 mb-4">Create New Room</h1>
-      <CreateForm amenities={amenities} />
+      <CreateRoomForm amenities={amenities} />
     </div>
   );
 };

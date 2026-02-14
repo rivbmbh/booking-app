@@ -1,6 +1,6 @@
 "use client";
-import { saveRoom } from "@/lib/action";
-import { Amenities } from "@prisma/client";
+import { saveRoomType } from "@/lib/action";
+import { Amenities, BedType } from "@prisma/client";
 import { type PutBlobResult } from "@vercel/blob";
 import clsx from "clsx";
 import Image from "next/image";
@@ -8,7 +8,7 @@ import { useActionState, useRef, useState, useTransition } from "react";
 import { IoCloudUploadOutline, IoTrashOutline } from "react-icons/io5";
 import { BarLoader } from "react-spinners";
 
-const CreateForm = ({ amenities }: { amenities: Amenities[] }) => {
+const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], bedType: BedType[] }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [image, setImage] = useState("");
   const [message, setMessage] = useState("");
@@ -51,7 +51,7 @@ const CreateForm = ({ amenities }: { amenities: Amenities[] }) => {
   };
 
   const [state, formAction, isPending] = useActionState(
-    saveRoom.bind(null, image),
+    saveRoomType.bind(null, image),
     null
   );
   return (
@@ -68,6 +68,19 @@ const CreateForm = ({ amenities }: { amenities: Amenities[] }) => {
             <div aria-live="polite" aria-atomic="true">
               <span className="text-sm text-red-500 mt-2">
                 {state?.error?.name}
+              </span>
+            </div>
+          </div>
+          <div className="mb-4">
+          <select name="bedType" className="py-2 px-4 rounded-sm border border-gray-400 w-full">
+            <option value="">-Choose Room Type-</option>
+            {bedType.map((data) => (
+                <option key={data+1} value={data}>{data}</option>
+            ))}
+          </select>
+            <div aria-live="polite" aria-atomic="true">
+              <span className="text-sm text-red-500 mt-2">
+                {state?.error?.bedType}
               </span>
             </div>
           </div>
@@ -209,4 +222,4 @@ const CreateForm = ({ amenities }: { amenities: Amenities[] }) => {
   );
 };
 
-export default CreateForm;
+export default CreateRoomTypeForm;

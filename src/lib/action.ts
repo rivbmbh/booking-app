@@ -53,6 +53,54 @@ export const saveRoom = async (
   redirect("/admin/room");
 };
 
+export const saveRoomType = async (
+  image: string,
+  prevState: unknown,
+  formData: FormData
+) => {
+  if (!image) return { message: "Please upload an image file" };
+
+  const rawData = {
+    name: formData.get("name"),
+    description: formData.get("description"),
+    capacity: formData.get("capacity"),
+    price: formData.get("price"),
+    bedType: formData.get('bedType'),
+    amenities: formData.getAll("amenities"),
+  };
+
+  const validateFields = RoomSchema.safeParse(rawData);
+  if (!validateFields.success) {
+    return { error: validateFields.error.flatten().fieldErrors };
+  }
+
+  const { name, description, capacity, price, bedType, amenities } = validateFields.data;
+
+  try {
+    await prisma.roomType.create({
+      data: {
+        name,
+        description,
+        capacity,
+        price,
+        bedType,
+        image,
+        RoomAmenities: {
+          createMany: {
+            data: amenities.map((item) => ({
+              amenitiesId: item,
+            })),
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.info(error);
+  }
+  redirect("/admin/room");
+};
+
+
 export const updateRoom = async (
   image: string,
   roomId: string,

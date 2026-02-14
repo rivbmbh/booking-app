@@ -1,4 +1,5 @@
-import { array, coerce, object, string } from "zod";
+import { BedType } from "@/types/room";
+import z, { array, coerce, object, string } from "zod";
 
 export const RoomSchema = object({
   name: string()
@@ -17,7 +18,9 @@ export const RoomSchema = object({
     .gt(0, "Capacity must be greater than zero"),
 
   price: coerce.number().gt(0, "Price must be greater than zero"),
-
+  bedType: z.nativeEnum(BedType, {
+    message: "Bed type must be one of: KING, QUEEN, TWIN, DOUBLE",
+  }),
   amenities: array(string().min(1, "Amenity cannot be empty")).nonempty(
     "Amenities are required"
   ),

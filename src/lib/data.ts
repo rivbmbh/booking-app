@@ -1,5 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { BedType } from "@prisma/client";
+
 
 export const getAmenities = async () => {
   const session = await auth();
@@ -23,6 +25,21 @@ export const getRooms = async () => {
   } catch (error) {
     console.info(error);
   }
+};
+
+export const getRoomType = async () => {
+  try {
+    const result = await prisma.roomType.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    return result;
+  } catch (error) {
+    console.info(error);
+  }
+};
+
+export const getBedType = async () => {
+  return Object.values(BedType);
 };
 
 export const getRoomById = async (roomId: string) => {
