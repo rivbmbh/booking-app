@@ -33,6 +33,7 @@ model RoomType {
   image String
   price Int 
   capacity Int
+  bedType BedType @default(KING) 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   RoomAmenities RoomAmenities[]
@@ -129,3 +130,12 @@ enum RoomStatus {
   BOOKED
   MAINTENANCE
 }
+
+enum BedType {
+  KING
+  QUEEN
+  TWIN
+  DOUBLE
+}
+
+
