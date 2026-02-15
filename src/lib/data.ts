@@ -31,6 +31,13 @@ export const getRoomType = async () => {
   try {
     const result = await prisma.roomType.findMany({
       orderBy: { createdAt: "desc" },
+      include:{
+        RoomAmenities: {
+          include: {
+            Amenities: {  select: { name: true } },
+          },
+        },
+      }
     });
     return result;
   } catch (error) {
