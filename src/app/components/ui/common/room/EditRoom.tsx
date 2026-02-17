@@ -1,5 +1,5 @@
 import { getAmenities, getRoomById } from "@/lib/data";
-import EditForm from "./EditForm";
+import EditForm from "./form/EditForm";
 import { notFound } from "next/navigation";
 
 const EditRoom = async ({ roomId }: { roomId: string }) => {

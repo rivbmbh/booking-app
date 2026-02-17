@@ -1,5 +1,5 @@
 import { getAmenities, getBedType } from "@/lib/data";
-import CreateRoomTypeForm from "./CreateRoomTypeForm";
+import CreateRoomTypeForm from "./form/CreateRoomTypeForm";
 
 const CreateRoomType = async () => {
   const amenities = await getAmenities();
