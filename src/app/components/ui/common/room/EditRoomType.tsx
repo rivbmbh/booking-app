@@ -8,7 +8,7 @@ const EditRoomType = async ({ roomId }: { roomId: string }) => {
     getRoomTypeById(roomId),
     getBedType()
   ]);
-  if (!amenities || !room) return notFound();
+  if (!amenities || !room || !bedType) return notFound();
 
   return (
     <div>

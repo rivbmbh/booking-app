@@ -17,7 +17,7 @@ const EditFormRoomType
   roomType
 }: {
   amenities: Amenities[];
-  bedType: BedType[]
+  bedType: string[]
   roomType: RoomTypeProps;
 }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
