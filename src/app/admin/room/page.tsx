@@ -1,5 +1,5 @@
-import RoomTypeTable from "@/app/components/ui/common/room/RoomTypeTable";
-import RoomTable from "@/app/components/ui/common/room/RoomTypeTable";
+
+import RoomTable from "@/app/components/ui/common/room/table/RoomTable";
 import Link from "next/link";
 import React, { Suspense } from "react";
 
@@ -18,7 +18,7 @@ const RoomPage = () => {
         </div>
       </div>
       <Suspense fallback={<p>Loading data...</p>}>
-        <RoomTypeTable />
+        <RoomTable />
       </Suspense>
     </div>
   );

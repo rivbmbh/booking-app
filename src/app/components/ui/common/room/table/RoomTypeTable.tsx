@@ -1,5 +1,6 @@
 import { getRoomType } from "@/lib/data";
-import RoomTypeTableClient from "./table/RoomTypeTableClient";
+import RoomTypeTableClient from "./RoomTypeTableClient";
+
 
 const RoomTypeTable = async () => {
   const roomType = await getRoomType();

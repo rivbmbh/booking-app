@@ -5,6 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
 import { IoClose, IoMenu } from "react-icons/io5";
 
 const NavLink = () => {
@@ -114,21 +115,43 @@ const NavLink = () => {
               </li>
               {session.user.role === "admin" && (
                 <>
-                  <li>
-                    <Link
-                      href="/admin/dashboard"
-                      className="block py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline"
-                    >
-                      Dashboard
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/admin/room"
-                      className="block py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline"
-                    >
-                      Manage Room
-                    </Link>
+                  <li className="relative inline-block">
+                    <button popoverTarget="manage-room" className="block md:mx-auto py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline uppercase flex gap-2 items-center" style={{ anchorName: "--manage-room-btn" }} >
+                      Manage Room  
+                      <FaCaretDown className="caret-down"/>
+                      <FaCaretUp className="caret-up"/>
+                    </button>
+
+                    <ul className="md:mt-6 w-max pl-0 md:pl-2 pr-4 md:pr-6 py-1.5 md:py-3 rounded-sm -space-y-1.5 md:space-y-3 bg-white shadow-2xl" id="manage-room" popover="auto"  style={{
+                      positionAnchor: "--manage-room-btn",
+                      top: "anchor(bottom)",
+                      left: "anchor(left)"
+                    }}>
+                      <li>
+                        <Link
+                          href="/admin/dashboard"
+                          className="block py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline"
+                        >
+                          Dashboard
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/admin/room"
+                          className="block py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline"
+                        >
+                          Room
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/admin/roomtype"
+                          className="block py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline"
+                        >
+                          Room Type
+                        </Link>
+                      </li>
+                    </ul>
                   </li>
                 </>
               )}

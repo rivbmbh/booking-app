@@ -2,10 +2,10 @@ import { deleteRoom } from "@/lib/action";
 import Link from "next/link";
 import { IoPencilOutline, IoTrashOutline } from "react-icons/io5";
 
-export const EditButton = ({ id }: { id: string }) => {
+export const EditButton = ({ id, url }: { id: string, url: string }) => {
   return (
     <Link
-      href={`/admin/room/edit/${id}`}
+      href={`${url}/${id}`}
       className="rounded-sm p-1 hover:bg-gray-200"
     >
       <IoPencilOutline className="size-5" />

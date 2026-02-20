@@ -2,7 +2,7 @@ import EditRoom from "@/app/components/ui/common/room/EditRoom";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-const UpdateRoomPage = async ({
+const UpdateRoomTypePage = async ({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -18,4 +18,4 @@ const UpdateRoomPage = async ({
   );
 };
 
-export default UpdateRoomPage;
+export default UpdateRoomTypePage;

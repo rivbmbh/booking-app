@@ -5,3 +5,16 @@
   --color-primary: #a9031c;
   --color-old-paper: #f6eee3;
 }
+
+@layer utilities {
+
+  .caret-up { display: none; }
+
+  .manage-room:has([popover]:popover-open) .caret-down {
+    display: none;
+  }
+
+  .manage-room:has([popover]:popover-open) .caret-up {
+    display: inline;
+  }
+}

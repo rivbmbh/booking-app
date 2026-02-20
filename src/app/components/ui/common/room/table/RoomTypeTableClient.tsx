@@ -1,13 +1,12 @@
 "use client"
 import { formatCurrency, formatDate } from '@/lib/utils'
 import Image from 'next/image'
-import { DeleteButton, EditButton } from '../Button'
+import { DeleteButton, EditButton } from '../button/Button'
 import { useState } from 'react'
 import { FaEye, FaEyeSlash } from 'react-icons/fa6'
 
 const RoomTypeTableClient = ({data}) => {
  const [openId, setOpenId] = useState<string | null>(null);
-    console.info(openId);
   const toggleDetails = (id: string) => {
     setOpenId(openId === id ? null : id);
   };
@@ -56,45 +55,45 @@ const RoomTypeTableClient = ({data}) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 ">
-          {data!.map((room) => (
-            <tr key={room.id} className="hover:bg-gray-100">
+          {data!.map((v) => (
+            <tr key={v.id} className="hover:bg-gray-100">
               <td className="px-6 py-4">
                 <div className="h-20 w-32 relative">
                   <Image
-                    src={room.image}
+                    src={v.image}
                     fill
                     sizes="20vw"
-                    alt="room image"
+                    alt="v image"
                     className="object-cover"
                   />
                 </div>
               </td>
               {openId  && (
-                <td className="px-6 py-4">{room.id}</td>
+                <td className="px-6 py-4">{v.id}</td>
               )}
-              <td className="px-6 py-4">{room.name}</td>
-              <td className="px-6 py-4">{room.bedType}</td>
-              <td className="px-6 py-4">{room.capacity}</td>
-              <td className="px-6 py-4">{formatCurrency(room.price)}</td>
-              {openId === room.id  && (
+              <td className="px-6 py-4">{v.name}</td>
+              <td className="px-6 py-4">{v.bedType}</td>
+              <td className="px-6 py-4">{v.capacity}</td>
+              <td className="px-6 py-4">{formatCurrency(v.price)}</td>
+              {openId === v.id  && (
                 <>
-                  <td className="px-6 py-4">{room.description}</td>
+                  <td className="px-6 py-4">{v.description}</td>
                   <td className="px-6 py-4">
-                    {room.RoomAmenities.map(a => a.Amenities.name).join(", ")}
+                    {v.RoomAmenities.map(a => a.Amenities.name).join(", ")}
                   </td>
-                  <td className="px-6 py-4">{formatDate(room.createdAt.toDateString())}</td>
+                  <td className="px-6 py-4">{formatDate(v.createdAt.toDateString())}</td>
                 </>
               )}
               <td className="px-6 py-4 text-right">
                 <div className="flex justify-center items-center gap-1.5">
                     <button
-                    onClick={() => toggleDetails(room.id)}
+                    onClick={() => toggleDetails(v.id)}
                     className="text-blue-600 underline"
                     > 
-                        {openId === room.id ? <FaEye color='black' className='size-5'/> : <FaEyeSlash color='black' className='size-5'/>}
+                        {openId === v.id ? <FaEye color='black' className='size-5'/> : <FaEyeSlash color='black' className='size-5'/>}
                     </button>
-                    <EditButton id={room.id} />
-                    <DeleteButton id={room.id} image={room.image} />
+                    <EditButton id={v.id} url='admin/roomtype/edit'/>
+                    <DeleteButton id={v.id} image={v.image} />
                 </div>
               </td>
             </tr>
