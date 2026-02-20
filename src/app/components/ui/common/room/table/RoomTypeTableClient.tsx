@@ -4,8 +4,9 @@ import Image from 'next/image'
 import { DeleteButton, EditButton } from '../button/Button'
 import { useState } from 'react'
 import { FaEye, FaEyeSlash } from 'react-icons/fa6'
+import { RoomTypeProps } from '@/types/room'
 
-const RoomTypeTableClient = ({data}) => {
+const RoomTypeTableClient = ({data} : {data: RoomTypeProps[]}) => {
  const [openId, setOpenId] = useState<string | null>(null);
   const toggleDetails = (id: string) => {
     setOpenId(openId === id ? null : id);

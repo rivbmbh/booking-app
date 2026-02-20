@@ -1,6 +1,7 @@
-import { deleteRoom } from "@/lib/action";
+import { deleteRoomType } from "@/lib/action";
 import Link from "next/link";
 import { IoPencilOutline, IoTrashOutline } from "react-icons/io5";
+
 
 export const EditButton = ({ id, url }: { id: string, url: string }) => {
   return (
@@ -14,7 +15,7 @@ export const EditButton = ({ id, url }: { id: string, url: string }) => {
 };
 
 export const DeleteButton = ({ id, image }: { id: string; image: string }) => {
-  const DeleteRoomWithId = deleteRoom.bind(null, id, image);
+  const DeleteRoomWithId = deleteRoomType.bind(null, id, image);
 
   return (
     <form action={DeleteRoomWithId}>
