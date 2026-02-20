@@ -49,9 +49,9 @@ export const getBedType = async () => {
   return Object.values(BedType);
 };
 
-export const getRoomById = async (roomId: string) => {
+export const getRoomTypeById = async (roomId: string) => {
   try {
-    const result = await prisma.room.findUnique({
+    const result = await prisma.roomType.findUnique({
       where: { id: roomId },
       include: { RoomAmenities: { select: { amenitiesId: true } } },
     });

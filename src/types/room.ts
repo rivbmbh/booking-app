@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-export type RoomProps = Prisma.RoomGetPayload<{
+export type RoomTypeProps = Prisma.RoomTypeGetPayload<{
   include: { RoomAmenities: { select: { amenitiesId: true } } };
 }>;
 export type RoomDetailProps = Prisma.RoomGetPayload<{

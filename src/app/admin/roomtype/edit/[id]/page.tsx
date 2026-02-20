@@ -1,4 +1,4 @@
-import EditRoom from "@/app/components/ui/common/room/EditRoom";
+import EditRoomType from "@/app/components/ui/common/room/EditRoomType";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
@@ -12,7 +12,7 @@ const UpdateRoomTypePage = async ({
   return (
     <div className="max-w-screen-2xl px-4 py-16 mt-10 mx-auto">
       <Suspense fallback={<p>Loading...</p>}>
-        <EditRoom roomId={roomId} />
+        <EditRoomType roomId={roomId} />
       </Suspense>
     </div>
   );

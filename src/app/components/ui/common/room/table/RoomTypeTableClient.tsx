@@ -92,7 +92,7 @@ const RoomTypeTableClient = ({data}) => {
                     > 
                         {openId === v.id ? <FaEye color='black' className='size-5'/> : <FaEyeSlash color='black' className='size-5'/>}
                     </button>
-                    <EditButton id={v.id} url='admin/roomtype/edit'/>
+                    <EditButton id={v.id} url='/admin/roomtype/edit'/>
                     <DeleteButton id={v.id} image={v.image} />
                 </div>
               </td>

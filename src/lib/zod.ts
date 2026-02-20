@@ -1,7 +1,7 @@
 import { BedType } from "@/types/room";
 import z, { array, coerce, object, string } from "zod";
 
-export const RoomSchema = object({
+export const RoomTypeSchema = object({
   name: string()
     .min(6, "Name must be at least 6 characters long")
     .max(100, "Name cannot exceed 100 characters")

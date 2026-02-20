@@ -1,6 +1,6 @@
 "use server";
 
-import { ContactShecma, ReserveSchema, RoomSchema } from "@/lib/zod";
+import { ContactShecma, ReserveSchema, RoomTypeSchema } from "@/lib/zod";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { del } from "@vercel/blob";
@@ -23,7 +23,7 @@ export const saveRoom = async (
     amenities: formData.getAll("amenities"),
   };
 
-  const validateFields = RoomSchema.safeParse(rawData);
+  const validateFields = RoomTypeSchema.safeParse(rawData);
   if (!validateFields.success) {
     return { error: validateFields.error.flatten().fieldErrors };
   }
@@ -69,7 +69,7 @@ export const saveRoomType = async (
     amenities: formData.getAll("amenities"),
   };
 
-  const validateFields = RoomSchema.safeParse(rawData);
+  const validateFields = RoomTypeSchema.safeParse(rawData);
   if (!validateFields.success) {
     return { error: validateFields.error.flatten().fieldErrors };
   }
@@ -101,9 +101,9 @@ export const saveRoomType = async (
 };
 
 
-export const updateRoom = async (
+export const updateRoomType = async (
   image: string,
-  roomId: string,
+  roomTypeId: string,
   prevState: unknown,
   formData: FormData
 ) => {
@@ -113,25 +113,27 @@ export const updateRoom = async (
     name: formData.get("name"),
     description: formData.get("description"),
     capacity: formData.get("capacity"),
+    bedType: formData.get('bedType'),
     price: formData.get("price"),
     amenities: formData.getAll("amenities"),
   };
 
-  const validateFields = RoomSchema.safeParse(rawData);
+  const validateFields = RoomTypeSchema.safeParse(rawData);
   if (!validateFields.success) {
     return { error: validateFields.error.flatten().fieldErrors };
   }
 
-  const { name, description, capacity, price, amenities } = validateFields.data;
+  const { name, description, capacity, bedType, price, amenities } = validateFields.data;
 
   try {
     await prisma.$transaction([
-      prisma.room.update({
-        where: { id: roomId },
+      prisma.roomType.update({
+        where: { id: roomTypeId },
         data: {
           name,
           description,
           capacity,
+          bedType,
           price,
           image,
           RoomAmenities: {
@@ -142,7 +144,7 @@ export const updateRoom = async (
       // dan masukan data baru
       prisma.roomAmenities.createMany({
         data: amenities.map((item) => ({
-          roomId,
+          roomTypeId,
           amenitiesId: item,
         })),
       }),
@@ -150,8 +152,8 @@ export const updateRoom = async (
   } catch (error) {
     console.info(error);
   }
-  revalidatePath("/admin/room");
-  redirect("/admin/room");
+  revalidatePath("/admin/roomtype");
+  redirect("/admin/roomtype ");
 };
 
 export const deleteRoom = async (id: string, image: string) => {
