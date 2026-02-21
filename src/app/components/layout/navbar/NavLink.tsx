@@ -115,24 +115,27 @@ const NavLink = () => {
               </li>
               {session.user.role === "admin" && (
                 <>
-                  <li className="relative inline-block">
-                    <button popoverTarget="manage-room" className="block md:mx-auto py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline uppercase flex gap-2 items-center" style={{ anchorName: "--manage-room-btn" }} >
-                      Manage Room  
-                      <FaCaretDown className="caret-down"/>
-                      <FaCaretUp className="caret-up"/>
-                    </button>
-
-                    <ul className="md:mt-6 w-max pl-0 md:pl-2 pr-4 md:pr-6 py-1.5 md:py-3 rounded-sm -space-y-1.5 md:space-y-3 bg-white shadow-2xl" id="manage-room" popover="auto"  style={{
+                  <li className="relative inline-block group">
+                    <ul 
+                      className="md:mt-6 w-max pl-0 md:pl-3 pr-4 md:pr-10 py-1.5 md:py-4 rounded-sm -space-y-1.5 md:space-y-3 bg-white shadow-2xl
+                      opacity-0 scale-95 translate-y-2
+                      transition-all duration-200 ease-in-out
+                      transition-discrete
+                      [&:popover-open]:opacity-100
+                      [&:popover-open]:scale-100
+                      [&:popover-open]:translate-y-0"
+                      id="manage-room" popover="auto" 
+                      style={{
                       positionAnchor: "--manage-room-btn",
                       top: "anchor(bottom)",
-                      left: "anchor(left)"
+                      left: "anchor(left)",
                     }}>
                       <li>
                         <Link
                           href="/admin/dashboard"
                           className="block py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline"
                         >
-                          Dashboard
+                          Summary
                         </Link>
                       </li>
                       <li>
@@ -152,6 +155,18 @@ const NavLink = () => {
                         </Link>
                       </li>
                     </ul>
+                    <button 
+                      popoverTarget="manage-room" 
+                      className="md:mx-auto py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline uppercase flex gap-2 items-center" 
+                      style={{ anchorName: "--manage-room-btn" }} >
+                        Manage Room            
+                        <FaCaretUp
+                        className="
+                        transition-transform duration-200 ease-in-out
+                        group-has-[ul:popover-open]:rotate-180
+                        "3
+                        />
+                    </button>
                   </li>
                 </>
               )}
