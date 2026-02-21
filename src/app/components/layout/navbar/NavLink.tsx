@@ -123,13 +123,10 @@ const NavLink = () => {
                       transition-discrete
                       [&:popover-open]:opacity-100
                       [&:popover-open]:scale-100
-                      [&:popover-open]:translate-y-0"
+                      [&:popover-open]:translate-y-0
+                      [position-anchor:--manage-room-btn] top-[anchor(bottom)] left-[anchor(left)]"
                       id="manage-room" popover="auto" 
-                      style={{
-                      positionAnchor: "--manage-room-btn",
-                      top: "anchor(bottom)",
-                      left: "anchor(left)",
-                    }}>
+                      >
                       <li>
                         <Link
                           href="/admin/dashboard"
@@ -157,8 +154,7 @@ const NavLink = () => {
                     </ul>
                     <button 
                       popoverTarget="manage-room" 
-                      className="md:mx-auto py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline uppercase flex gap-2 items-center" 
-                      style={{ anchorName: "--manage-room-btn" }} >
+                      className="md:mx-auto py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline uppercase flex gap-2 items-center [anchor-name:--manage-room-btn]">
                         Manage Room            
                         <FaCaretUp
                         className="
