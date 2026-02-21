@@ -1,200 +1,211 @@
 "use client";
 import { saveRoom } from "@/lib/action";
-import { Amenities } from "@prisma/client";
-import { type PutBlobResult } from "@vercel/blob";
+import { RoomTypeDetailProps } from "@/types/room";
 import clsx from "clsx";
-import Image from "next/image";
-import { useActionState, useRef, useState, useTransition } from "react";
-import { IoCloudUploadOutline, IoTrashOutline } from "react-icons/io5";
-import { BarLoader } from "react-spinners";
+import { useActionState, useEffect, useRef, useState } from "react";
 
-const CreateRoomForm = ({ amenities }: { amenities: Amenities[] }) => {
-  const inputFileRef = useRef<HTMLInputElement>(null);
-  const [image, setImage] = useState("");
-  const [message, setMessage] = useState("");
-  const [pending, startTransition] = useTransition();
 
-  const handleUpload = () => {
-    if (!inputFileRef.current?.files) return null;
-    const file = inputFileRef.current.files[0];
-    const formData = new FormData();
-    formData.set("file", file);
-    startTransition(async () => {
-      try {
-        const response = await fetch("/api/upload", {
-          method: "PUT",
-          body: formData,
-        });
-        const data = await response.json();
-        if (response.status !== 200) {
-          setMessage(data.message);
-        }
-        const img = data as PutBlobResult;
-        setImage(img.url);
-      } catch (error) {
-        console.info(error);
-      }
-    });
-  };
-
-  const deleteImage = (image: string) => {
-    startTransition(async () => {
-      try {
-        await fetch(`/api/upload/?imageUrl=${image}`, {
-          method: "DELETE",
-        });
-        setImage("");
-      } catch (err) {
-        console.info(err);
-      }
-    });
-  };
-
+const CreateRoomForm = ({roomType}: {roomType: RoomTypeDetailProps[]}) => {
   const [state, formAction, isPending] = useActionState(
-    saveRoom.bind(null, image),
+    saveRoom.bind(null),
     null
   );
+
+  const [selectedFloor, setSelectedFloor] = useState(null); 
+  const roomRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+  if (!roomRef.current || !selectedFloor) return;
+
+  const map = {
+    "2nd": 200,
+    "3rd": 300,
+    "4th": 400,
+  };
+
+  const base = map[selectedFloor];
+
+  roomRef.current.min = base;
+  roomRef.current.max = base + 99;
+
+  roomRef.current.placeholder = `Start from ${base}`;
+
+  // clear previous error
+  roomRef.current.setCustomValidity("");
+}, [selectedFloor]);
+
+const validateRoom = (e) => {
+  if (!selectedFloor) return;
+
+  const value = Number(e.target.value);
+  const firstDigit = Math.floor(value / 100);
+
+  const map = { "2nd": 2, "3rd": 3, "4th": 4 };
+
+  if (firstDigit !== map[selectedFloor]) {
+    e.target.setCustomValidity(
+      `Room number must start with ${map[selectedFloor]}`
+    );
+  } else {
+    e.target.setCustomValidity("");
+  }
+};
   return (
     <form action={formAction}>
-      <div className="grid md:grid-cols-12 gap-5">
-        <div className="col-span-8 bg-white p-4">
+      <div className="flex justify-start  w-full max-w-screen-2xl">
+        <div className="w-4/6 bg-white p-4">
           <div className="mb-4">
-            <input
-              type="text"
-              name="name"
-              className="py-2 px-4 rounded-sm border border-gray-400 w-full"
-              placeholder="Room name"
-            />
-            <div aria-live="polite" aria-atomic="true">
-              <span className="text-sm text-red-500 mt-2">
-                {state?.error?.name}
-              </span>
-            </div>
-          </div>
-          <div className="mb-4">
-            <textarea
-              name="description"
-              rows={8}
-              placeholder="Description"
-              className="py-2 px-4 rounded-sm border border-gray-400 w-full"
-            ></textarea>
-            <div aria-live="polite" aria-atomic="true">
-              <span className="text-sm text-red-500 mt-2">
-                {state?.error?.description}
-              </span>
-            </div>
-          </div>
-          <div className="mb-4 grid md:grid-cols-3">
-            {amenities.map((item) => (
-              <div key={item.id} className="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  name="amenities"
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
-                  defaultValue={item.id}
-                />
-                <label
-                  htmlFor="amenities"
-                  className="ms-2 text-sm font-medium text-gray-900 capitalize"
-                >
-                  {item.name}
+            <p className="block text-sm font-medium text-gray-600 mb-1">Floor</p>
+            <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
+                {["2nd","3rd","4th"].map((floor) => (
+                <label key={floor} className="cursor-pointer">
+                  <input type="radio" name="floor" value={floor} className="peer hidden" onChange={(e) => setSelectedFloor(e.target.value)}/>
+                  <div className="px-5 py-2 rounded-md text-sm font-medium
+                  text-gray-600
+                  peer-checked:bg-primary 
+                  peer-checked:text-white
+                  peer-checked:font-semibold
+                  peer-checked:shadow
+                  transition-all">
+                    {floor}
+                  </div>
                 </label>
-              </div>
-            ))}
+                ))}
+            </div>
             <div aria-live="polite" aria-atomic="true">
               <span className="text-sm text-red-500 mt-2">
-                {state?.error?.amenities}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="col-span-4 bg-white p-4">
-          {/* general message */}
-          {state?.message ? (
-            <div className="mb-4 bg-red-500 p-2 rounded-l-sm rounded-br-sm">
-              <span className="text-sm text-gray-100">{state.message}</span>
-            </div>
-          ) : null}
-          <label
-            htmlFor="input-file"
-            className="flex flex-col mb-4 items-center justify-center aspect-video border-2 border-gray-300 border-dashed rounded-md cursor-pointer bg-gray-50 relative"
-          >
-            <div
-              className="flex flex-col items-center justify-center text-gray-500 pt-5
-                pb-6 z-10"
-            >
-              {pending ? <BarLoader /> : null}
-              {image ? (
-                <button
-                  type="button"
-                  onClick={() => deleteImage(image)}
-                  className="flex items-center justify-center bg-transparent size-6 rounded-sm absolute right-1.5 top-1.5 text-white hover:bg-red-600"
-                >
-                  <IoTrashOutline className="size-5 text-white" />
-                </button>
-              ) : (
-                <div className="flex flex-col items-center justify-center">
-                  <IoCloudUploadOutline className="size-8" />
-                  <p className="mb-1 text-sm font-bold">Select image</p>
-                  {message ? (
-                    <p className="text-xs text-red-500">{message}</p>
-                  ) : (
-                    <p className="text-xs">
-                      SVG, PNG, JPG, GIF, or others (Max: 4MB)
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-            {!image ? (
-              <input
-                type="file"
-                id="input-file"
-                ref={inputFileRef}
-                onChange={handleUpload}
-                className="hidden"
-              />
-            ) : (
-              <Image
-                src={image}
-                alt="image"
-                width={640}
-                height={360}
-                className="rounded-md absolute aspect-video object-cover"
-              />
-            )}
-          </label>
-          <div className="mb-4">
-            <input
-              type="text"
-              name="capacity"
-              placeholder="Capacity..."
-              className="py-2 px-4 rounded-sm border border-gray-400 w-full"
-            />
-            <div aria-live="polite" aria-atomic="true">
-              <span className="text-sm text-red-500 mt-2">
-                {state?.error?.capacity}
-              </span>
-            </div>
-          </div>
-          <div className="mb-4">
-            <input
-              type="text"
-              name="price"
-              placeholder="Price..."
-              className="py-2 px-4 rounded-sm border border-gray-400 w-full"
-            />
-            <div aria-live="polite" aria-atomic="true">
-              <span className="text-sm text-red-500 mt-2">
-                {state?.error?.price}
+                {state?.error?.status}
               </span>
             </div>
           </div>
 
+          <div className="mb-4">
+          <div className="relative">
+
+            {/* Prefix floor indicator */}
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+              #
+            </div>
+
+            <input
+              ref={roomRef}
+              type="number"
+              name="roomNumber"
+              placeholder=""
+              onInput={validateRoom}
+              className={`peer w-full py-2.5 pl-8 pr-4 rounded-lg border bg-white outline-none transition-all
+              [appearance:textfield]
+              [&::-webkit-outer-spin-button]:appearance-none
+              [&::-webkit-inner-spin-button]:appearance-none
+              ${state?.error?.roomNumber
+                ? "border-red-400 focus:ring-2 focus:ring-red-200"
+                : "border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"}
+              `}
+              required
+            />
+
+            {/* Floating label */}
+            <label className="absolute left-8 -top-2.5 bg-white px-1 text-xs text-gray-500
+              peer-placeholder-shown:top-2.5
+              peer-placeholder-shown:text-sm
+              peer-placeholder-shown:text-gray-400
+              peer-focus:-top-2.5
+              peer-focus:text-xs
+              peer-focus:text-blue-600
+              transition-all">
+              {/* Room Number (ex: 201 = 2nd floor) */}
+              {selectedFloor
+              ? `Rooms Number (ex: ${selectedFloor[0]}01 = ${selectedFloor} floor)`
+              : "Select floor first"}
+            </label>
+          </div>
+
+          {/* Error message */}
+          <div aria-live="polite" aria-atomic="true">
+            <span className="text-sm text-red-500 mt-2 block">
+              {state?.error?.roomNumber}
+            </span>
+          </div>
+          </div>
+
+          <div className="w-full mb-4">
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Room Type
+            </label>
+
+            <div className="relative">
+              <select
+                name="bedType"
+                defaultValue=""
+                className={`appearance-none w-full py-2.5 px-4 pr-10 rounded-lg border bg-white
+                transition-all outline-none
+                ${state?.error?.roomType
+                  ? "border-red-400 focus:ring-2 focus:ring-red-200"
+                  : "border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"}
+                text-gray-700 invalid:text-gray-400`}
+                required
+              >
+                <option value="" disabled hidden>
+                  Choose Room Type
+                </option>
+
+                {roomType.map((data) => (
+                  <option key={data.id} value={data.id}>
+                    {data.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Arrow icon */}
+              <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </div>
+
+            {/* Error message */}
+            <div aria-live="polite" aria-atomic="true">
+              <span className="text-sm text-red-500 mt-2 block">
+                {state?.error?.roomType}
+              </span>
+            </div>
+          </div>
+          <div className="mb-4">
+            <p className="block text-sm font-medium text-gray-600 mb-1">Status</p>
+            <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
+                {["AVAILABLE","BOOKED","MAINTENANCE"].map((status) => (
+                <label key={status} className="cursor-pointer">
+                  <input type="radio" name="status" value={status} className="peer hidden" />
+                  <div className="px-5 py-2 rounded-md text-sm font-medium
+                  text-gray-600
+                  peer-checked:bg-primary 
+                  peer-checked:text-white
+                  peer-checked:font-semibold
+                  peer-checked:shadow
+                  transition-all">
+                    {status}
+                  </div>
+                </label>
+                ))}
+            </div>
+            <div aria-live="polite" aria-atomic="true">
+              <span className="text-sm text-red-500 mt-2">
+                {state?.error?.status}
+              </span>
+            </div>
+          </div>
+          
           <button
             type="submit"
             className={clsx(
-              "bg-orange-400 text-white w-full hover:bg-orange-500 py-2.5 px-6 md:px-1 text-lg font-semibold cursor-pointer",
+              "mt-10 bg-primary text-white w-full hover:bg-primary-hover py-2.5 px-6 md:px-1 text-lg font-semibold cursor-pointer",
               {
                 "opacity-50 cursor-progress": isPending,
               }

@@ -1,6 +1,24 @@
 import { BedType } from "@/types/room";
 import z, { array, coerce, object, string } from "zod";
 
+export const RoomSchema = object({
+  roomNumber: string()
+    .min(1, "Room number must be at least 1 character long")
+    .max(100, "Room number cannot exceed 100 characters")
+    .nonempty("Room number is required"),
+
+  floor: coerce
+    .number()
+    .int("Floor must be an integer")
+    .gt(0, "Floor must be greater than zero"),
+  
+  status: z.enum(["AVAILABLE", "BOOKED", "MAINTENANCE"], {
+      message: "Status must be one of: AVAILABLE, BOOKED, MAINTENANCE",
+    }),
+
+   roomType: string().nonempty("Room type is required"),
+});
+
 export const RoomTypeSchema = object({
   name: string()
     .min(6, "Name must be at least 6 characters long")

@@ -1,6 +1,6 @@
 "use server";
 
-import { ContactShecma, ReserveSchema, RoomTypeSchema } from "@/lib/zod";
+import { ContactShecma, ReserveSchema, RoomSchema, RoomTypeSchema } from "@/lib/zod";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { del } from "@vercel/blob";
@@ -8,6 +8,37 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { differenceInCalendarDays } from "date-fns";
 
+export const saveRoom = async (prevState: unknown, formData: FormData) => {
+  //data mentah dari form
+  const rawData = {
+    roomNumber: formData.get("roomNumber"),
+    floor: formData.get("floor"),
+    status:  formData.get("status"),
+    roomType: formData.get("roomType"),
+  }
+
+  //validasi input menggunakan zod
+  const validateFields = RoomSchema.safeParse(rawData);
+  if (!validateFields.success) {
+    return { error: validateFields.error.flatten().fieldErrors };
+  }
+
+  const { roomNumber, floor,  status, roomType } = validateFields.data;  
+
+  try {
+    await prisma.room.create({
+      data:{
+        roomNumber,
+        floor,
+        status: status as "AVAILABLE" | "BOOKED" | "MAINTENANCE",
+        roomTypeId: roomType as string,
+      }
+    })
+  } catch (error) {
+    console.info(error);  
+  }
+  redirect("/admin/room");
+}
 
 export const saveRoomType = async (
   image: string,
