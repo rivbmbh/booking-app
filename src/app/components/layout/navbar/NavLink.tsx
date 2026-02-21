@@ -5,7 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
+import { FaCaretUp } from "react-icons/fa6";
 import { IoClose, IoMenu } from "react-icons/io5";
 
 const NavLink = () => {
