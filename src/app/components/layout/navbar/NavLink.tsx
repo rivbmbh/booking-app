@@ -164,7 +164,7 @@ const NavLink = () => {
                         className="
                         transition-transform duration-200 ease-in-out
                         group-has-[ul:popover-open]:rotate-180
-                        "3
+                        "
                         />
                     </button>
                   </li>
