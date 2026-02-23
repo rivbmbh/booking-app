@@ -147,6 +147,18 @@ export const updateRoomType = async (
   redirect("/admin/roomtype ");
 };
 
+export const deleteRoom = async (id: string) => {
+  try {
+    //hapus data room by id
+    await prisma.room.delete({
+      where: { id },
+    });
+  } catch (error) {
+    console.info(error);
+  }
+  revalidatePath("/admin/room"); //auto refresh halaman agar data yang dihapus segera hilang dari UI
+};
+
 export const deleteRoomType = async (id: string, image: string) => {
   try {
     await del(image); //hapus gambar dari storage vercel blob

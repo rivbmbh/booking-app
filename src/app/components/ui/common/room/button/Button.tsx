@@ -1,4 +1,4 @@
-import { deleteRoomType } from "@/lib/action";
+import { deleteRoom, deleteRoomType } from "@/lib/action";
 import Link from "next/link";
 import { IoPencilOutline, IoTrashOutline } from "react-icons/io5";
 
@@ -14,11 +14,17 @@ export const EditButton = ({ id, url }: { id: string, url: string }) => {
   );
 };
 
-export const DeleteButton = ({ id, image }: { id: string; image: string }) => {
-  const DeleteRoomWithId = deleteRoomType.bind(null, id, image);
+type DeleteButtonProps = {
+  id: string;
+  image?: string;
+};
 
-  return (
-    <form action={DeleteRoomWithId}>
+export const DeleteButton = ({ id, image }: DeleteButtonProps) => {
+  const DeleteRoom = deleteRoom.bind(null, id);
+  const DeleteRoomType = deleteRoomType.bind(null, id, image as string);
+  const deleteAction = image ? DeleteRoomType : DeleteRoom;
+return (
+    <form action={deleteAction}>
       <button
         type="submit"
         className="rounded-sm p-1 hover:bg-gray-200 cursor-pointer"
