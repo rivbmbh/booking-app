@@ -1,12 +1,22 @@
 import { BedType } from "@/types/room";
 import z, { array, coerce, object, string } from "zod";
+import { isRoomNumberExists } from "./utils";
 
 export const RoomSchema = object({
   roomNumber: string()
     .min(1, "Room number must be at least 1 character long")
     .max(100, "Room number cannot exceed 100 characters")
-    .nonempty("Room number is required"),
-
+    .nonempty("Room number is required")
+    .superRefine(async (value, ctx) => {
+      const exists = await isRoomNumberExists(value);
+      if (exists) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Room number already exists",
+        });
+      }
+    }),
+    
   floor: coerce
     .number()
     .int("Floor must be an integer")

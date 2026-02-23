@@ -5,51 +5,52 @@ import clsx from "clsx";
 import { useActionState, useEffect, useRef, useState } from "react";
 
 
+type FloorLabel = "2nd" | "3rd" | "4th";
 const CreateRoomForm = ({roomType}: {roomType: RoomTypeDetailProps[]}) => {
+  const [selectedFloor, setSelectedFloor] = useState<FloorLabel | null>(null);
+  const roomRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (!roomRef.current || !selectedFloor) return;
+
+    const map: Record<FloorLabel, number> = {
+      "2nd": 201,
+      "3rd": 301,
+      "4th": 401,
+    };
+
+    const base = map[selectedFloor];
+
+      roomRef.current.min = String(base);
+      roomRef.current.max = String(base + 99);
+
+      roomRef.current.placeholder = `Start from ${base} to ${base + 49}`;
+
+      // clear previous error
+      roomRef.current.setCustomValidity("");
+  }, [selectedFloor]);
+
+  const validateRoom = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!selectedFloor) return;
+
+    const value = Number(e.target.value);
+    const firstDigit = Math.floor(value / 100);
+
+    const map = { "2nd": 2, "3rd": 3, "4th": 4 };
+
+    if (firstDigit !== map[selectedFloor]) {
+      e.target.setCustomValidity(
+        `Room number must start with ${map[selectedFloor]}`
+      );
+    } else {
+      e.target.setCustomValidity("");
+    }
+  };
+
   const [state, formAction, isPending] = useActionState(
     saveRoom.bind(null),
     null
   );
-
-  const [selectedFloor, setSelectedFloor] = useState(null); 
-  const roomRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-  if (!roomRef.current || !selectedFloor) return;
-
-  const map = {
-    "2nd": 200,
-    "3rd": 300,
-    "4th": 400,
-  };
-
-  const base = map[selectedFloor];
-
-  roomRef.current.min = base;
-  roomRef.current.max = base + 99;
-
-  roomRef.current.placeholder = `Start from ${base}`;
-
-  // clear previous error
-  roomRef.current.setCustomValidity("");
-}, [selectedFloor]);
-
-const validateRoom = (e) => {
-  if (!selectedFloor) return;
-
-  const value = Number(e.target.value);
-  const firstDigit = Math.floor(value / 100);
-
-  const map = { "2nd": 2, "3rd": 3, "4th": 4 };
-
-  if (firstDigit !== map[selectedFloor]) {
-    e.target.setCustomValidity(
-      `Room number must start with ${map[selectedFloor]}`
-    );
-  } else {
-    e.target.setCustomValidity("");
-  }
-};
   return (
     <form action={formAction}>
       <div className="flex justify-start  w-full max-w-screen-2xl">
@@ -59,7 +60,7 @@ const validateRoom = (e) => {
             <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
                 {["2nd","3rd","4th"].map((floor) => (
                 <label key={floor} className="cursor-pointer">
-                  <input type="radio" name="floor" value={floor} className="peer hidden" onChange={(e) => setSelectedFloor(e.target.value)}/>
+                  <input type="radio" name="floor" value={floor} className="peer hidden" onChange={(e) => setSelectedFloor(e.target.value as FloorLabel)}/>
                   <div className="px-5 py-2 rounded-md text-sm font-medium
                   text-gray-600
                   peer-checked:bg-primary 
@@ -74,58 +75,58 @@ const validateRoom = (e) => {
             </div>
             <div aria-live="polite" aria-atomic="true">
               <span className="text-sm text-red-500 mt-2">
-                {state?.error?.status}
+                {state?.error?.floor}
               </span>
             </div>
           </div>
 
           <div className="mb-4">
-          <div className="relative">
+            <div className="relative">
 
-            {/* Prefix floor indicator */}
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
-              #
+              {/* Prefix floor indicator */}
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                #
+              </div>
+
+              <input
+                ref={roomRef}
+                type="number"
+                name="roomNumber"
+                placeholder=""
+                onInput={validateRoom}
+                className={`peer w-full py-2.5 pl-8 pr-4 rounded-lg border bg-white outline-none transition-all
+                [appearance:textfield]
+                [&::-webkit-outer-spin-button]:appearance-none
+                [&::-webkit-inner-spin-button]:appearance-none
+                ${state?.error?.roomNumber
+                  ? "border-red-400 focus:ring-2 focus:ring-red-200"
+                  : "border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"}
+                `}
+                required
+              />
+
+              {/* Floating label */}
+              <label className="absolute left-8 -top-2.5 bg-white px-1 text-xs text-gray-500
+                peer-placeholder-shown:top-2.5
+                peer-placeholder-shown:text-sm
+                peer-placeholder-shown:text-gray-400
+                peer-focus:-top-2.5
+                peer-focus:text-xs
+                peer-focus:text-blue-600
+                transition-all">
+                {/* Room Number (ex: 201 = 2nd floor) */}
+                {selectedFloor
+                ? `Rooms Number (ex: ${selectedFloor[0]}01 = ${selectedFloor} floor)`
+                : "Select floor first"}
+              </label>
             </div>
 
-            <input
-              ref={roomRef}
-              type="number"
-              name="roomNumber"
-              placeholder=""
-              onInput={validateRoom}
-              className={`peer w-full py-2.5 pl-8 pr-4 rounded-lg border bg-white outline-none transition-all
-              [appearance:textfield]
-              [&::-webkit-outer-spin-button]:appearance-none
-              [&::-webkit-inner-spin-button]:appearance-none
-              ${state?.error?.roomNumber
-                ? "border-red-400 focus:ring-2 focus:ring-red-200"
-                : "border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"}
-              `}
-              required
-            />
-
-            {/* Floating label */}
-            <label className="absolute left-8 -top-2.5 bg-white px-1 text-xs text-gray-500
-              peer-placeholder-shown:top-2.5
-              peer-placeholder-shown:text-sm
-              peer-placeholder-shown:text-gray-400
-              peer-focus:-top-2.5
-              peer-focus:text-xs
-              peer-focus:text-blue-600
-              transition-all">
-              {/* Room Number (ex: 201 = 2nd floor) */}
-              {selectedFloor
-              ? `Rooms Number (ex: ${selectedFloor[0]}01 = ${selectedFloor} floor)`
-              : "Select floor first"}
-            </label>
-          </div>
-
-          {/* Error message */}
-          <div aria-live="polite" aria-atomic="true">
-            <span className="text-sm text-red-500 mt-2 block">
-              {state?.error?.roomNumber}
-            </span>
-          </div>
+            {/* Error message */}
+            <div aria-live="polite" aria-atomic="true">
+              <span className="text-sm text-red-500 mt-2 block">
+                {state?.error?.roomNumber}
+              </span>
+            </div>
           </div>
 
           <div className="w-full mb-4">
@@ -135,7 +136,7 @@ const validateRoom = (e) => {
 
             <div className="relative">
               <select
-                name="bedType"
+                name="roomType"
                 defaultValue=""
                 className={`appearance-none w-full py-2.5 px-4 pr-10 rounded-lg border bg-white
                 transition-all outline-none
@@ -177,6 +178,7 @@ const validateRoom = (e) => {
               </span>
             </div>
           </div>
+
           <div className="mb-4">
             <p className="block text-sm font-medium text-gray-600 mb-1">Status</p>
             <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
@@ -203,6 +205,7 @@ const validateRoom = (e) => {
           </div>
           
           <button
+          onClick={() => console.info('clicked')}
             type="submit"
             className={clsx(
               "mt-10 bg-primary text-white w-full hover:bg-primary-hover py-2.5 px-6 md:px-1 text-lg font-semibold cursor-pointer",

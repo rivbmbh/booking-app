@@ -9,26 +9,30 @@ import { auth } from "@/auth";
 import { differenceInCalendarDays } from "date-fns";
 
 export const saveRoom = async (prevState: unknown, formData: FormData) => {
-  //data mentah dari form
+if (!formData.get("floor") || !formData.get("roomNumber")) {
+    return { message: "Please select floor and input room number" };
+  }
+
   const rawData = {
     roomNumber: formData.get("roomNumber"),
-    floor: formData.get("floor"),
+    floor: parseInt(formData.get("floor") as string),
     status:  formData.get("status"),
     roomType: formData.get("roomType"),
   }
 
   //validasi input menggunakan zod
-  const validateFields = RoomSchema.safeParse(rawData);
-  if (!validateFields.success) {
-    return { error: validateFields.error.flatten().fieldErrors };
+  const validateFields = RoomSchema.safeParseAsync(rawData);
+  if (!(await validateFields).success) {
+    const error = (await validateFields).error!.flatten().fieldErrors;
+    return { error };
   }
 
-  const { roomNumber, floor,  status, roomType } = validateFields.data;  
+  const { roomNumber, floor,  status, roomType } = (await validateFields).data!;  
 
   try {
     await prisma.room.create({
       data:{
-        roomNumber,
+        roomNumber: roomNumber,
         floor,
         status: status as "AVAILABLE" | "BOOKED" | "MAINTENANCE",
         roomTypeId: roomType as string,
@@ -84,7 +88,7 @@ export const saveRoomType = async (
   } catch (error) {
     console.info(error);
   }
-  redirect("/admin/room");
+  redirect("/admin/roomType");
 };
 
 

@@ -1,3 +1,5 @@
+import { prisma } from "./prisma";
+
 export const formatDate = (dateStr: string) => {
   const date = new Date(dateStr);
   const formatter = new Intl.DateTimeFormat("id-ID", {
@@ -14,3 +16,12 @@ export const formatCurrency = (amount: number) => {
   });
   return formatter.format(amount);
 };
+
+export async function isRoomNumberExists(roomNumber: string) {
+  const room = await prisma.room.findUnique({
+    where: {
+      roomNumber
+    },
+  });
+  return !!room;
+}
