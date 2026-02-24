@@ -17,11 +17,18 @@ export const formatCurrency = (amount: number) => {
   return formatter.format(amount);
 };
 
-export async function isRoomNumberExists(roomNumber: string) {
-  const room = await prisma.room.findUnique({
+export const isRoomNumberExists = async (
+  roomNumber: string,
+  excludeRoomId?: string
+) => {
+  const room = await prisma.room.findFirst({
     where: {
-      roomNumber
-    },
+      roomNumber,
+      ...(excludeRoomId && {
+        NOT: { id: excludeRoomId }
+      })
+    }
   });
+
   return !!room;
-}
+};

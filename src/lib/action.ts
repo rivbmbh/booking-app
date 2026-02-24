@@ -7,6 +7,7 @@ import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { differenceInCalendarDays } from "date-fns";
+import { isRoomNumberExists } from "./utils";
 
 export const saveRoom = async (prevState: unknown, formData: FormData) => {
 if (!formData.get("floor") || !formData.get("roomNumber")) {
@@ -21,13 +22,23 @@ if (!formData.get("floor") || !formData.get("roomNumber")) {
   }
 
   //validasi input menggunakan zod
-  const validateFields = RoomSchema.safeParseAsync(rawData);
+  const validateFields = RoomSchema.safeParse(rawData);
   if (!(await validateFields).success) {
     const error = (await validateFields).error!.flatten().fieldErrors;
     return { error };
   }
 
   const { roomNumber, floor,  status, roomType } = (await validateFields).data!;  
+
+  const exists = await isRoomNumberExists(roomNumber);
+
+  if (exists) {
+    return {
+      error: {
+        roomNumber: ["Room number already exists"]
+      }
+    };
+  }
 
   try {
     await prisma.room.create({
@@ -91,6 +102,57 @@ export const saveRoomType = async (
   redirect("/admin/roomType");
 };
 
+export const updateRoom = async (
+  roomId: string,
+  prevState: unknown,
+  formData: FormData
+) => {
+  if (!formData.get("floor") || !formData.get("roomNumber")) {
+    return { message: "Please select floor and input room number" };
+  }
+
+  const rawData = {
+    roomNumber: formData.get("roomNumber"),
+    floor: parseInt(formData.get("floor") as string),
+    status:  formData.get("status"),
+    roomType: formData.get("roomType"),
+  }
+
+  //validasi input menggunakan zod
+  const validateFields = RoomSchema.safeParse(rawData);
+  if (!(await validateFields).success) {
+    const error = (await validateFields).error!.flatten().fieldErrors;
+    return { error };
+  }
+
+  const { roomNumber, floor, status, roomType } = (await validateFields).data!;  
+
+  // cek duplicate khusus update
+  const exists = await isRoomNumberExists(roomNumber, roomId);
+
+  if (exists) {
+    return {
+      error: {
+        roomNumber: ["Room number already exists"]
+      }
+    };
+  }
+
+  try {
+    await prisma.room.update({
+      where: { id: roomId },
+      data:{
+        roomNumber: roomNumber,
+        floor,
+        status: status as "AVAILABLE" | "BOOKED" | "MAINTENANCE",
+        roomTypeId: roomType as string,
+      }
+    })
+  } catch (error) {
+    console.info(error);  
+  }
+  redirect("/admin/room");
+}
 
 export const updateRoomType = async (
   image: string,

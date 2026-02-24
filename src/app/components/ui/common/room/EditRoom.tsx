@@ -1,18 +1,18 @@
-import { getAmenities, getRoomById } from "@/lib/data";
+import { getRoomById, getRoomType } from "@/lib/data";
 import EditForm from "./form/EditForm";
 import { notFound } from "next/navigation";
 
 const EditRoom = async ({ roomId }: { roomId: string }) => {
-  const [amenities, room] = await Promise.all([
-    getAmenities(),
+  const [room, roomType] = await Promise.all([
     getRoomById(roomId),
+    getRoomType(),
   ]);
-  if (!amenities || !room) return notFound();
+  if (!room || !roomType) return notFound();
 
   return (
     <div>
       <h1 className="text-3xl font-bold text-gray-800 mb-4">Edit a Room</h1>
-      <EditForm amenities={amenities} room={room} />
+      <EditForm room={room} roomType={roomType} />
     </div>
   );
 };
