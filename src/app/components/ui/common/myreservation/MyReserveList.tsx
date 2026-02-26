@@ -36,7 +36,7 @@ const MyReserveList = async () => {
           </div>
           <div className="flex flex-col mb-4  items-start bg-white md:flex-row md:w-full">
             <Image
-              src={item.Room.image}
+              src={item.Room.RoomType?.image}
               width={500}
               height={300}
               className="object-cover w-full h-60 md:h-auto md:w-1/3 md:rounded-none"
@@ -47,7 +47,7 @@ const MyReserveList = async () => {
                 <div className="grid grid-cols-[120px_10px_1fr]">
                   <span className="w-36">Price</span>
                   <span className="w-3">:</span>
-                  <span>{formatCurrency(item.Room.price)}</span>
+                  <span>{formatCurrency(item.Room.RoomType?.price || 0)}</span>
                 </div>
                 <div className="grid grid-cols-[120px_10px_1fr]">
                   <span className="w-36">Arrival</span>
