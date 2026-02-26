@@ -18,6 +18,18 @@ export type RoomTypeDetailProps = Prisma.RoomTypeGetPayload<{
   };
 }>;
 
+export type RoomDetailProps = Prisma.RoomGetPayload<{
+  include: {
+    RoomType: {
+      include: {
+        RoomAmenities: {
+          select: { amenitiesId: true, Amenities: { select: { name: true } } };
+        };
+      };
+    };
+  };
+}>;
+
 export enum BedType {
   KING = "KING",
   QUEEN = "QUEEN",

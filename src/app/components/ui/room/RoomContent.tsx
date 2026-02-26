@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Card from "../card/Card";
 import FloorPlans from "./sketch/FloorPlans";
+import { RoomProps } from "@/types/room";
 
-const RoomContent = ({rooms}) => {
+const RoomContent = ({rooms}: {rooms: RoomProps}) => {
+  // console.info(rooms)
     const [view, setView] = useState("denah")
   return (
    <>
@@ -31,7 +33,7 @@ const RoomContent = ({rooms}) => {
 
     {view == "card" && (
         <div className="grid gap-5 md:grid-cols-3">
-            {rooms.map((room) => (
+            {rooms.map((room: RoomProps) => (
                 <Card key={room.id} room={room}/>
             ))}
         </div>

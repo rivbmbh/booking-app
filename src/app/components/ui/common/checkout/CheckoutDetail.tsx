@@ -1,7 +1,6 @@
 import { getReservationById } from "@/lib/data";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { differenceInCalendarDays } from "date-fns";
-import Image from "next/image";
 import PaymentButoon from "@/app/components/ui/common/PaymentButoon";
 import ImagesCardInput from "../ImageGallery";
 
@@ -19,16 +18,16 @@ const CheckoutDetail = async ({ reservationId }: { reservationId: string }) => {
   return (
     <div className="w-full 2xl:w-5/6 flex flex-col md:flex-row justify-center gap-2">
       <div className="w-full lg:w-[80%]">
-        <ImagesCardInput image={reservation.Room.image} />
+        <ImagesCardInput image={reservation.Room.RoomType?.image} />
         <div className="flex flex-col items-start rounded-2xl bg-white border border-gray-200 md:flex-row md:w-full">
           <div className="flex flex-col justify-between p-4 leading-normal w-full">
             <h5 className="mb-1 text-3xl font-bold tracking-tight text-gray-900">
-              {reservation.Room.name}
+              {reservation.Room.RoomType?.name}
             </h5>
             <div className="flex items-center gap-1 text-2xl text-gray-700">
               <div className="flex items-center justify-center gap-1">
                 <span className="text-lg">
-                  {formatCurrency(reservation.price)}
+                  {formatCurrency(reservation.Room.RoomType?.price || 0)}
                 </span>
                 <span className="text-lg">/ Night</span>
               </div>

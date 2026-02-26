@@ -33,7 +33,7 @@ const ReserveForm = ({
   }
 
   const [state, formAction, isPending] = useActionState(
-    createReserve.bind(null, room.id, room.price, startDate, endDate),
+    createReserve.bind(null, room.id, room.RoomType?.price, startDate, endDate),
     null
   );
 

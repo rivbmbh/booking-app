@@ -1,5 +1,4 @@
 import { getRooms } from "@/lib/data";
-import Card from "../card/Card";
 import RoomContent from "../room/RoomContent";
 
 const Main = async () => {

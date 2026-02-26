@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { RoomProps } from "@/types/room";
 import { BedType } from "@prisma/client";
 
 
@@ -16,14 +17,18 @@ export const getAmenities = async () => {
   }
 };
 
-export const getRooms = async () => {
+export const getRooms = async () : Promise<RoomProps[]> => {
   try {
     const result = await prisma.room.findMany({
       orderBy: { createdAt: "desc" },
+      include: {
+        RoomType: true,
+      }
     });
     return result;
   } catch (error) {
     console.info(error);
+    return [];
   }
 };
 
@@ -80,10 +85,12 @@ export const getRoomDetailById = async (roomId: string) => {
     const result = await prisma.room.findUnique({
       where: { id: roomId },
       include: {
-        RoomAmenities: {
+        RoomType: {
           include: {
-            Amenities: {
-              select: { name: true },
+            RoomAmenities: {
+              include: {
+                Amenities: { select: { name: true } },
+              },
             },
           },
         },
@@ -101,11 +108,15 @@ export const getReservationById = async (id: string) => {
       where: { id },
       include: {
         Room: {
-          select: {
-            name: true,
-            image: true,
-            price: true,
-          },
+          include:{
+            RoomType:{
+              select: {
+                name: true,
+                image: true,
+                price: true,
+              },
+            }
+          }
         },
         User: {
           select: {
@@ -154,11 +165,15 @@ export const getReservationByUserId = async () => {
       },
       include: {
         Room: {
-          select: {
-            name: true,
-            image: true,
-            price: true,
-          },
+          include:{
+            RoomType: {
+              select: {
+                name: true,
+                image: true,
+                price: true,
+              },
+            }
+          }
         },
         User: {
           select: {
@@ -222,11 +237,15 @@ export const getReservation = async () => {
     const result = await prisma.reservation.findMany({
       include: {
         Room: {
-          select: {
+         include: {
+          RoomType:{
+            select: {
             name: true,
             image: true,
             price: true,
           },
+          }
+         }
         },
         User: {
           select: {
