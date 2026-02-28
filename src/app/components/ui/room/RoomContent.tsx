@@ -3,11 +3,10 @@
 import { useState } from "react";
 import Card from "../card/Card";
 import FloorPlans from "./sketch/FloorPlans";
-import { RoomProps } from "@/types/room";
+import { RoomProps, RoomTypeProps } from "@/types/room";
 
-const RoomContent = ({rooms}: {rooms: RoomProps}) => {
-  // console.info(rooms)
-    const [view, setView] = useState("denah")
+const RoomContent = ({rooms}: {rooms: RoomTypeProps}) => {
+  const [view, setView] = useState("denah")
   return (
    <>
     <div className="flex mb-10">
@@ -33,7 +32,7 @@ const RoomContent = ({rooms}: {rooms: RoomProps}) => {
 
     {view == "card" && (
         <div className="grid gap-5 md:grid-cols-3">
-            {rooms.map((room: RoomProps) => (
+            {rooms.map((room: RoomTypeProps) => (
                 <Card key={room.id} room={room}/>
             ))}
         </div>

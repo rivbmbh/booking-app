@@ -1,6 +1,6 @@
 "use client";
 import { createReserve } from "@/lib/action";
-import { DisabledDateProps, RoomDetailProps } from "@/types/room";
+import { DisabledDateProps, RoomTypeDetailProps } from "@/types/room";
 import clsx from "clsx";
 import { addDays, isAfter, isEqual, subDays } from "date-fns";
 import { useActionState, useMemo, useState } from "react";
@@ -8,12 +8,13 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const ReserveForm = ({
-  room,
+  roomType,
   disabledDate,
 }: {
-  room: RoomDetailProps;
+  roomType: RoomTypeDetailProps;
   disabledDate: DisabledDateProps[];
 }) => {
+  // console.info(roomType);
   const StartDate = new Date();
   const EndDate = addDays(StartDate, 1); // satu hari setelah hari pertama
 
@@ -33,7 +34,7 @@ const ReserveForm = ({
   }
 
   const [state, formAction, isPending] = useActionState(
-    createReserve.bind(null, room.id, room.RoomType?.price, startDate, endDate),
+    createReserve.bind(null, roomType.id, roomType.price, startDate, endDate),
     null
   );
 

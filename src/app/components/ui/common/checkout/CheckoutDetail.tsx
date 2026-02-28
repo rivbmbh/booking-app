@@ -6,7 +6,6 @@ import ImagesCardInput from "../ImageGallery";
 
 const CheckoutDetail = async ({ reservationId }: { reservationId: string }) => {
   const reservation = await getReservationById(reservationId);
-  console.info(reservation);
   if (!reservation || !reservation.Payment) {
     return <h1>No Reservation Found</h1>;
   }
@@ -44,6 +43,12 @@ const CheckoutDetail = async ({ reservationId }: { reservationId: string }) => {
                 <td className="py-1">Reservation ID</td>
                 <td className="py-1 text-right truncate font-semibold">
                   #{reservation.id}
+                </td>
+              </tr>
+              <tr>
+                <td className="py-1">Room Number</td>
+                <td className="py-1 text-right truncate font-semibold">
+                  {reservation.Room.roomNumber}
                 </td>
               </tr>
               <tr>

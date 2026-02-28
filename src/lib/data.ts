@@ -56,6 +56,9 @@ export const getRoomType = async () => {
             Amenities: {  select: { name: true } },
           },
         },
+        rooms: {
+          select: { id: true },
+        }
       }
     });
     return result;
@@ -92,6 +95,24 @@ export const getRoomDetailById = async (roomId: string) => {
                 Amenities: { select: { name: true } },
               },
             },
+          },
+        },
+      },
+    });
+    return result;
+  } catch (error) {
+    console.info(error);
+  }
+};
+
+export const getRoomTypeDetailById = async (roomId: string) => {
+  try {
+    const result = await prisma.roomType.findUnique({
+      where: { id: roomId },
+      include: {
+        RoomAmenities: {
+          include: {
+            Amenities: { select: { name: true } },
           },
         },
       },

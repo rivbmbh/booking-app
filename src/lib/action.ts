@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
-import { differenceInCalendarDays } from "date-fns";
+import { addMinutes, differenceInCalendarDays } from "date-fns";
 import { isRoomNumberExists } from "./utils";
 
 export const saveRoom = async (prevState: unknown, formData: FormData) => {
@@ -240,8 +240,9 @@ export const deleteRoomType = async (id: string, image: string) => {
   revalidatePath("/admin/roomtype"); //auto refresh halaman agar data yang dihapus segera hilang dari UI
 };
 
+
 export const createReserve = async (
-  roomId: string,
+  roomTypeId: string,
   price: number,
   startDate: Date,
   endDate: Date,
@@ -250,7 +251,33 @@ export const createReserve = async (
 ) => {
   const session = await auth();
   if (!session || !session.user || !session.user.id)
-    redirect(`/signin?redirect_url=room/${roomId}`);
+    redirect(`/signin?redirect_url=room/${roomTypeId}`);
+
+  const available = await prisma.room.findFirst({
+    where: {
+      roomTypeId,
+      Reservation: {
+        none: {
+          status: {
+            in: ["PENDING", "CONFIRMED"],
+          },
+          expiresAt: {
+            gt: new Date(),
+          },
+          AND:[
+            {
+              startDate:{ lte:endDate },
+              endDate:{ gte:startDate }
+            }
+          ]
+        }
+      }
+    },
+  });
+
+  if (!available) {
+    return { message: "Sorry, no available room for the selected dates" };
+  }
 
   const rawData = {
     name: formData.get("name"),
@@ -282,16 +309,18 @@ export const createReserve = async (
 
       const reservation = await tx.reservation.create({
         data: {
+          userId: session.user.id as string,
+          roomId: available!.id as string,
           startDate: startDate,
           endDate: endDate,
           price: price,
-          roomId: roomId,
-          userId: session.user.id as string,
+          status: "PENDING",
+          expiresAt: addMinutes(new Date(), 15),
           Payment: {
             create: {
-              amount: total,
-            },
-          },
+              amount: total
+            }
+          }
         },
       });
       reservationId = reservation.id;

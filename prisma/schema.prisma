@@ -64,8 +64,10 @@ model Reservation{
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
   roomId String
   Room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  status ReservationStatus @default(PENDING)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  expiresAt DateTime
   Payment Payment?
 }
 
@@ -129,6 +131,13 @@ enum RoomStatus {
   AVAILABLE
   BOOKED
   MAINTENANCE
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  EXPIRED
 }
 
 enum BedType {

@@ -1,8 +1,9 @@
-import { getRooms } from "@/lib/data";
+import { getRooms, getRoomType } from "@/lib/data";
 import RoomContent from "../room/RoomContent";
 
 const Main = async () => {
-  const rooms = await getRooms();
+  // const rooms = await getRooms();
+  const rooms = await getRoomType();
   if (!rooms?.length) return <p>No Room Found</p>;
 
   return (
