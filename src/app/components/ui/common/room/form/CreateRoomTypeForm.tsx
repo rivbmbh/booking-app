@@ -1,57 +1,25 @@
 "use client";
 import { saveRoomType } from "@/lib/action";
 import { Amenities, BedType } from "@prisma/client";
-import { type PutBlobResult } from "@vercel/blob";
 import clsx from "clsx";
 import Image from "next/image";
-import { useActionState, useRef, useState, useTransition } from "react";
-import { IoCloudUploadOutline, IoTrashOutline } from "react-icons/io5";
-import { BarLoader } from "react-spinners";
+import { useActionState, useRef, useState, } from "react";
+import { IoCloudUploadOutline } from "react-icons/io5";
 
 const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], bedType: BedType[] }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const [image, setImage] = useState("");
-  const [message, setMessage] = useState("");
-  const [pending, startTransition] = useTransition();
+  const [preview, setPreview] = useState<string | null>(null);
+  console.info(preview)
+  const handlePreview = () => {
+    const file = inputFileRef.current?.files?.[0];
+    if (!file) return;
 
-  const handleUpload = () => {
-    if (!inputFileRef.current?.files) return null;
-    const file = inputFileRef.current.files[0];
-    const formData = new FormData();
-    formData.set("file", file);
-    startTransition(async () => {
-      try {
-        const response = await fetch("/api/upload", {
-          method: "PUT",
-          body: formData,
-        });
-        const data = await response.json();
-        if (response.status !== 200) {
-          setMessage(data.message);
-        }
-        const img = data as PutBlobResult;
-        setImage(img.url);
-      } catch (error) {
-        console.info(error);
-      }
-    });
-  };
-
-  const deleteImage = (image: string) => {
-    startTransition(async () => {
-      try {
-        await fetch(`/api/upload/?imageUrl=${image}`, {
-          method: "DELETE",
-        });
-        setImage("");
-      } catch (err) {
-        console.info(err);
-      }
-    });
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
   };
 
   const [state, formAction, isPending] = useActionState(
-    saveRoomType.bind(null, image),
+    saveRoomType,
     null
   );
   return (
@@ -74,8 +42,8 @@ const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], be
           <div className="mb-4">
           <select name="bedType" className="py-2 px-4 rounded-sm border border-gray-400 w-full">
             <option value="">-Choose Room Type-</option>
-            {bedType.map((data) => (
-                <option key={data+1} value={data}>{data}</option>
+            {bedType.map((type) => (
+                <option key={type} value={type}>{type}</option>
             ))}
           </select>
             <div aria-live="polite" aria-atomic="true">
@@ -107,7 +75,7 @@ const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], be
                   defaultValue={item.id}
                 />
                 <label
-                  htmlFor="amenities"
+                  htmlFor={item.id}
                   className="ms-2 text-sm font-medium text-gray-900 capitalize"
                 >
                   {item.name}
@@ -122,65 +90,40 @@ const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], be
           </div>
         </div>
         <div className="col-span-4 bg-white p-4">
-          {/* general message */}
-          {state?.message ? (
-            <div className="mb-4 bg-red-500 p-2 rounded-l-sm rounded-br-sm">
-              <span className="text-sm text-gray-100">{state.message}</span>
-            </div>
-          ) : null}
+          {/* IMAGE UPLOAD */}
           <label
-            htmlFor="input-file"
-            className="flex flex-col mb-4 items-center justify-center aspect-video border-2 border-gray-300 border-dashed rounded-md cursor-pointer bg-gray-50 relative"
+            htmlFor="image"
+            className="flex flex-col items-center justify-center aspect-video border-2 border-dashed rounded-md cursor-pointer relative mb-4"
           >
-            <div
-              className="flex flex-col items-center justify-center text-gray-500 pt-5
-                pb-6 z-10"
-            >
-              {pending ? <BarLoader /> : null}
-              {image ? (
-                <button
-                  type="button"
-                  onClick={() => deleteImage(image)}
-                  className="flex items-center justify-center bg-transparent size-6 rounded-sm absolute right-1.5 top-1.5 text-white hover:bg-red-600"
-                >
-                  <IoTrashOutline className="size-5 text-white" />
-                </button>
-              ) : (
-                <div className="flex flex-col items-center justify-center">
-                  <IoCloudUploadOutline className="size-8" />
-                  <p className="mb-1 text-sm font-bold">Select image</p>
-                  {message ? (
-                    <p className="text-xs text-red-500">{message}</p>
-                  ) : (
-                    <p className="text-xs">
-                      SVG, PNG, JPG, GIF, or others (Max: 4MB)
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-            {!image ? (
-              <input
-                type="file"
-                id="input-file"
-                ref={inputFileRef}
-                onChange={handleUpload}
-                className="hidden"
+            {preview ? (
+              <Image
+                src={preview}
+                alt="Preview"
+                fill
+                className="object-cover rounded-md"
               />
             ) : (
-              <Image
-                src={image}
-                alt="image"
-                width={640}
-                height={360}
-                className="rounded-md absolute aspect-video object-cover"
-              />
+              <>
+                <IoCloudUploadOutline className="size-8 text-gray-500" />
+                <p className="text-sm">Select Image</p>
+              </>
             )}
+
+            <input
+              type="file"
+              name="image"
+              id="image"
+              ref={inputFileRef}
+              onChange={handlePreview}
+              className="hidden"
+              accept="image/*"
+            />
           </label>
           <div className="mb-4">
             <input
-              type="text"
+              type="number"
               name="capacity"
+              min={1}
               placeholder="Capacity..."
               className="py-2 px-4 rounded-sm border border-gray-400 w-full"
             />
@@ -192,9 +135,10 @@ const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], be
           </div>
           <div className="mb-4">
             <input
-              type="text"
+              type="number"
               name="price"
               placeholder="Price..."
+              min={0} step="0.01" 
               className="py-2 px-4 rounded-sm border border-gray-400 w-full"
             />
             <div aria-live="polite" aria-atomic="true">

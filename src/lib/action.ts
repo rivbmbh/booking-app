@@ -3,7 +3,7 @@
 import { ContactShecma, ReserveSchema, RoomSchema, RoomTypeSchema } from "@/lib/zod";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { del } from "@vercel/blob";
+import { del, put } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { addMinutes, differenceInCalendarDays } from "date-fns";
@@ -56,11 +56,11 @@ if (!formData.get("floor") || !formData.get("roomNumber")) {
 }
 
 export const saveRoomType = async (
-  image: string,
   prevState: unknown,
   formData: FormData
 ) => {
-  if (!image) return { message: "Please upload an image file" };
+  const file = formData.get("image") as File | null;
+  if (!file || file.size === 0) return { message: "Please upload an image file" };
 
   const rawData = {
     name: formData.get("name"),
@@ -72,6 +72,7 @@ export const saveRoomType = async (
   };
 
   const validateFields = RoomTypeSchema.safeParse(rawData);
+
   if (!validateFields.success) {
     return { error: validateFields.error.flatten().fieldErrors };
   }
@@ -79,6 +80,21 @@ export const saveRoomType = async (
   const { name, description, capacity, price, bedType, amenities } = validateFields.data;
 
   try {
+    if (!file.type.startsWith("image/")) {
+      return { message: "File must be an image" };
+    }
+
+    if (file.size > 2_000_000) {
+      return { message: "Max file size is 2MB" };
+    }
+
+    //buat nama file unik untuk menghindari konflik nama file di storage
+    const extension = file.name.split(".").pop();
+    const filename = `${crypto.randomUUID()}.${extension}`;
+
+    const blob = await put(filename, file, {
+      access: "public",
+    })
     await prisma.roomType.create({
       data: {
         name,
@@ -86,7 +102,7 @@ export const saveRoomType = async (
         capacity,
         price,
         bedType,
-        image,
+        image: blob.url,
         RoomAmenities: {
           createMany: {
             data: amenities.map((item) => ({
@@ -99,7 +115,7 @@ export const saveRoomType = async (
   } catch (error) {
     console.info(error);
   }
-  redirect("/admin/roomType");
+  redirect("/admin/roomtype");
 };
 
 export const updateRoom = async (
