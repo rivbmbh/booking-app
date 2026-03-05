@@ -171,12 +171,10 @@ export const updateRoom = async (
 }
 
 export const updateRoomType = async (
-  image: string,
   roomTypeId: string,
   prevState: unknown,
   formData: FormData
 ) => {
-  if (!image) return { message: "Please upload an image file" };
 
   const rawData = {
     name: formData.get("name"),
@@ -184,7 +182,7 @@ export const updateRoomType = async (
     capacity: formData.get("capacity"),
     bedType: formData.get('bedType'),
     price: formData.get("price"),
-    amenities: formData.getAll("amenities"),
+    amenities: formData.getAll("amenities") as string[],
   };
 
   const validateFields = RoomTypeSchema.safeParse(rawData);
@@ -195,6 +193,31 @@ export const updateRoomType = async (
   const { name, description, capacity, bedType, price, amenities } = validateFields.data;
 
   try {
+    const file = formData.get("image") as File | null;
+    let imageUrl = formData.get("currentImage") as string;
+
+    if(file && file.size > 0){
+      if (!file.type.startsWith("image/")) {
+        return { message: "File must be an image" };
+      }
+      if (file.size > 2_000_000) {
+        return { message: "Max file size is 2MB" };
+      }
+
+      const extension = file.name.split(".").pop();
+      const filename = `${crypto.randomUUID()}.${extension}`;
+
+      const blob = await put(filename, file, {
+        access: "public",
+      });
+
+      if(imageUrl){
+        await del(imageUrl); //hapus gambar lama dari storage vercel blob
+      }
+
+      imageUrl = blob.url; //update url gambar dengan yang baru
+    }
+
     await prisma.$transaction([
       prisma.roomType.update({
         where: { id: roomTypeId },
@@ -204,7 +227,7 @@ export const updateRoomType = async (
           capacity,
           bedType,
           price,
-          image,
+          image: imageUrl,
           RoomAmenities: {
             deleteMany: {}, // hapus semua data amenities yang berelasi
           },

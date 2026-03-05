@@ -9,7 +9,6 @@ import { IoCloudUploadOutline } from "react-icons/io5";
 const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], bedType: BedType[] }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  console.info(preview)
   const handlePreview = () => {
     const file = inputFileRef.current?.files?.[0];
     if (!file) return;
