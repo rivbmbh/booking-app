@@ -49,6 +49,9 @@ const RoomDetailUser = async ({ roomId }: { roomId: string }) => {
           </div>
           {/*Reservation Form */}
           <ReserveForm roomType={room} disabledDate={disabledDate} />
+          <p className="text-sm font-italic text-gray-500 mt-2">
+            *if you want to reserve more than 1 room, please make another reservation after you complete the first reservation.
+          </p>
         </div>
       </div>
     </div>

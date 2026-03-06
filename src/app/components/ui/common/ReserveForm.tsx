@@ -118,6 +118,12 @@ const ReserveForm = ({
         </div>
         {/* end input date */}
         <div className="mb-4">
+          {/* general message */}
+          {state?.message ? (
+            <div className="mb-4 bg-red-500 p-2 rounded-l-sm rounded-br-sm">
+              <span className="text-sm text-gray-100">{state.message}</span>
+            </div>
+          ) : null}
           <label className="block mb-2 text-sm font-medium text-gray-900 capitalize">
             Your Name
           </label>

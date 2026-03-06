@@ -4,10 +4,14 @@ import { differenceInCalendarDays } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import CountdownPaid from "./CountdownPaid";
+import { cancelReservation } from "@/lib/action";
+import CancelButton from "../room/button/CancelButton";
 
 const MyReserveList = async () => {
   const reservation = await getReservationByUserId();
   if (!reservation) notFound();
+
   return (
     <div>
       {reservation.map((item) => (
@@ -31,6 +35,14 @@ const MyReserveList = async () => {
                 }`}
               >
                 {item.Payment?.status}
+              </span>
+            </div>
+            <div className="flex gap-1 px-3 py-2 text-sm font-normal">
+              <span>expired payment</span>
+              <span
+                className={`font-bold uppercase`}
+              >
+              <CountdownPaid expiresAt={item.expiresAt}/>
               </span>
             </div>
           </div>
@@ -77,8 +89,16 @@ const MyReserveList = async () => {
               </div>
             </div>
           </div>
-          <div className="flex items-end justify-end absolute inset-4">
-            {item.Payment?.status === "unpaid" ? (
+          <div className="flex items-end justify-end absolute inset-4 gap-3">
+            <form action={async () => {
+              "use server"
+              await cancelReservation(item.id)
+            }}
+            >
+            <CancelButton />
+            </form>
+            {/* ["unpaid", "expired"].includes(item.Payment?.status ?? */}
+                {item.Payment?.status === "unpaid" || item.Payment?.status === "expired"? (
               <Link
                 href={`/checkout/${item.id}`}
                 className="px-6 py-1 bg-primary text-white rounded-md hover:bg-primary-hover"

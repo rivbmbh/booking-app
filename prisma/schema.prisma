@@ -75,7 +75,7 @@ model Payment{
   id            String          @id @default(cuid())
   method String?
   amount Int
-  status String @default("unpaid")
+  status PaymentStatus @default(unpaid)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   reservationId String @unique
@@ -138,6 +138,14 @@ enum ReservationStatus {
   CONFIRMED
   CANCELLED
   EXPIRED
+}
+
+enum PaymentStatus {
+  unpaid
+  paid
+  failed
+  expired
+  cancelled
 }
 
 enum BedType {

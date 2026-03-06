@@ -170,7 +170,7 @@ export const updateRoom = async (
   redirect("/admin/room");
 }
 
-export const updateRoomType = async (
+export const updateRoomType = async ( 
   roomTypeId: string,
   prevState: unknown,
   formData: FormData
@@ -292,6 +292,7 @@ export const createReserve = async (
   if (!session || !session.user || !session.user.id)
     redirect(`/signin?redirect_url=room/${roomTypeId}`);
 
+  //cek ketersediaan kamar untuk tanggal yang dipilih
   const available = await prisma.room.findFirst({
     where: {
       roomTypeId,
@@ -314,10 +315,12 @@ export const createReserve = async (
     },
   });
 
+  //jika tidak ada kamar yang tersedia untuk tanggal yang dipilih, kembalikan pesan error
   if (!available) {
     return { message: "Sorry, no available room for the selected dates" };
   }
 
+  //validasi input menggunakan zod
   const rawData = {
     name: formData.get("name"),
     phone: formData.get("phone"),
@@ -333,7 +336,7 @@ export const createReserve = async (
 
   const { name, phone } = validateFields.data;
 
-  //validasi agar user tidak memilih tanggal check-out sama dengan tanggal check-in
+  //hitung total harga berdasarkan lama menginap (jumlah malam) dikali harga per malam
   const night = differenceInCalendarDays(endDate, startDate);
   if (night <= 0) return { messageDate: "Date must be at leats 1 night" };
   const total = night * price;
@@ -370,6 +373,21 @@ export const createReserve = async (
 
   redirect(`/checkout/${reservationId}`);
 };
+
+export const cancelReservation = async (reservationId: string) => {
+  await prisma.$transaction([
+    prisma.reservation.update({
+      where: { id: reservationId },
+      data: { status:  "CANCELLED"}
+    }),
+
+    prisma.payment.updateMany({
+      where: {reservationId},
+      data: {status: "cancelled"}
+    })
+  ])
+  revalidatePath("/myreservation")
+}
 
 export const ContactMessage = async (
   previewState: unknown,
