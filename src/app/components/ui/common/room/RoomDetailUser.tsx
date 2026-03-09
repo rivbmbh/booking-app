@@ -1,15 +1,17 @@
-import { getDisabledRoomById, getRoomTypeDetailById } from "@/lib/data";
+import { getDisabledRoomById, getDisabledRoomTypeById, getRoomTypeDetailById } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { IoCheckmark, IoPeopleOutline } from "react-icons/io5";
 import ReserveForm from "../ReserveForm";
 import ImageGallery from "../ImageGallery";
 
-const RoomDetailUser = async ({ roomId }: { roomId: string }) => {
+const RoomDetailUser = async ({ roomTypeId }: { roomTypeId: string }) => {
+  console.info(roomTypeId)
   const [room, disabledDate] = await Promise.all([
-    getRoomTypeDetailById(roomId),
-    getDisabledRoomById(roomId),
+    getRoomTypeDetailById(roomTypeId),
+    getDisabledRoomTypeById(roomTypeId),
   ]);
+  console.info(disabledDate)
   if (!room || !disabledDate) return notFound();
   return (
     <div className="max-w-screen-2xl py-16 px-4 grid lg:grid-cols-12 gap-8 mx-auto  ">

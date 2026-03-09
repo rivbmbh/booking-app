@@ -46,6 +46,40 @@ export const getRoomById = async (roomId: string) => {
   }
 }
 
+export const getAvailableRooms = async (startDate: Date, endDate: Date) => {
+  try {
+    const availableRooms = await prisma.room.findMany({
+      where: {
+        Reservation: {
+          none: {
+            status: {
+              in: ["PENDING", "CONFIRMED"]
+            },
+            expiresAt: {
+              gt: new Date()
+            },
+            AND: [
+              {
+                startDate: {
+                  lte: endDate
+                }
+              },
+              {
+                endDate: {
+                  gte: startDate
+                }
+              }
+            ]
+          }
+        }
+      }
+    });
+  return availableRooms
+  } catch (error) {
+    console.info(error)
+  }
+}
+
 export const getRoomType = async () => {
   try {
     const result = await prisma.roomType.findMany({
@@ -155,7 +189,7 @@ export const getReservationById = async (id: string) => {
   }
 };
 
-export const getDisabledRoomById = async (roomId: string) => {
+export const getDisabledRoomTypeById = async (roomId: string) => {
   try {
     const result = await prisma.reservation.findMany({
       select: {
@@ -164,7 +198,7 @@ export const getDisabledRoomById = async (roomId: string) => {
       },
       where: {
         roomId: roomId,
-        Payment: { status: { not: "failure" } },
+        Payment: { status: { not: "failed" } },
       },
     });
     return result;

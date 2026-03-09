@@ -14,9 +14,9 @@ const ReserveForm = ({
   roomType: RoomTypeDetailProps;
   disabledDate: DisabledDateProps[];
 }) => {
-  // console.info(roomType);
+  console.info(disabledDate)
   const StartDate = new Date();
-  const EndDate = addDays(StartDate, 1); // satu hari setelah hari pertama
+  const EndDate = addDays(StartDate, 1); // satu hari setelah hari pertama (starDate)
 
   const [startDate, setStartDate] = useState(StartDate);
   const [endDate, setEndDate] = useState(EndDate);
@@ -24,7 +24,7 @@ const ReserveForm = ({
   function handleStartDateChange(date: Date | null) {
     setStartDate(date ?? StartDate);
 
-    //pastikan tanggal check-out setelah tanggal check-in
+    //jika startDate >= endDate maka endDate akan diundur satu hari setelah startDate
     if (date! >= endDate) {
       setEndDate(addDays(date!, 1));
     }
@@ -33,39 +33,48 @@ const ReserveForm = ({
     setEndDate(date ?? EndDate);
   }
 
-  const [state, formAction, isPending] = useActionState(
-    createReserve.bind(null, roomType.id, roomType.price, startDate, endDate),
-    null
-  );
+const excludeDates = useMemo(
+  () =>
+    disabledDate.map((item) => ({
+      start: new Date(item.startDate),
+      end: subDays(new Date(item.endDate), 1),
+    })),
+  [disabledDate]
+);
 
-  // console.info(disabledDate);
-  const excludeDates = useMemo(
-    () =>
-      disabledDate.map((item) => ({
-        start: item.startDate,
-        end: item.endDate,
-      })),
-    [disabledDate]
-  );
+  console.info(excludeDates)
 
+  //Tanggal maksimal check-out berdasarkan booking/disabled date yang sudah ada
   function getMaxEndDate(
     startDate: Date,
     disabledDate: DisabledDateProps[]
   ): Date | null {
     const futureDisabled = disabledDate
-      .map((item) => new Date(item.startDate))
-      .filter((date) => isAfter(date, startDate) || isEqual(date, startDate))
+      .map((item) => new Date(item.startDate))//ambil semua startDate dari disabled date.
+      .filter((date) => isAfter(date, startDate) || isEqual(date, startDate))//ambil tanggal yang setelah check-in atau sama dengan check-in
       .sort((a, b) => a.getTime() - b.getTime());
 
-    if (futureDisabled.length === 0) return null;
+    //batas maksimal berdasarkan aturan hotel
+    const maxStayLimit = addDays(startDate, 7);//hanya bisa booking selama 1 minggu 
+      if (futureDisabled.length === 0) {
+      return maxStayLimit;
+    }
+   
+    const nextBooking = subDays(futureDisabled[0], 1);
 
-    // maksimal check-out = 1 hari sebelum disabled date terdekat
-    return subDays(futureDisabled[0], 1);
+    // ambil tanggal yang lebih dekat
+    return nextBooking < maxStayLimit ? nextBooking : maxStayLimit;
   }
 
   const maxEndDate = useMemo(
     () => getMaxEndDate(startDate, disabledDate),
     [startDate, disabledDate]
+  );
+
+  //action setelah button submit ditekan
+  const [state, formAction, isPending] = useActionState(
+    createReserve.bind(null, roomType.id, roomType.price, startDate, endDate),
+    null
   );
 
   return (

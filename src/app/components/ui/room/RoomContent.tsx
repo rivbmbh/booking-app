@@ -3,10 +3,11 @@
 import { useState } from "react";
 import Card from "../card/Card";
 import FloorPlans from "./sketch/FloorPlans";
-import { RoomProps, RoomTypeProps } from "@/types/room";
+import { RoomTypeProps } from "@/types/room";
 
 const RoomContent = ({rooms}: {rooms: RoomTypeProps}) => {
-  const [view, setView] = useState("denah")
+  console.info(rooms)
+  const [view, setView] = useState("card")
   return (
    <>
     <div className="flex mb-10">

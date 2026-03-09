@@ -298,16 +298,21 @@ export const createReserve = async (
       roomTypeId,
       Reservation: {
         none: {
-          status: {
-            in: ["PENDING", "CONFIRMED"],
-          },
-          expiresAt: {
-            gt: new Date(),
-          },
-          AND:[
+          OR: [
             {
-              startDate:{ lte:endDate },
-              endDate:{ gte:startDate }
+              status: "CONFIRMED",
+              AND: [
+                { startDate: { lt: endDate } },
+                { endDate: { gt: startDate } }
+              ]
+            },
+            {
+              status: "PENDING",
+              expiresAt: { gt: new Date() },
+              AND: [
+                { startDate: { lt: endDate } },
+                { endDate: { gt: startDate } }
+              ]
             }
           ]
         }
@@ -317,7 +322,7 @@ export const createReserve = async (
 
   //jika tidak ada kamar yang tersedia untuk tanggal yang dipilih, kembalikan pesan error
   if (!available) {
-    return { message: "Sorry, no available room for the selected dates" };
+    return { message: "Sorry, no available room for the selected dates, please choose another date" };
   }
 
   //validasi input menggunakan zod

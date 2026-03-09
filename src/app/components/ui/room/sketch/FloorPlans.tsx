@@ -4,6 +4,8 @@ import FloorPlan2nd from "./floorplans/Floor2nd";
 import DatePicker from "react-datepicker";
 import { addDays } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
+import { RoomTypeProps } from "@/types/room";
+import { getAvailableRooms } from "@/lib/data";
 
 type TExcludeDate =
   | Array<{
@@ -12,16 +14,28 @@ type TExcludeDate =
     }>
   | Array<Date>;
 
-const FloorPlans = ({rooms}) => {
+const FloorPlans = ({rooms}: {rooms: RoomTypeProps}) => {
   console.info(rooms);
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(null);
 
-  const onChange = (dates: [Date | null, Date | null]) => {
+  const onChange = async (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
+
     setStartDate(start);
     setEndDate(end);
+
+    if (start && end) {
+      const res = await fetch("/api/room/available", {
+        method: "POST",
+        body: JSON.stringify({ start, end })
+      });
+
+      const data = await res.json();
+      console.log(data);
+    }
   };
+
 
   const excludeDates: TExcludeDate = [
     addDays(new Date(), 1),//besok
@@ -41,7 +55,7 @@ const FloorPlans = ({rooms}) => {
           <p className="text-center font-semibold my-4 text-md">Pilih tanggal menginap</p>
             <DatePicker
               selected={startDate}
-                    minDate={new Date()}
+              minDate={new Date()}
               onChange={onChange}
               startDate={startDate}
               endDate={endDate}

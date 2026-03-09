@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 const RoomDetailUserPage = async ({
   params,
 }: {
-  params: Promise<{ roomId: string }>;
+  params: Promise<{ roomTypeId: string }>;
 }) => {
-  const roomId = (await params).roomId;
+  const roomTypeId = (await params).roomTypeId;
   return (
     <div className="mt-16">
       <Suspense fallback={<RoomDetailUserSkeleton />}>
-        <RoomDetailUser roomId={roomId} />
+        <RoomDetailUser roomTypeId={roomTypeId} />
       </Suspense>
     </div>
   );
