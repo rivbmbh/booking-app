@@ -1,5 +1,5 @@
 import { formatCurrency } from "@/lib/utils";
-import { RoomProps, RoomTypeProps } from "@/types/room";
+import { RoomTypeProps } from "@/types/room";
 import Image from "next/image";
 import Link from "next/link";
 import { IoPeopleOutline } from "react-icons/io5";

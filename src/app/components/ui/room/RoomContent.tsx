@@ -5,7 +5,7 @@ import Card from "../card/Card";
 import FloorPlans from "./sketch/FloorPlans";
 import { RoomTypeProps } from "@/types/room";
 
-const RoomContent = ({rooms}: {rooms: RoomTypeProps}) => {
+const RoomContent = ({rooms}: {rooms: RoomTypeProps[]}) => {
   const [view, setView] = useState("floorplan")
   return (
    <>
@@ -32,13 +32,13 @@ const RoomContent = ({rooms}: {rooms: RoomTypeProps}) => {
 
     {view == "card" && (
         <div className="grid gap-5 md:grid-cols-3">
-            {rooms.map((room: RoomTypeProps) => (
+            {rooms.map((room) => (
                 <Card key={room.id} room={room}/>
             ))}
         </div>
     )}
 
-    {view == "floorplan" && <FloorPlans rooms={rooms} exclude/>}
+    {view == "floorplan" && <FloorPlans />}
    </>
   );
 };

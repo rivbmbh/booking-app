@@ -9,7 +9,7 @@ const FloorPlans = () => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [bookedRooms, setBookedRooms] = useState<string[] | null>([]);
-  console.info(bookedRooms)
+
   const onChange = async (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
 
@@ -29,17 +29,17 @@ const FloorPlans = () => {
   };
 
   return (
-    <>
     <div className="flex flex-wrap gap-4 items-start justify-center w-full h-max">
       <div className="flex flex-col gap-8 justify-between">
         <div className="overflow-auto mx-auto mt-2">
             <RoomColorDescription/>
         </div>
         <div className="w-auto mx-auto">
-          <p className="text-center font-semibold my-4 text-md">Pilih tanggal menginap</p>
+          <p className="text-center font-semibold my-4 text-md">Select your stay date</p>
             <DatePicker
               selected={startDate}
               minDate={new Date()}
+              // maxDate={startDate ? new Date(startDate.getTime() + 6 * 24 * 60 * 60 * 1000) : undefined}
               onChange={onChange}
               startDate={startDate}
               endDate={endDate}
@@ -48,7 +48,7 @@ const FloorPlans = () => {
               inline
             />
             <div className="w-full flex justify-center my-4">
-              <button className="bg-blue-500 w-[85%] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Pesan Sekarang</button>
+              <button className="px-6 w-60 py-2 bg-primary text-white rounded-md hover:bg-primary-hover">Booking Now</button>
               </div>
             </div>
       </div>
@@ -56,7 +56,6 @@ const FloorPlans = () => {
           <FloorPlan2nd bookedRooms={bookedRooms ?? []}/>
       </div>
     </div>
-    </>
   );
 };
 
