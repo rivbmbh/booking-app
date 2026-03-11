@@ -46,6 +46,7 @@ export const getRoomById = async (roomId: string) => {
   }
 }
 
+
 export const getAvailableRooms = async (startDate: Date, endDate: Date) => {
   try {
     const availableRooms = await prisma.room.findMany({
@@ -70,7 +71,7 @@ export const getAvailableRooms = async (startDate: Date, endDate: Date) => {
                 }
               }
             ]
-          }
+          },
         }
       }
     });
@@ -188,6 +189,7 @@ export const getReservationById = async (id: string) => {
     console.info(error);
   }
 };
+
 
 export const getDisabledRoomTypeById = async (roomId: string) => {
   try {

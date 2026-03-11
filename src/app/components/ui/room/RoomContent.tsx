@@ -6,8 +6,7 @@ import FloorPlans from "./sketch/FloorPlans";
 import { RoomTypeProps } from "@/types/room";
 
 const RoomContent = ({rooms}: {rooms: RoomTypeProps}) => {
-  console.info(rooms)
-  const [view, setView] = useState("card")
+  const [view, setView] = useState("floorplan")
   return (
    <>
     <div className="flex mb-10">
@@ -21,9 +20,9 @@ const RoomContent = ({rooms}: {rooms: RoomTypeProps}) => {
         </button>
 
         <button
-          onClick={() => setView("denah")}
+          onClick={() => setView("floorplan")}
           className={`px-4 py-2 rounded ${
-            view === "denah" ? "bg-primary text-white" : "bg-gray-200"
+            view === "floorplan" ? "bg-primary text-white" : "bg-gray-200"
           }`}
         >
           Floor Plan
@@ -39,7 +38,7 @@ const RoomContent = ({rooms}: {rooms: RoomTypeProps}) => {
         </div>
     )}
 
-    {view == "denah" && <FloorPlans rooms={rooms}/>}
+    {view == "floorplan" && <FloorPlans rooms={rooms} exclude/>}
    </>
   );
 };

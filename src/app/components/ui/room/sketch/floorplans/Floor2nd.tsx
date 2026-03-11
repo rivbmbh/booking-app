@@ -2,63 +2,117 @@
 
 import { useEffect, useState } from 'react';
 
-export default function FloorPlan2nd() {
-  const [svg,  setSvg] = useState('');
 
+const FloorPlan2nd = ({bookedRooms}: {bookedRooms: string[]}) => {
+  const [svg,  setSvg] = useState('');
+  console.info(bookedRooms)
   useEffect(() => {
     fetch('/floorplans/lantai_2.svg')
       .then(res => res.text())
       .then(setSvg);//simpan string/text SVG ke state
   }, []);
 
+  //tandai room yang telah dibooking
   useEffect(() => {
-    // cek jika svg belum dimuat
-    // svg ini bersi string HTML dari gambar SVG yang diambil dari fetch
     if (!svg) return;
 
-    const container = document.getElementById('svg-container');
+    const container = document.getElementById("svg-container");
     if (!container) return;
 
-    const handleClick = (e) => {
-      const target = e.target;// target dari event klik, misalnya rooom-201 yang diklik
+    const rooms = container.querySelectorAll<SVGGElement>('g[id^="room-"]');
+
+    rooms.forEach((room) => {
+      const roomNumber = room.id.replace("room-", "");
+
+      const bg = room.querySelector<SVGRectElement>('rect[id^="bg"]');
+      const label = room.querySelector<SVGPathElement>('path[id^="label"]');
+
+      if (!bg || !label) return;
+
+      const isBooked = bookedRooms?.includes(roomNumber);
+      console.info(isBooked)
+
+      if (isBooked) {
+        room.classList.add("booked");
+
+        bg.style.fill = "#6a7282";
+        label.style.fill = "#999";
+
+        room.style.pointerEvents = "none";
+        room.style.cursor = "not-allowed";
+      }
+    });
+  }, [svg, bookedRooms]);
+
+    useEffect(() => {
+    if (!svg) return;
+
+    const container = document.getElementById("svg-container");
+    if (!container) return;
+
+    const handleClick = (e: Event) => {
+      const target = e.target as HTMLElement;
+
+      const room = target.closest<SVGGElement>('g[id^="room-"]');
+
+      if (!room) return;
+
+      if (room.classList.contains("booked")) return;
+
+      const bg = room.querySelector<SVGRectElement>('rect[id^="bg"]');
+      const label = room.querySelector<SVGPathElement>('path[id^="label"]');
+
+      if (!bg || !label) return;
+
+      const isActive = room.classList.contains("active");
+
+      const activeRooms = [
+        ...container.querySelectorAll<SVGGElement>(".active"),
+      ].map((el) => el.id);
 
       /**
-       * mencari elemen child dari target yang diklik dengan id dimulai dengan "room-"
-       * misalnya <g id="room-201">...</g>
-       */ 
-      // console.log(target);
-      const room = target.closest('g[id^="room-"]');
-      // console.log(room);
-      if (!room) return; // jika tidak ada, keluar
-      const bg = room.querySelector('rect[id^="bg"]');
-      const label = room.querySelector('path[id^="label"]');
-      if(!bg || !label) return;
-      
-      // simpan warna awal (sekali saja)
+       * limit 5 kamar
+       */
+      if (!isActive && activeRooms.length >= 5) {
+        alert("maksimal booking hanya 5 kamar dalam sekali klik");
+        return;
+      }
+
+      /**
+       * simpan warna awal
+       */
       if (!bg.dataset.originalFill) {
-        bg.dataset.originalFill = bg.style.fill || bg.getAttribute('fill') || '';
-        label.dataset.originalFill = label.style.fill || label.getAttribute('fill') || '';
+        bg.dataset.originalFill =
+          bg.style.fill || bg.getAttribute("fill") || "";
+
+        label.dataset.originalFill =
+          label.style.fill || label.getAttribute("fill") || "";
       }
 
-      const isActive = room.classList.contains('active');//cek apakah room ini sudah aktif (sudah dipilih)
-
+      /**
+       * jika sudah aktif -> deselect
+       */
       if (isActive) {
-        // balikin warna awal
         bg.style.fill = bg.dataset.originalFill;
-        label.style.fill = label.dataset.originalFill;
-        room.classList.remove('active');
-      } else {
-        // set warna aktif
-        bg.style.fill = '#0459e0';
-        label.style.fill = 'white';
-        room.classList.add('active');
+        label.style.fill = label.dataset.originalFill!;
+        room.classList.remove("active");
+
+        return;
       }
+
+      /**
+       * select room
+       */
+      bg.style.fill = "#0459e0";
+      label.style.fill = "white";
+
+      room.classList.add("active");
     };
 
-    container.addEventListener('click', handleClick);
+    container.addEventListener("click", handleClick);
 
     return () => {
-      container.removeEventListener('click', handleClick);
+      container.removeEventListener("click", handleClick);
     };
   }, [svg]);
 
@@ -71,3 +125,5 @@ export default function FloorPlan2nd() {
     />
   );
 }
+
+export default FloorPlan2nd

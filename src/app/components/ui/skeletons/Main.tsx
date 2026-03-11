@@ -1,9 +1,9 @@
-import { getRooms, getRoomType } from "@/lib/data";
+import { getAvailableRooms, getDisabledRoomTypeById, getRooms, getRoomType } from "@/lib/data";
 import RoomContent from "../room/RoomContent";
 
 const Main = async () => {
   const rooms = await getRoomType();
-  // const disabledDates = await get
+  const disabledDates =  await getAvailableRooms()
   if (!rooms?.length) return <p>No Room Found</p>;
 
   return (

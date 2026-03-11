@@ -1,4 +1,4 @@
-import { getDisabledRoomById, getDisabledRoomTypeById, getRoomTypeDetailById } from "@/lib/data";
+import { getDisabledRoomTypeById, getRoomTypeDetailById } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { IoCheckmark, IoPeopleOutline } from "react-icons/io5";
@@ -11,7 +11,6 @@ const RoomDetailUser = async ({ roomTypeId }: { roomTypeId: string }) => {
     getRoomTypeDetailById(roomTypeId),
     getDisabledRoomTypeById(roomTypeId),
   ]);
-  console.info(disabledDate)
   if (!room || !disabledDate) return notFound();
   return (
     <div className="max-w-screen-2xl py-16 px-4 grid lg:grid-cols-12 gap-8 mx-auto  ">

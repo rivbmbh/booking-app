@@ -6,16 +6,20 @@ export async function POST(req: Request) {
   const rooms = await prisma.room.findMany({
     where: {
       Reservation: {
-        none: {
+        some: {
           status: {
             in: ["PENDING", "CONFIRMED"]
           },
           AND: [
             {
-              startDate: { lte: new Date(end) }
+              startDate: {
+                lte: new Date(end)
+              }
             },
             {
-              endDate: { gte: new Date(start) }
+              endDate: {
+                gte: new Date(start)
+              }
             }
           ]
         }
@@ -23,5 +27,7 @@ export async function POST(req: Request) {
     }
   });
 
-  return Response.json(rooms);
+  return Response.json(
+    rooms.map((room) => room.roomNumber)
+  );
 }

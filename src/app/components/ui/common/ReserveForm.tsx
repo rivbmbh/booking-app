@@ -14,7 +14,6 @@ const ReserveForm = ({
   roomType: RoomTypeDetailProps;
   disabledDate: DisabledDateProps[];
 }) => {
-  console.info(disabledDate)
   const StartDate = new Date();
   const EndDate = addDays(StartDate, 1); // satu hari setelah hari pertama (starDate)
 
@@ -33,16 +32,14 @@ const ReserveForm = ({
     setEndDate(date ?? EndDate);
   }
 
-const excludeDates = useMemo(
-  () =>
-    disabledDate.map((item) => ({
-      start: new Date(item.startDate),
-      end: subDays(new Date(item.endDate), 1),
-    })),
-  [disabledDate]
-);
-
-  console.info(excludeDates)
+  const excludeDates = useMemo(
+    () =>
+      disabledDate.map((item) => ({
+        start: new Date(item.startDate),
+        end: subDays(new Date(item.endDate), 1),
+      })),
+    [disabledDate]
+  );
 
   //Tanggal maksimal check-out berdasarkan booking/disabled date yang sudah ada
   function getMaxEndDate(
