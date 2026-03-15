@@ -319,7 +319,7 @@ export const createReserve = async (
       }
     },
   });
-
+  console.info(available)
   //jika tidak ada kamar yang tersedia untuk tanggal yang dipilih, kembalikan pesan error
   if (!available) {
     return { message: "Sorry, no available room for the selected dates, please choose another date" };
@@ -345,9 +345,9 @@ export const createReserve = async (
   const night = differenceInCalendarDays(endDate, startDate);
   if (night <= 0) return { messageDate: "Date must be at leats 1 night" };
   const total = night * price;
-
+  let bookingId;
   try {
-    const booking =  await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: { id: session.user.id },
         data: { name, phone },
@@ -362,6 +362,7 @@ export const createReserve = async (
           totalPrice: total
         }
       })
+
       await tx.reservation.create({
         data: {
           bookingId: booking.id,
@@ -381,9 +382,8 @@ export const createReserve = async (
         }
       });
 
-      return booking
+      bookingId = booking.id
     });
-    redirect(`/checkout/${booking.id}`);
 
   } catch (error) {
     console.error("Reservation error:", error);
@@ -392,6 +392,7 @@ export const createReserve = async (
       message: "Something went wrong while creating reservation. Please try again.",
     };
   }
+    redirect(`/checkout/${bookingId}`);
 };
 
 
