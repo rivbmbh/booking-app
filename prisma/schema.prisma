@@ -23,7 +23,7 @@ model Room {
   RoomType RoomType @relation(fields: [roomTypeId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Reservation Reservation[]
+  Reservations Reservation[]
 }
 
 model RoomType {
@@ -55,31 +55,56 @@ model Amenities {
   RoomAmenities RoomAmenities[]
 }
 
-model Reservation{
-  id            String          @id @default(cuid())
-  startDate DateTime
-  endDate DateTime
-  price Int
+model Booking{
+  id String @id @default(cuid())
   userId String
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  roomId String
-  Room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  status ReservationStatus @default(PENDING)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  expiresAt DateTime
+  startDate DateTime
+  endDate DateTime
+  totalPrice Int
+  status BookingStatus @default(PENDING)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  Reservations Reservation[]
   Payment Payment?
 }
 
-model Payment{
+model Reservation{
   id            String          @id @default(cuid())
-  method String?
-  amount Int
-  status PaymentStatus @default(unpaid)
+  bookingId String
+  Booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  roomId String
+  Room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  startDate DateTime
+  endDate   DateTime
+  price Int
+  status ReservationStatus @default(PENDING)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  reservationId String @unique
-  Reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+
+  @@index([roomId, startDate, endDate])
+  @@index([bookingId])
+}
+
+model Payment{
+  id String @id @default(cuid())
+
+  bookingId String @unique
+  Booking       Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  method String?
+  amount Int
+
+  status PaymentStatus @default(unpaid)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model User {
@@ -90,12 +115,13 @@ model User {
   image         String?
   role String   @default("user")
   phone String?
-  accounts      Account[]
-  Reservation Reservation[]
+  accounts Account[]
+  Bookings Booking[]
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model Account {
   userId            String
   type              String
@@ -133,6 +159,13 @@ enum RoomStatus {
   MAINTENANCE
 }
 
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+}
+
 enum ReservationStatus {
   PENDING
   CONFIRMED
@@ -146,6 +179,7 @@ enum PaymentStatus {
   failed
   expired
   cancelled
+  pending
 }
 
 enum BedType {

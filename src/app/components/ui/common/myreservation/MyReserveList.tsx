@@ -9,12 +9,16 @@ import { cancelReservation } from "@/lib/action";
 import CancelButton from "../room/button/CancelButton";
 
 const MyReserveList = async () => {
-  const reservation = await getReservationByUserId();
-  if (!reservation) notFound();
+  const booking = await getReservationByUserId();
+  console.info(booking)
+  if (!booking) notFound();
 
   return (
     <div>
-      {reservation.map((item) => (
+      {booking.map((item) => {
+        const reservation = item.Reservations?.[0]
+        console.info("idCheckout: "+item.id)
+        return  (
         <div
           key={item.id}
           className="bg-white shadow pb-4 mb-4 md:pb-0 relative"
@@ -42,13 +46,13 @@ const MyReserveList = async () => {
               <span
                 className={`font-bold uppercase`}
               >
-              <CountdownPaid expiresAt={item.expiresAt}/>
+              <CountdownPaid expiresAt={reservation.expiresAt}/>
               </span>
             </div>
           </div>
           <div className="flex flex-col mb-4  items-start bg-white md:flex-row md:w-full">
             <Image
-              src={item.Room.RoomType?.image}
+              src={reservation.Room.RoomType?.image}
               width={500}
               height={300}
               className="object-cover w-full h-60 md:h-auto md:w-1/3 md:rounded-none"
@@ -59,7 +63,7 @@ const MyReserveList = async () => {
                 <div className="grid grid-cols-[120px_10px_1fr]">
                   <span className="w-36">Price</span>
                   <span className="w-3">:</span>
-                  <span>{formatCurrency(item.Room.RoomType?.price || 0)}</span>
+                  <span>{formatCurrency(reservation.Room.RoomType?.price || 0)}</span>
                 </div>
                 <div className="grid grid-cols-[120px_10px_1fr]">
                   <span className="w-36">Arrival</span>
@@ -115,7 +119,10 @@ const MyReserveList = async () => {
             )}
           </div>
         </div>
-      ))}
+      )
+      }
+     
+      )}
     </div>
   );
 };

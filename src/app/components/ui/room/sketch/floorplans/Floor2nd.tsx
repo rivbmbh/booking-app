@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 const FloorPlan2nd = ({bookedRooms}: {bookedRooms: string[]}) => {
   const [svg,  setSvg] = useState('');
-  console.info(bookedRooms)
+  
   useEffect(() => {
     fetch('/floorplans/lantai_2.svg')
       .then(res => res.text())
@@ -30,7 +30,6 @@ const FloorPlan2nd = ({bookedRooms}: {bookedRooms: string[]}) => {
       if (!bg || !label) return;
 
       const isBooked = bookedRooms?.includes(roomNumber);
-      console.info(isBooked)
 
       if (isBooked) {
         room.classList.add("booked");
@@ -118,11 +117,14 @@ const FloorPlan2nd = ({bookedRooms}: {bookedRooms: string[]}) => {
 
 
   return (
+    <>
+    <input type="hidden" className='hidden' name='selectedRooms' defaultValue={`[]`} />
     <div
       id="svg-container"
       dangerouslySetInnerHTML={{ __html: svg }}//dan disini diubah menjadi HTML tag biasanya
       className="w-full h-full cursor-pointer"
-    />
+      />
+    </>
   );
 }
 

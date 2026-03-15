@@ -10,14 +10,18 @@ export type reservationProps = Prisma.ReservationGetPayload<{
           price: true;
       };
       }
-    };
-    User: {
+    },
+    Booking: {
       select: {
-        name: true;
-        email: true;
-        phone: true;
-      };
-    };
-    Payment: true;
+        User: {
+          select: {
+            name: true;
+            email: true;
+            phone: true;
+          };
+        };
+        Payment: true;
+      }
+    }
   };
 }>;

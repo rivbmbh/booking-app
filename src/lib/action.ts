@@ -296,7 +296,7 @@ export const createReserve = async (
   const available = await prisma.room.findFirst({
     where: {
       roomTypeId,
-      Reservation: {
+      Reservations: {
         none: {
           OR: [
             {
@@ -346,38 +346,59 @@ export const createReserve = async (
   if (night <= 0) return { messageDate: "Date must be at leats 1 night" };
   const total = night * price;
 
-  let reservationId;
   try {
-    await prisma.$transaction(async (tx) => {
+    const booking =  await prisma.$transaction(async (tx) => {
       await tx.user.update({
-        data: { name, phone },
         where: { id: session.user.id },
+        data: { name, phone },
       });
 
-      const reservation = await tx.reservation.create({
+      const booking = await tx.booking.create({
         data: {
           userId: session.user.id as string,
-          roomId: available!.id as string,
-          startDate: startDate,
-          endDate: endDate,
-          price: price,
+          startDate,
+          endDate,
           status: "PENDING",
-          expiresAt: addMinutes(new Date(), 15),
-          Payment: {
-            create: {
-              amount: total
-            }
-          }
+          totalPrice: total
+        }
+      })
+      await tx.reservation.create({
+        data: {
+          bookingId: booking.id,
+          roomId: available!.id as string,
+          startDate,
+          endDate,
+          price,
+          status: "PENDING",
+          expiresAt: addMinutes(new Date(), 30),
         },
       });
-      reservationId = reservation.id;
-    });
-  } catch (error) {
-    console.info(error);
-  }
 
-  redirect(`/checkout/${reservationId}`);
+      await tx.payment.create({
+        data: {
+          bookingId: booking.id,
+          amount: total
+        }
+      });
+
+      return booking
+    });
+    redirect(`/checkout/${booking.id}`);
+
+  } catch (error) {
+    console.error("Reservation error:", error);
+
+    return {
+      message: "Something went wrong while creating reservation. Please try again.",
+    };
+  }
 };
+
+
+
+export const createReserveByFloorPlan = async ()=>{
+  
+}
 
 export const cancelReservation = async (reservationId: string) => {
   await prisma.$transaction([

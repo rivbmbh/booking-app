@@ -1,5 +1,5 @@
 "use client";
-import { reservationProps } from "@/types/reservation";
+import { bookingProps } from "@/types/booking";
 import { useTransition } from "react";
 
 /*
@@ -15,14 +15,14 @@ declare global {
   }
 }
 
-function PaymentButoon({ reservation }: { reservation: reservationProps }) {
+function PaymentButoon({ booking }: { booking: bookingProps }) {
   const [isPending, startTransition] = useTransition();
   const handlePayment = async () => {
     startTransition(async () => {
       try {
         const response = await fetch("/api/payment", {
           method: "POST",
-          body: JSON.stringify(reservation),
+          body: JSON.stringify(booking),
         });
         const { token } = await response.json();
         if (token) {

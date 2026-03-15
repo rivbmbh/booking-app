@@ -158,6 +158,48 @@ export const getRoomTypeDetailById = async (roomId: string) => {
   }
 };
 
+export const getBookingById = async (bookingId: string) => {
+  if (!bookingId) {
+    throw new Error("ID undifined")
+  }
+
+  try {
+    const result = await prisma.booking.findUnique({
+      where: {
+        id: bookingId
+      },
+      include: {
+        Reservations: {
+          include: {
+            Room: {
+              include: {
+                RoomType: {
+                  select: {
+                    name: true,
+                    price: true,
+                    image: true
+                  }
+                }
+              }
+            }
+          }
+        },
+        User: {
+          select: {
+            name: true,
+            email: true,
+            phone: true
+          }
+        },
+        Payment: true
+      }
+    })
+    return result
+  } catch (error) {
+    console.info("ErrorBookingByID"+ error)
+  }
+}
+
 export const getReservationById = async (id: string) => {
   try {
     const result = await prisma.reservation.findUnique({
@@ -174,14 +216,18 @@ export const getReservationById = async (id: string) => {
             }
           }
         },
-        User: {
-          select: {
-            name: true,
-            email: true,
-            phone: true,
-          },
-        },
-        Payment: true,
+        Booking: {
+          select:{
+            User: {
+              select: {
+                name: true,
+                email: true,
+                phone: true,
+              },
+            },
+            Payment: true,
+          }
+        }
       },
     });
     return result;
@@ -193,16 +239,23 @@ export const getReservationById = async (id: string) => {
 
 export const getDisabledRoomTypeById = async (roomId: string) => {
   try {
-    const result = await prisma.reservation.findMany({
+    const result = await prisma.booking.findMany({
       select: {
-        startDate: true,
-        endDate: true,
+        Reservations: {
+          select: {
+            startDate: true,
+            endDate: true,
+          },
+          where: {
+            roomId: roomId,
+          },
+        },
       },
       where: {
-        roomId: roomId,
         Payment: { status: { not: "failed" } },
       },
     });
+
     return result;
   } catch (error) {
     console.info(error);
@@ -216,36 +269,35 @@ export const getReservationByUserId = async () => {
   }
 
   try {
-    const result = await prisma.reservation.findMany({
+    const result = await prisma.booking.findMany({
       where: {
-        userId: session.user.id,
+        userId: session.user.id
       },
       include: {
-        Room: {
-          include:{
-            RoomType: {
-              select: {
-                name: true,
-                image: true,
-                price: true,
-              },
+        Reservations: {
+          include: {
+            Room:{
+              include: {
+                RoomType:true
+              }
             }
           }
         },
-        User: {
+        User:{
           select: {
             name: true,
-            email: true,
             phone: true,
-          },
+            email: true
+          }
         },
-        Payment: true,
+        Payment: true
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: {createdAt: "desc"}
     });
     return result;
   } catch (error) {
     console.info(error);
+    throw new Error("Failed to fetch reservations");
   }
 };
 
