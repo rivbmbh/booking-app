@@ -17,7 +17,7 @@ const CheckoutPage = async ({
   return (
     <div className="max-w-screen-2xl px-4 mx-auto py-20 mt-9">
       <h1 className="text-4xl font-bold mb-4 text-center md:text-start">
-        Reservation Summary
+        Reservation Summary {bookingId}
       </h1>
       <Suspense fallback={<ReservationSummarySkeleton />}>
         <CheckoutDetail bookingId={bookingId} />

@@ -1,15 +1,20 @@
-import { useActionState, useState } from "react";
+import { useState } from "react";
 import RoomColorDescription from "./RoomColorDescription";
 import FloorPlan2nd from "./floorplans/Floor2nd";
 import DatePicker from "react-datepicker";
+import clsx from "clsx";
+import { useRouter } from "next/navigation";
 import "react-datepicker/dist/react-datepicker.css";
-import { createReserve } from "@/lib/action";
 
 
 const FloorPlans = () => {
+  const router = useRouter()
+
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [bookedRooms, setBookedRooms] = useState<string[] | null>([]);
+  const [selectedRooms, setSelectedRooms] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   const onChange = async (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
@@ -29,13 +34,56 @@ const FloorPlans = () => {
     }
   };
 
-  // const [state, formAction, isPending] = useActionState(
-  //     createManyReserve.bind(null, startDate, endDate),
-  //     null
-  //   );
+
+
+  const handleSubmit = async (e: Event) => {
+    e.preventDefault()
+
+    if(!startDate || !endDate){
+      alert("Please select date first")
+      return
+    }
+
+    if(!selectedRooms || selectedRooms.length === 0){
+      alert("Please select at least 1 room")
+      return
+    }
+
+    try {
+      setIsLoading(true)
+
+      const res = await fetch("/api/room/booking", {
+        method: "POST",
+        headers:{
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          startDate,
+          endDate,
+          roomIds: selectedRooms
+        })
+      })
+
+      const data = await res.json()
+
+      if(!res.ok){
+        throw new Error(data.message || "Something went wrong")
+      }
+
+      router.push(`/checkout/${data.bookingId}`)
+      
+
+    } catch (error) {
+      alert(error.message)
+    } finally{
+      setIsLoading(false)
+    }
+  }
+
+ 
 
   return (
-    <form className="flex flex-wrap gap-4 items-start justify-center w-full h-max">
+    <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 items-start justify-center w-full h-max">
       <div className="flex flex-col gap-8 justify-between">
         <div className="overflow-auto mx-auto mt-2">
             <RoomColorDescription/>
@@ -57,12 +105,19 @@ const FloorPlans = () => {
               <p className="text-sm text-red-500 mt-2">{state?.messageDate}</p>
             </div> */}
             <div className="w-full flex justify-center my-4">
-              <button className="px-6 w-60 py-2 bg-primary text-white rounded-md hover:bg-primary-hover">Booking Now</button>
+              <button 
+              type="submit" 
+              className={clsx("px-6 w-60 py-2 bg-primary text-white rounded-md hover:bg-primary-hover", 
+                {"opacity-50 cursor-progress": isLoading}
+              )}
+              disabled={isLoading}>
+                {isLoading ? "Loading..." : "Booking Now"}
+              </button>
             </div>
         </div>
       </div>
       <div className="w-full min-[1170px]:w-auto bg-old-paper rounded-md mx-auto py-10 overflow-auto scale-85 md:scale-90 lg:scale-100 2xl:scale-none">
-          <FloorPlan2nd bookedRooms={bookedRooms ?? []}/>
+          <FloorPlan2nd bookedRooms={bookedRooms ?? []} selectedRooms={selectedRooms} setSelectedRooms={setSelectedRooms}/>
       </div>
     </form>
   );

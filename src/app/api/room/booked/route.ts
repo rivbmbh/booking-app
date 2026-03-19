@@ -5,7 +5,7 @@ export async function POST(req: Request) {
 
   const rooms = await prisma.room.findMany({
     where: {
-      Reservation: {
+      Reservations: {
         some: {
           status: {
             in: ["PENDING", "CONFIRMED"]

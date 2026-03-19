@@ -4,13 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoPeopleOutline } from "react-icons/io5";
 
-const Card = ({ room }: { room: RoomTypeProps }) => {
-  if (!room) return null;
+const Card = ({ roomType }: { roomType: RoomTypeProps }) => {
+  if (!roomType) return null;
   return (
     <div className="bg-white shadow-lg rounded-2xl transition duration-100 hover:shadow-sm">
       <div className="h-[260px] w-auto rounded-t-sm relative">
         <Image
-          src={room.image}
+          src={roomType.image}
           alt="room image"
           width={384}
           height={256}
@@ -20,15 +20,15 @@ const Card = ({ room }: { room: RoomTypeProps }) => {
       <div className="p-8">
         <h4 className="text-2xl font-medium">
           <Link
-            href={`/room/${room.id}`}
+            href={`/room/${roomType.id}`}
             className="hover:text-gray-800 transition duration-150"
           >
-            {room.name}
+            {roomType.name}
           </Link>
         </h4>
         <h4 className="text-2xl mb-7">
           <span className="font-semibold text-slate-600">
-            {formatCurrency(room.price)}
+            {formatCurrency(roomType.price)}
           </span>
           <span className="text-gray-400 text-sm">/Night</span>
         </h4>
@@ -36,11 +36,11 @@ const Card = ({ room }: { room: RoomTypeProps }) => {
           <div className="flex items-center space-x-2">
             <IoPeopleOutline />
             <span>
-              {room.capacity} {room.capacity === 1 ? "Person" : "People"}
+              {roomType.capacity} {roomType.capacity === 1 ? "Person" : "People"}
             </span>
           </div>
           <Link
-            href={`/room/${room.id}`}
+            href={`/room/${roomType.id}`}
             className="px-6 py-2.5 md:px-10 md:py-3 font-semibold text-white bg-primary rounded-sm hover:bg-primary-hover transition duration-150"
           >
             Book Now

@@ -33,7 +33,7 @@ const RoomContent = ({rooms}: {rooms: RoomTypeProps[]}) => {
     {view == "card" && (
         <div className="grid gap-5 md:grid-cols-3">
             {rooms.map((room) => (
-                <Card key={room.id} room={room}/>
+                <Card key={room.id} roomType={room}/>
             ))}
         </div>
     )}
