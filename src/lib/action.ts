@@ -45,7 +45,7 @@ if (!formData.get("floor") || !formData.get("roomNumber")) {
       data:{
         roomNumber: roomNumber,
         floor,
-        status: status as "AVAILABLE" | "BOOKED" | "MAINTENANCE",
+        status: status as "ACTIVE" | "INACTIVE",
         roomTypeId: roomType as string,
       }
     })
@@ -160,7 +160,7 @@ export const updateRoom = async (
       data:{
         roomNumber: roomNumber,
         floor,
-        status: status as "AVAILABLE" | "BOOKED" | "MAINTENANCE",
+        status: status as "ACTIVE" | "INACTIVE",
         roomTypeId: roomType as string,
       }
     })
@@ -250,9 +250,13 @@ export const updateRoomType = async (
 
 export const deleteRoom = async (id: string) => {
   try {
-    //hapus data room by id
-    await prisma.room.delete({
+    //hapus data room by id 
+    await prisma.room.update({
       where: { id },
+      data: {
+        status: "INACTIVE",
+        deletedAt: new Date()
+      }
     });
   } catch (error) {
     console.info(error);

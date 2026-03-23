@@ -16,6 +16,8 @@ const FloorPlans = () => {
   const [selectedRooms, setSelectedRooms] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
+  console.log(bookedRooms)
+
   const onChange = async (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
 
@@ -29,6 +31,7 @@ const FloorPlans = () => {
       });
 
       const data = await res.json();
+      console.info(data)
       setBookedRooms(data)
       return data
     }
@@ -70,7 +73,7 @@ const FloorPlans = () => {
         throw new Error(data.message || "Something went wrong")
       }
 
-      router.push(`/checkout/${data.bookingId}`)
+      router.push(`/checkout/booking/${data.bookingId}`)
       
 
     } catch (error) {

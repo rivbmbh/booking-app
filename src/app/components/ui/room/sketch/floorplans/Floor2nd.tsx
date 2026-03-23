@@ -13,7 +13,6 @@ const FloorPlan2nd = ({
   selectedRooms,
   setSelectedRooms,
 }: Props) => {
-  console.info(selectedRooms)
   const [svg, setSvg] = useState('');
 
   // ambil SVG
@@ -33,7 +32,6 @@ const FloorPlan2nd = ({
 
       const room = target.closest<SVGGElement>('g[id^="room-"]');
       if (!room) return;
-      console.info(room)
 
       const roomNumber = room.id.replace('room-', '');
 
@@ -62,9 +60,7 @@ const FloorPlan2nd = ({
     };
   }, [bookedRooms, setSelectedRooms]);
 
-  /**
-   * 🔥 SINGLE SOURCE RENDER UI (BOOKED + SELECTED)
-   */
+
   useEffect(() => {
     if (!svg) return;
 

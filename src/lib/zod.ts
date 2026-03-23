@@ -12,8 +12,8 @@ export const RoomSchema = object({
     .int("Floor must be an integer")
     .gt(0, "Floor must be greater than zero"),
   
-  status: z.enum(["AVAILABLE", "BOOKED", "MAINTENANCE"], {
-      message: "Status must be one of: AVAILABLE, BOOKED, MAINTENANCE",
+  status: z.enum(["ACTIVE", "INACTIVE"], {
+      message: "Status must be one of: ACTIVE or INACTIVE",
     }),
 
    roomType: string().nonempty("Room type is required"),

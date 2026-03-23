@@ -18,11 +18,12 @@ model Room {
   id            String          @id @default(cuid())
   roomNumber String @unique
   floor Int
-  status RoomStatus @default(AVAILABLE)
+  status RoomStatus @default(ACTIVE)
   roomTypeId String
   RoomType RoomType @relation(fields: [roomTypeId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
   Reservations Reservation[]
 }
 
@@ -154,9 +155,8 @@ model Contact{
 }
 
 enum RoomStatus {
-  AVAILABLE
-  BOOKED
-  MAINTENANCE
+  ACTIVE
+  INACTIVE
 }
 
 enum BookingStatus {

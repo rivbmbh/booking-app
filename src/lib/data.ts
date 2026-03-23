@@ -200,6 +200,49 @@ export const getBookingById = async (bookingId: string) => {
   }
 }
 
+export const getAllBookingById = async (bookingId: string) => {
+  if(!bookingId){
+    throw new Error("ID undefined")
+  }
+
+  try {
+    const result = await prisma.booking.findMany({
+      where: {
+        id: bookingId
+      },
+      include: {
+        Reservations: {
+          include: {
+            Room: {
+              include: {
+                RoomType: {
+                  select: {
+                    name: true,
+                    price: true,
+                    image: true
+                  }
+                }
+              }
+            }
+          }
+        },
+        User: {
+          select: {
+            name: true,
+            email: true,
+            phone: true
+          }
+        },
+        Payment: true
+      }
+    })
+
+    return result
+  } catch (error) {
+    console.info(error)
+  }
+}
+
 export const getReservationById = async (id: string) => {
   try {
     const result = await prisma.reservation.findUnique({

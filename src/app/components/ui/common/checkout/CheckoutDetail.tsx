@@ -6,7 +6,6 @@ import ImagesCardInput from "../ImageGallery";
 
 const CheckoutDetail = async ({ bookingId }: { bookingId: string }) => {  
   const booking = await getBookingById(bookingId)
-  console.info(booking)
   if (!booking || !booking.Payment) {
     return <h1>No Reservation Found</h1>;
   }

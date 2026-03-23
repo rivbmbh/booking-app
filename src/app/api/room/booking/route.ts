@@ -6,19 +6,26 @@ export async function POST(req: Request) {
     const {startDate, endDate, roomIds} = await req.json()
     const session = await auth()
 
-     if (!session || !session.user || !session.user.id)
-        redirect(`/signin`);
+    if (!session || !session.user || !session.user.id) {
+    return Response.json({ message: "Unauthorized" }, { status: 401 })
+    }
 
     if(!roomIds || roomIds.length === 0){
         return Response.json({message: "No rooms selected"}, { status: 400})
     }
+
+    const roomsNumber = roomIds.map((id: string) =>
+        id.replace("room-", "")
+    )
 
     try {
         const result = await prisma.$transaction(async (tx) => {
 
             const conflicts = await tx.reservation.findMany({
                 where: {
-                    roomId: { in: roomIds},
+                    Room: {
+                        roomNumber: { in: roomsNumber }
+                    },
                     status: { in: ["PENDING", "CONFIRMED"]},
                     OR: [
                         {
@@ -35,7 +42,7 @@ export async function POST(req: Request) {
 
             const rooms = await tx.room.findMany({
                 where: {
-                    id: {in: roomIds}
+                    roomNumber: {in: roomsNumber}
                 },
                 include: {
                     RoomType: true

@@ -185,7 +185,7 @@ const EditForm = ({room, roomType}: {room: RoomProps, roomType: RoomTypeProps}) 
             <div className="mb-4">
               <p className="block text-sm font-medium text-gray-600 mb-1">Status</p>
               <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
-                  {["AVAILABLE","BOOKED","MAINTENANCE"].map((status) => (
+                  {["ACTIVE","INACTIVE"].map((status) => (
                   <label key={status} className="cursor-pointer">
                     <input type="radio" name="status" value={status} className="peer hidden" defaultChecked={room.status === status} />
                     <div className="px-5 py-2 rounded-md text-sm font-medium
