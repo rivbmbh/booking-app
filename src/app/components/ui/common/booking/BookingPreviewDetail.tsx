@@ -1,17 +1,17 @@
-import { getAllBookingById } from '@/lib/data'
+import { getBookingById } from '@/lib/data'
 
 const BookingPreviewDetail = async ({bookingId}: {bookingId: string}) => {
-    const mybooking =  await getAllBookingById(bookingId)
-    console.info(mybooking)
-
-    if(!mybooking){
+    const [booking] = (await getBookingById(bookingId)) ?? [];
+  
+    if(!booking){
         return <h1>No Booking Found</h1>
     }
 
     
   return (
     <div>
-            <pre>{JSON.stringify(mybooking, null, 2)}</pre>
+        {booking.User.name}
+        <pre>{JSON.stringify(booking, null, 2)}</pre>
     </div>
   )
 }

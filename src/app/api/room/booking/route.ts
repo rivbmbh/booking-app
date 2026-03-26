@@ -1,6 +1,6 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
-import { redirect } from "next/navigation";
+import { differenceInCalendarDays } from "date-fns"
 
 export async function POST(req: Request) {
     const {startDate, endDate, roomIds} = await req.json()
@@ -14,9 +14,33 @@ export async function POST(req: Request) {
         return Response.json({message: "No rooms selected"}, { status: 400})
     }
 
+    if (roomIds.length > 5) {
+        return Response.json(
+            { message: "Maksimal 5 kamar" },
+            { status: 400 }
+        );
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (start >= end) {
+    return Response.json(
+        { message: "Tanggal tidak valid" },
+        { status: 400 }
+    );
+    }
+
+    if (start < new Date()) {
+    return Response.json(
+        { message: "Tanggal tidak boleh di masa lalu" },
+        { status: 400 }
+    );
+    }
     const roomsNumber = roomIds.map((id: string) =>
         id.replace("room-", "")
-    )
+)
+
 
     try {
         const result = await prisma.$transaction(async (tx) => {
@@ -49,9 +73,18 @@ export async function POST(req: Request) {
                 }
             })
 
+            if (rooms.length !== roomsNumber.length) {
+                throw new Error("Beberapa kamar tidak ditemukan");
+            }
+            
+            const nights = differenceInCalendarDays(
+            new Date(endDate),
+            new Date(startDate)
+            );
+
             const totalPrice = rooms.reduce((sum, r) => {
-                return sum + r.RoomType.price
-            }, 0)
+            return sum + r.RoomType.price * nights;
+            }, 0);
 
             const booking = await tx.booking.create({
                 data: {
@@ -63,6 +96,13 @@ export async function POST(req: Request) {
                 }
             })
 
+            await tx.payment.create({
+            data: {
+                bookingId: booking.id,
+                amount: totalPrice,
+                status: "unpaid"
+            }
+});
             await tx.reservation.createMany({
                 data: rooms.map((room)=> ({
                     bookingId: booking.id,
@@ -77,7 +117,7 @@ export async function POST(req: Request) {
         })
 
         return Response.json({ bookingId: result.id });
-    } catch (error: any) {
+    } catch (error) {
         return Response.json(
             { message: error.message },
             { status: 400 }

@@ -15,7 +15,7 @@ const CheckoutPage = async ({
 }) => {
   const bookingId = (await params).id;
   return (
-    <div className="max-w-screen-2xl px-4 mx-auto py-20 mt-9">
+    <div className="max-w-screen-2xl px-4 mx-auto py-20 mt-9 relative min-h-screen">
       <h1 className="text-4xl font-bold mb-4 text-center md:text-start">
         Reservation Summary
       </h1>

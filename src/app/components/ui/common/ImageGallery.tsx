@@ -25,13 +25,13 @@ const ImageGallery = ({ image }: { image: string }) => {
     });
   }
   return (
-    <div className="aspect-video relative w-full mb-2">
+    <div className="aspect-video relative w-full h-full mb-2">
       <Image
         src={imageList[0]}
         alt="Room Image"
         width={200}
         height={100}
-        className="object-cover w-full rounded-2xl aspect-video"
+        className="object-cover w-full h-full rounded-tl-2xl md:rounded-l-2xl aspect-video"
       />
       <div className="absolute left-3 bottom-3 object-cover flex gap-4 justify-evenly">
         {imageList.slice(1).map((thumbnail, index) => (

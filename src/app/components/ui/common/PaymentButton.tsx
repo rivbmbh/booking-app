@@ -15,7 +15,7 @@ declare global {
   }
 }
 
-function PaymentButoon({ booking }: { booking: bookingProps }) {
+function PaymentButton({ booking }: { booking: bookingProps }) {
   const [isPending, startTransition] = useTransition();
   const handlePayment = async () => {
     startTransition(async () => {
@@ -34,13 +34,8 @@ function PaymentButoon({ booking }: { booking: bookingProps }) {
     });
   };
   return (
-    <button
-      onClick={handlePayment}
-      className="px-10 py-3 mt-2 text-center font-semibold text-white w-full bg-primary rounded-lg hover:bg-primary-hover cursor-pointer"
-    >
-      {isPending ? "Processing..." : "Process Payment"}
-    </button>
+    <button onClick={handlePayment} className="w-36 h-9 text-[21px] mt-4 min-[380px]:mt-0 tracking-wider bg-primary rounded-md text-white hover:bg-primary-hover active:scale-105 flex justify-center items-center uppercase font-light">{isPending ? "Processing..." : "Pay Now"}</button>
   );
 }
 
-export default PaymentButoon;
+export default PaymentButton;
