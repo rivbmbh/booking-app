@@ -10,6 +10,14 @@ export async function POST(req: Request) {
     return Response.json({ message: "Unauthorized" }, { status: 401 })
     }
 
+    const user = await prisma.user.findUnique({
+        where: { id: session.user.id},
+        select: {
+            phone: true,
+            name: true
+        }
+    })
+
     if(!roomIds || roomIds.length === 0){
         return Response.json({message: "No rooms selected"}, { status: 400})
     }
@@ -26,14 +34,14 @@ export async function POST(req: Request) {
 
     if (start >= end) {
     return Response.json(
-        { message: "Tanggal tidak valid" },
+        { message: "Invalid dates" },
         { status: 400 }
     );
     }
 
     if (start < new Date()) {
     return Response.json(
-        { message: "Tanggal tidak boleh di masa lalu" },
+        { message: "Selected date cannot be earlier than today." },
         { status: 400 }
     );
     }
@@ -74,7 +82,7 @@ export async function POST(req: Request) {
             })
 
             if (rooms.length !== roomsNumber.length) {
-                throw new Error("Beberapa kamar tidak ditemukan");
+                throw new Error("One or more rooms were not found.");
             }
             
             const nights = differenceInCalendarDays(
@@ -105,6 +113,8 @@ export async function POST(req: Request) {
 });
             await tx.reservation.createMany({
                 data: rooms.map((room)=> ({
+                    guestName: user!.name || session.user.name,
+                    guestPhone: user!.phone,
                     bookingId: booking.id,
                     roomId: room.id,
                     startDate: new Date(startDate),

@@ -74,6 +74,8 @@ model Booking{
 
 model Reservation{
   id            String          @id @default(cuid())
+  guestName String?
+  guestPhone String?
   bookingId String
   Booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 

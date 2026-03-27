@@ -193,6 +193,9 @@ export const getBookingById = async (bookingId: string) => {
           }
         },
         Payment: true
+      },
+      orderBy: {
+        updatedAt: "asc"
       }
     })
 

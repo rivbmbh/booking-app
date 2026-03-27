@@ -77,3 +77,21 @@ export const ContactShecma = object({
     .min(20, "Message at least 20 characters")
     .max(300, "Message maximum 300 characters"),
 });
+
+export const updateReservationSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name is required.")
+    .max(30, "Name must be at most 25 characters.")
+    .trim()
+    .optional(),
+
+  phone: z
+    .string()
+    .min(1, "Phone number is required.")
+    .regex(
+      /^(?:\+62|62|0)8[1-9][0-9]{6,10}$/,
+      "Invalid Indonesian phone number format."
+    )
+    .optional(),
+});
