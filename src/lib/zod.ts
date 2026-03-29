@@ -44,23 +44,22 @@ export const RoomTypeSchema = object({
   ),
 });
 
-export const ReserveSchema = object({
-  name: string()
+export const ReserveSchema = z.object({
+  name: z
+  .string()
     .trim()
     .nonempty("Name is required")
     .min(6, "Name must be at least 6 characters long")
     .max(100, "Name cannot exceed 100 characters")
     .regex(/^[A-Za-z\s]+$/, "Name must contain letters only"),
 
-  phone: string()
-    .nonempty("Phone number is required")
-    .transform((val) => val.replace(/\s+/g, ""))
-    .refine((val) => val.length >= 10, {
-      message: "Phone number must be at least 10 digits long",
-    })
-    .refine((val) => val.length <= 20, {
-      message: "Phone number cannot exceed 20 digits",
-    }),
+  phone: z
+  .string()
+  .nonempty("Phone number is required")
+  .transform((val) => val.replace(/\s+/g, ""))
+  .refine((val) => /^(?:\+62|62|0)8[1-9][0-9]{6,10}$/.test(val), {
+    message: "Invalid Indonesian phone number format.",
+  })
 });
 
 export const ContactShecma = object({
@@ -86,12 +85,12 @@ export const updateReservationSchema = z.object({
     .trim()
     .optional(),
 
-  phone: z
-    .string()
-    .min(1, "Phone number is required.")
-    .regex(
-      /^(?:\+62|62|0)8[1-9][0-9]{6,10}$/,
-      "Invalid Indonesian phone number format."
-    )
-    .optional(),
+phone: z
+  .string()
+  .nonempty("Phone number is required")
+  .transform((val) => val.replace(/\s+/g, ""))
+  .refine((val) => /^(?:\+62|62|0)8[1-9][0-9]{6,10}$/.test(val), {
+    message: "Invalid Indonesian phone number format.",
+  })
+  .optional(),
 });
