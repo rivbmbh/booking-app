@@ -17,7 +17,7 @@ const FloorPlan2nd = ({
 
   // ambil SVG
   useEffect(() => {
-    fetch('/floorplans/lantai_2.svg')
+    fetch('/floorplans/floorplan.svg')
       .then((res) => res.text())
       .then(setSvg);
   }, []);

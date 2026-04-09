@@ -354,7 +354,7 @@ export const createReserve = async (
     await prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: { id: session.user.id },
-        data: { name, phone },
+        data: { phone },
       });
 
       const booking = await tx.booking.create({

@@ -122,7 +122,7 @@ const CheckoutTable = ({booking, reservation}: {booking: bookingProps, reservati
                                 maxLength={12}
                             />
                             ) : (
-                            reservation.guestPhone
+                            reservation.guestPhone ? reservation.guestPhone : "No phone number provided"
                             )}
                         </td>
                     </tr>
