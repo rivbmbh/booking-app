@@ -17,4 +17,40 @@
   .manage-room:has([popover]:popover-open) .caret-up {
     display: inline;
   }
+
+  /* base room */
+  g[id^="room-"] {
+    @apply cursor-pointer;
+  }
+
+  /* DEFAULT */
+  g[id^="room-"] rect[id^="bg"] {
+    @apply fill-white;
+  }
+
+  g[id^="room-"] path[id^="label"] {
+    @apply fill-gray-800;
+  }
+
+  /* ACTIVE */
+  g[id^="room-"].active rect[id^="bg"] {
+    @apply fill-blue-700;
+  }
+
+  g[id^="room-"].active path[id^="label"] {
+    @apply fill-white;
+  }
+
+  /* BOOKED */
+  g[id^="room-"].booked {
+    @apply pointer-events-none cursor-not-allowed;
+  }
+
+  g[id^="room-"].booked rect[id^="bg"] {
+    @apply fill-gray-500;
+  }
+
+  g[id^="room-"].booked path[id^="label"] {
+    @apply fill-gray-400;
+  }
 }
