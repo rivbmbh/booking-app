@@ -4,6 +4,8 @@ import RoomColorDescription from "../../../room/sketch/RoomColorDescription";
 import FloorPlan2nd from "../../../room/sketch/floorplans/Floor2nd";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
+import { formatCurrency } from "@/lib/utils";
 
 type Props = {
    setRoomData: (data: string[]) => void;
@@ -18,11 +20,24 @@ const FloorplanForm = ({ setRoomData }: Props) => {
     const [isLoading, setIsLoading] = useState(false)
     const [roomCache, setRoomCache] = useState<{ [key: string]: [] }>({})
     const [selectedRoomsData, setSelectedRoomsData] = useState<string[]>([])
-
+    const [grandPrice, setGrandPrice] = useState("")
     const handleSelectedRoomsData = useCallback((rooms: string[]) => {
         setSelectedRoomsData(rooms)
     }, [])
     
+    // useEffect kalkulasi grand price
+    useEffect(() => {
+    let totalPrice = 0
+    selectedRoomsData.forEach((room) => {
+        const roomNumber = room.replace("room-", "")
+        const roomInfo = roomCache[roomNumber]
+        if (roomInfo) {
+        totalPrice += roomInfo.RoomType.price // ✅ Fix bug 1
+        }
+    })
+    setGrandPrice(formatCurrency(totalPrice))
+    }, [selectedRoomsData, roomCache]) // ✅ tambah roomCache sebagai dependency
+
     useEffect(() => {
     const controller = new AbortController();
 
@@ -51,6 +66,7 @@ const FloorplanForm = ({ setRoomData }: Props) => {
                 })
                 return newCache
             })
+            console.log("data selected rooms", data)    
             setRoomData(data);
         } catch (err) {
             if (err.name !== "AbortError") {
@@ -92,12 +108,24 @@ const FloorplanForm = ({ setRoomData }: Props) => {
     e.preventDefault()
 
     if(!startDate || !endDate){
-        alert("Please select date first")
+        Swal.fire({
+            icon: 'warning',
+            title: 'Invalid Date!',
+            text: 'Please select a valid date range',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#3085d6',
+        });
         return
     }
 
     if(!selectedRoomsData || selectedRoomsData.length === 0){
-        alert("Please select at least 1 room")
+        Swal.fire({
+            icon: 'warning',
+            title: 'No Rooms Selected!',
+            text: 'Please select at least 1 room',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#3085d6',
+        });
         return
     }
 
@@ -174,7 +202,7 @@ const FloorplanForm = ({ setRoomData }: Props) => {
                 <div className="flex justify-between items-center text-md mb-4 sm:mb-0">
                     <p className="font-semibold">Grand Total : </p>
                     &nbsp;
-                    <p>Rp 1,000,000</p>
+                    <p>{grandPrice || "Rp 0"}</p>
                 </div>
                 <button 
                 type="submit" 

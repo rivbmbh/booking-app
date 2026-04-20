@@ -47,8 +47,8 @@ const FloorPlan2nd = ({ bookedRooms, setSelectedRoomsData }: Props) => {
       if (selectedRooms.length >= 5 && !selectedRooms.includes(room.id)) {
           Swal.fire({
               icon: 'warning',
-              title: 'Batas Maksimal!',
-              text: 'Maksimal booking hanya 5 kamar dalam sekali pesan',
+              title: 'Maximal Reached!',
+              text: 'You have reached the maximum number of rooms that can be selected.',
               confirmButtonText: 'Ok',
               confirmButtonColor: '#3085d6',
           }).then(() => {
