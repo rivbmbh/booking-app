@@ -16,13 +16,13 @@ export const EditButton = ({ id, url }: { id: string, url: string }) => {
 
 type DeleteButtonProps = {
   id: string;
-  image?: string;
+  images?: string[];
 };
 
-export const DeleteButton = ({ id, image }: DeleteButtonProps) => {
+export const DeleteButton = ({ id, images }: DeleteButtonProps) => {
   const DeleteRoom = deleteRoom.bind(null, id);
-  const DeleteRoomType = deleteRoomType.bind(null, id, image as string);
-  const deleteAction = image ? DeleteRoomType : DeleteRoom;
+  const DeleteRoomType = deleteRoomType.bind(null, id, images || []);
+  const deleteAction = images && images.length > 0 ? DeleteRoomType : DeleteRoom;
 return (
     <form action={deleteAction}>
       <button

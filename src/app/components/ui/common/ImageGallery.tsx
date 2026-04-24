@@ -2,11 +2,10 @@
 import Image from "next/image";
 import { useState } from "react";
 
-const ImageGallery = ({ image }: { image: string }) => {
+const ImageGallery = ({ image }: { image: string[] }) => {
   const [imageList, setImageList] = useState<string[]>([
-    image,
-    "/hero3.jpg",
-    "/hero2.jpg",
+    image[0],
+    ...(image.length > 1 ? image.slice(1) : []),
   ]);
 
   function handleThumbnailClick(ClickedImage: string) {

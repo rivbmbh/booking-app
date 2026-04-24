@@ -8,6 +8,7 @@ const EditRoomType = async ({ roomId }: { roomId: string }) => {
     getRoomTypeById(roomId),
     getBedType()
   ]);
+  console.info("room", room?.image);
   if (!amenities || !room || !bedType) return notFound();
 
   return (

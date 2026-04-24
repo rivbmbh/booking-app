@@ -59,8 +59,10 @@ export const saveRoomType = async (
   prevState: unknown,
   formData: FormData
 ) => {
-  const file = formData.get("image") as File | null;
-  if (!file || file.size === 0) return { message: "Please upload an image file" };
+  const files = formData.getAll("image") as File[] | null;
+  if (!files || files.length === 0) return { message: "Please upload an image file" };
+
+  if(files.length > 3) return { message: "Maximum 3 images allowed" };
 
   const rawData = {
     name: formData.get("name"),
@@ -80,21 +82,26 @@ export const saveRoomType = async (
   const { name, description, capacity, price, bedType, amenities } = validateFields.data;
 
   try {
-    if (!file.type.startsWith("image/")) {
-      return { message: "File must be an image" };
+    for(const file of files){
+      if(!file.type.startsWith("image/")){
+        return { message: "All files must be an image" };
+      }
+      if(file.size > 2_000_000){
+        return { message: "Max file size is 2MB" };
+      }
     }
 
-    if (file.size > 2_000_000) {
-      return { message: "Max file size is 2MB" };
-    }
-
-    //buat nama file unik untuk menghindari konflik nama file di storage
-    const extension = file.name.split(".").pop();
-    const filename = `${crypto.randomUUID()}.${extension}`;
-
-    const blob = await put(filename, file, {
-      access: "public",
+    const uploadPromises = files.map( async (file) => {
+      const extension = file.name.split(".").pop()
+      const filename = `${crypto.randomUUID()}.${extension}`;
+      const blob = await put(filename, file, {
+        access: "public",
+      });
+      return blob.url;
     })
+
+    const imageUrls = await Promise.all(uploadPromises);
+
     await prisma.roomType.create({
       data: {
         name,
@@ -102,7 +109,7 @@ export const saveRoomType = async (
         capacity,
         price,
         bedType,
-        image: blob.url,
+        image: imageUrls,
         RoomAmenities: {
           createMany: {
             data: amenities.map((item) => ({
@@ -190,32 +197,61 @@ export const updateRoomType = async (
     return { error: validateFields.error.flatten().fieldErrors };
   }
 
+  //data
   const { name, description, capacity, bedType, price, amenities } = validateFields.data;
 
   try {
-    const file = formData.get("image") as File | null;
-    let imageUrl = formData.get("currentImage") as string;
+    const allFiles = formData.getAll("image") as File[];
+    const newFiles = allFiles.filter((file) => file.size > 0); //filter file yang diupload, karena input file tetap mengirim array walaupun tidak ada file yang dipilih 
+    let currentImages = formData.getAll("currentImage") as string[]; //ambil url gambar lama dari input hidden
 
-    if(file && file.size > 0){
-      if (!file.type.startsWith("image/")) {
-        return { message: "File must be an image" };
-      }
-      if (file.size > 2_000_000) {
-        return { message: "Max file size is 2MB" };
-      }
+    const totalImages = currentImages.length + newFiles.length;
+    if(totalImages === 0) return { message: "Please upload at least one image" };
+    if(totalImages > 3) return { message: "Maximum 3 images allowed" };
+    let finalImageUrls: string[] = [...currentImages];
 
-      const extension = file.name.split(".").pop();
-      const filename = `${crypto.randomUUID()}.${extension}`;
+    if(newFiles.length > 0){
+      for(const file of newFiles){
+        if(!file.type.startsWith("image/")){
+          return { message: "All files must be an image" };
+        } 
+        if(file.size > 2_000_000){      
+          return { message: "Max file size is 2MB" };
+        }
+      
+    }
 
-      const blob = await put(filename, file, {
-        access: "public",
-      });
+      // Upload semua file baru bersamaan
+      const uploadResults = await Promise.all(
+        newFiles.map(async (file) => {
+          const mimeToExt: Record<string, string> = {
+            "image/jpeg": "jpg",
+            "image/png": "png",
+            "image/webp": "webp",
+            "image/gif": "gif",
+            "image/avif": "avif",
+          };
+          const extension = mimeToExt[file.type] ?? "jpg";
+          const filename = `${crypto.randomUUID()}.${extension}`;
+          const blob = await put(filename, file, { access: "public" });
+          return blob.url;
+        })
+      );
+      finalImageUrls = [...finalImageUrls, ...uploadResults];
+    }
 
-      if(imageUrl){
-        await del(imageUrl); //hapus gambar lama dari storage vercel blob
-      }
+    const existing = await prisma.roomType.findUnique({
+      where: { id: roomTypeId },
+      select: { image: true } 
+    });
 
-      imageUrl = blob.url; //update url gambar dengan yang baru
+    const deletedImages = (existing?.image || []).filter(
+      (url) => !currentImages.includes(url)
+    );
+
+    // Hapus gambar yang sudah tidak dipakai dari storage
+    if (deletedImages.length > 0) {
+      await Promise.all(deletedImages.map((url) => del(url)));
     }
 
     await prisma.$transaction([
@@ -227,7 +263,7 @@ export const updateRoomType = async (
           capacity,
           bedType,
           price,
-          image: imageUrl,
+          image: finalImageUrls,
           RoomAmenities: {
             deleteMany: {}, // hapus semua data amenities yang berelasi
           },
@@ -264,10 +300,11 @@ export const deleteRoom = async (id: string) => {
   revalidatePath("/admin/room"); //auto refresh halaman agar data yang dihapus segera hilang dari UI
 };
 
-export const deleteRoomType = async (id: string, image: string) => {
+export const deleteRoomType = async (id: string, images: string[]) => {
   try {
-    await del(image); //hapus gambar dari storage vercel blob
-
+    for (const image of images) {
+      await del(image); //hapus gambar dari storage vercel blob
+    }
     //hapus data amenities yang berelasi dengan roomtype  
     await prisma.roomAmenities.deleteMany({
       where: { roomTypeId: id },

@@ -10,7 +10,7 @@ const Card = ({ roomType }: { roomType: RoomTypeProps }) => {
     <div className="bg-white shadow-lg rounded-2xl transition duration-100 hover:shadow-sm">
       <div className="h-[260px] w-auto rounded-t-sm relative">
         <Image
-          src={roomType.image}
+          src={roomType.image[0] || '/placeholder-image.webp'}
           alt="room image"
           width={384}
           height={256}

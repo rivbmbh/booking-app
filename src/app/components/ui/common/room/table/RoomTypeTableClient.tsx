@@ -61,7 +61,7 @@ const RoomTypeTableClient = ({data} : {data: RoomTypeProps[]}) => {
               <td className="px-6 py-4">
                 <div className="h-20 w-32 relative">
                   <Image
-                    src={v.image}
+                    src={v.image[0] || '/placeholder-image.webp'}
                     fill
                     sizes="20vw"
                     alt="v image"
@@ -94,7 +94,7 @@ const RoomTypeTableClient = ({data} : {data: RoomTypeProps[]}) => {
                         {openId === v.id ? <FaEye color='black' className='size-5'/> : <FaEyeSlash color='black' className='size-5'/>}
                     </button>
                     <EditButton id={v.id} url='/admin/roomtype/edit'/>
-                    <DeleteButton id={v.id} image={v.image} />
+                    <DeleteButton id={v.id} images={v.image} />
                 </div>
               </td>
             </tr>

@@ -53,4 +53,11 @@
   g[id^="room-"].booked path[id^="label"] {
     @apply fill-gray-400;
   }
+
+  @layer base {
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: white;
+  }
+}
 }

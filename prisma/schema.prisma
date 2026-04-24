@@ -31,7 +31,7 @@ model RoomType {
   id String @id @default(cuid())
   name String 
   description String @db.Text
-  image String
+  image String[]
   price Int 
   capacity Int
   bedType BedType @default(KING) 
