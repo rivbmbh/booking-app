@@ -192,7 +192,7 @@ const FloorplanForm = ({ setRoomData }: Props) => {
                 </div>
 
                 <div className="w-full bg-gray-700 rounded-lg min-[1170px]:w-max mt-5 p-10 md:ml-2 overflow-auto">
-                    <FloorPlan2nd bookedRooms={bookedRooms ?? []} setSelectedRoomsData={handleSelectedRoomsData}/>
+                    <FloorPlan2nd endDate={endDate} resetTrigger={endDate} bookedRooms={bookedRooms ?? []} setSelectedRoomsData={handleSelectedRoomsData}/>
                 </div>
             </div>
 

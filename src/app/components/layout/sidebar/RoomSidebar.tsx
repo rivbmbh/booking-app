@@ -47,6 +47,12 @@ const RoomSidebar = ({roomData }:
 
             <div className='min-h-0 overflow-y-auto flex-1 pt-2 px-0 sm:px-2 md:px-2 pb-14'>
                 <ul className="pb-16 h-max space-y-6">
+                    {roomData.length === 0 && (
+                        <div className="flex flex-col items-center gap-2 mt-10">
+                            <IoPricetags className="size-10 text-gray-400" />
+                            <p className="text-gray-500 text-sm">No rooms selected yet.</p>
+                        </div>
+                    )}
                     {roomData.map((data, index) => (
                         <div key={index}>
                             <li>
@@ -77,7 +83,7 @@ const RoomSidebar = ({roomData }:
                                     `}
                                 >
                                     <Image
-                                    src={data.RoomType.image}
+                                    src={data.RoomType.image[0]}
                                     alt="Room Image"
                                     width={100}
                                     height={100}

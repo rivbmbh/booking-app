@@ -20,7 +20,7 @@ const roomType = async (type: string) => {
 
 async function main() {
   const TWIN = await roomType("Deluxe Twin")
-  const KING = await roomType("Deluxe King")
+  const KING = await roomType("Deluxe Room")
 
   if (!TWIN || !KING) {
     throw new Error("Room type tidak ditemukan");
