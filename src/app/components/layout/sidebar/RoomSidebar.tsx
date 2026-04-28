@@ -24,14 +24,14 @@ const RoomSidebar = ({roomData }:
 
     return (
         <>
-        <button type="button" onClick={toggleSidebar} className={`cursor-pointer fixed right-0 top-32 bg-primary w-10 h-10 rounded-l-full flex justify-center items-center p-3 text-white transition-all ease-in-out duration-500 ${roomData.length > 0 && !openSidebar ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0' }`}>
+        <button type="button" onClick={toggleSidebar} className={`cursor-pointer fixed right-0 top-32 bg-primary w-10 h-10 rounded-l-full flex justify-center items-center p-3 text-white transition-all ease-in-out duration-300 ${roomData.length > 0 && !openSidebar ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0' }`}>
             <div className="relative">
             <IoPricetags className="size-5"/>
             <p className="w-5 h-5 absolute -top-6 -right-2.5 rounded-full bg-[#C8A755] text-white text-sm flex items-center justify-center">{roomData.length}</p>
             </div>
         </button>
         <aside 
-        className={`fixed right-0 top-0 bg-white px-4 py-6 z-40 w-[98%] md:w-[432px] h-screen transition-all duration-500 ease-in-out pt-21 sm:pt-18 md:pt-16 shadow-lg flex flex-col
+        className={`fixed right-0 top-0 bg-white px-4 py-6 z-40 w-[98%] md:w-[432px] h-screen transition-all duration-300 ease-in-out pt-21 sm:pt-18 md:pt-16 shadow-lg flex flex-col
         ${openSidebar 
             ? 'translate-x-0 opacity-100' 
             : 'translate-x-full opacity-0 pointer-events-none'}

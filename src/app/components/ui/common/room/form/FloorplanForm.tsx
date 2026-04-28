@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import RoomColorDescription from "../../../room/sketch/RoomColorDescription";
 import FloorPlan2nd from "../../../room/sketch/floorplans/Floor2nd";
@@ -8,14 +8,15 @@ import Swal from "sweetalert2";
 import { formatCurrency } from "@/lib/utils";
 
 type Props = {
-   setRoomData: (data: string[]) => void;
+    setRoomData: (data: string[]) => void;
+    endDate?: Date | null;
+    setEndDate?: React.Dispatch<React.SetStateAction<Date | null>>;
 };
 
-const FloorplanForm = ({ setRoomData }: Props) => {
-
+const FloorplanForm = ({ setRoomData, endDate, setEndDate }: Props) => {
     const router = useRouter()
     const [startDate, setStartDate] = useState<Date | null>(new Date());
-    const [endDate, setEndDate] = useState<Date | null>(null);
+    // const [endDate, setEndDate] = useState<Date | null>(null);
     const [bookedRooms, setBookedRooms] = useState<string[] | null>([]);
     const [isLoading, setIsLoading] = useState(false)
     const [roomCache, setRoomCache] = useState<{ [key: string]: [] }>({})
@@ -24,8 +25,7 @@ const FloorplanForm = ({ setRoomData }: Props) => {
     const handleSelectedRoomsData = useCallback((rooms: string[]) => {
         setSelectedRoomsData(rooms)
     }, [])
-    
-    // useEffect kalkulasi grand price
+
     useEffect(() => {
     let totalPrice = 0
     selectedRoomsData.forEach((room) => {
@@ -45,7 +45,10 @@ const FloorplanForm = ({ setRoomData }: Props) => {
         const getDataSelectedRooms = async () => {
         try {
             if (!selectedRoomsData || selectedRoomsData.length === 0) return;
-    
+            if (!selectedRoomsData || selectedRoomsData.length === 0) {
+                setRoomData([]);
+                return;
+            }
             const roomNumbers = selectedRoomsData.map((room) => room.replace("room-", ""))
             const res = await fetch("/api/room/selected", {
                 method: "POST",
@@ -66,7 +69,6 @@ const FloorplanForm = ({ setRoomData }: Props) => {
                 })
                 return newCache
             })
-            console.log("data selected rooms", data)    
             setRoomData(data);
         } catch (err) {
             if (err.name !== "AbortError") {
@@ -84,27 +86,26 @@ const FloorplanForm = ({ setRoomData }: Props) => {
 
     }, [selectedRoomsData])
 
-
     const onChange = async (dates: [Date | null, Date | null]) => {
-    const [start, end] = dates;
+        const [start, end] = dates;
 
-    setSelectedRoomsData([])// reset selected rooms when date change
-    setStartDate(start);
-    setEndDate(end);
+        setSelectedRoomsData([])// reset selected rooms when date change
+        setStartDate(start);
+        setEndDate(end);
 
-    if (start && end) {
-        const res = await fetch("/api/room/booked", {
-        method: "POST",
-        body: JSON.stringify({ start, end })
-        });
+        if (start && end) {
+            const res = await fetch("/api/room/booked", {
+            method: "POST",
+            body: JSON.stringify({ start, end })
+            });
 
-        const data = await res.json();
-        setBookedRooms(data)
-        return data
+            const data = await res.json();
+            setBookedRooms(data)
+            // return data
+        }
     }
-    }
 
-    const handleSubmit = async (e: Event) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if(!startDate || !endDate){
