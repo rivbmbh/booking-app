@@ -102,6 +102,20 @@ export const getRoomType = async () => {
   }
 };
 
+export const getRoomTypeOptions = async () => {
+  try {
+    const result = await prisma.roomType.findMany({
+      select:{
+        id: true,
+        name: true,
+      }
+    })
+    return result
+  } catch (error) {
+    console.info(error);
+  }
+};
+
 export const getBedType = async () => {
   return Object.values(BedType);
 };
@@ -240,7 +254,6 @@ export const getReservationById = async (id: string) => {
     console.info(error);
   }
 };
-
 
 export const getDisabledRoomTypeById = async (roomId: string) => {
   try {

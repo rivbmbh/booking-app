@@ -1,13 +1,18 @@
-import { getRoomType } from "@/lib/data";
+import { getBedType, getRoomType, getRoomTypeOptions } from "@/lib/data";
 import RoomContent from "../room/RoomContent";
 
 const Main = async () => {
-  const rooms = await getRoomType();
+    const [rooms, roomTypeOptions, bedTypeOptions] = await Promise.all([
+        getRoomType(),
+        getRoomTypeOptions(),
+        getBedType()
+    ]);
   if (!rooms?.length) return <p>No Room Found</p>;
 
+  console.info("roomTypeOptions", roomTypeOptions)
   return (
     <div className="max-w-screen-3xl mx-auto">
-       <RoomContent rooms={rooms}/>
+       <RoomContent rooms={rooms} roomTypeOptions={roomTypeOptions} bedTypeOptions={bedTypeOptions}/>
     </div>
   );
 };

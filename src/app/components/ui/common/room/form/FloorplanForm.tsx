@@ -1,4 +1,4 @@
-import { use, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import RoomColorDescription from "../../../room/sketch/RoomColorDescription";
 import FloorPlan2nd from "../../../room/sketch/floorplans/Floor2nd";
@@ -6,6 +6,8 @@ import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { formatCurrency } from "@/lib/utils";
+import FilterRoomsForm from "./FilterRoomsForm";
+import { RoomTypeOptionsProps } from "@/types/room";
 
 type Props = {
     setRoomData: (data: string[]) => void;
@@ -13,10 +15,9 @@ type Props = {
     setEndDate?: React.Dispatch<React.SetStateAction<Date | null>>;
 };
 
-const FloorplanForm = ({ setRoomData, endDate, setEndDate }: Props) => {
+const FloorplanForm = ({ setRoomData, endDate, setEndDate, roomTypeOptions, bedTypeOptions }: Props & { roomTypeOptions: RoomTypeOptionsProps[], bedTypeOptions: string[] }) => {
     const router = useRouter()
     const [startDate, setStartDate] = useState<Date | null>(new Date());
-    // const [endDate, setEndDate] = useState<Date | null>(null);
     const [bookedRooms, setBookedRooms] = useState<string[] | null>([]);
     const [isLoading, setIsLoading] = useState(false)
     const [roomCache, setRoomCache] = useState<{ [key: string]: [] }>({})
@@ -35,6 +36,7 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate }: Props) => {
         totalPrice += roomInfo.RoomType.price // ✅ Fix bug 1
         }
     })
+
     setGrandPrice(formatCurrency(totalPrice))
     }, [selectedRoomsData, roomCache]) // ✅ tambah roomCache sebagai dependency
 
@@ -84,7 +86,7 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate }: Props) => {
         controller.abort()
     }
 
-    }, [selectedRoomsData])
+    }, [selectedRoomsData, setRoomData, roomCache])
 
     const onChange = async (dates: [Date | null, Date | null]) => {
         const [start, end] = dates;
@@ -162,11 +164,14 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate }: Props) => {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white max-w-screen-2xl w-full md:mx-auto rounded-lg">
-            <div  className="flex flex-col md:flex-row gap-4 items-start justify-evenly w-full px-2">
+        <form onSubmit={handleSubmit} className="bg-white max-w-screen-2xl pt-4 w-full md:mx-auto rounded-lg">
+            <div  className="flex flex-col md:flex-row items-start justify-evenly w-full px-2">
                 <div className="flex flex-wrap sm:flew-row justify-center md:flex-col w-full sm:w-max px-5 sm:px-10 md:px-2 py-10 sm:justify-between sm:items-center gap-6">
                     <div className="">
-                        <p className="tracking-wider text-base mb-2">Choose Date</p>
+                        <div className="flex items-center gap-2 mb-2">
+                            <p className="rounded-full bg-primary w-7 h-7 text-center font-semibold text-white border-2 border-black">1</p>
+                            <p className="tracking-wider text-base font-semibold">Choose Date</p>
+                        </div>
                         <DatePicker
                         className="object-cover "
                         selected={startDate}
@@ -179,21 +184,26 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate }: Props) => {
                         selectsDisabledDaysInRange
                         inline
                         />
-                        {/* <div aria-live="polite" aria-atomic="true">
-                        <p className="text-sm text-red-500 mt-2">{state?.messageDate}</p>
-                        </div> */}  
                     </div>
 
                     <div className="overflow-auto w-max ">
-                        <p className="tracking-wider text-balance mb-2">Room Color Description</p>
-                        <div className="border-dashed border-2 border-gray-300 py-4 px-7 rounded-md">
+                        <p className="tracking-wider text-balance mb-2 text-center">Room Color Description</p>
+                        <div className="border-dashed border-2 bg-gray-100  border-gray-300 py-4 px-8 rounded-md">
                             <RoomColorDescription/>
                         </div>
                     </div>
                 </div>
-
-                <div className="w-full bg-gray-700 rounded-lg min-[1170px]:w-max mt-5 p-10 md:ml-2 overflow-auto">
-                    <FloorPlan2nd endDate={endDate} resetTrigger={endDate} bookedRooms={bookedRooms ?? []} setSelectedRoomsData={handleSelectedRoomsData}/>
+                
+                <div className="w-full min-[1170px]:w-max md:ml-2 overflow-auto px-2 pt-2 mt-8">
+                    <h5 className="mb-1.5">Filter Rooms : </h5>
+                    <FilterRoomsForm roomTypeOptions={roomTypeOptions} bedTypeOptions={bedTypeOptions}/>
+                    <div className="flex items-center gap-2 mb-2 mt-6">
+                        <p className="rounded-full bg-primary w-7 h-7 text-center font-semibold text-white border-2 border-black">2</p>
+                        <p className="tracking-wider text-base font-semibold">Choose Room</p>
+                    </div>
+                    <div className="w-full border border-gray-300 p-7 rounded-sm overflow-auto">
+                        <FloorPlan2nd endDate={endDate} resetTrigger={endDate} bookedRooms={bookedRooms ?? []} setSelectedRoomsData={handleSelectedRoomsData}/>
+                    </div>
                 </div>
             </div>
 

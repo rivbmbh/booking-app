@@ -4,7 +4,7 @@ import React from 'react'
 const RoomColorDescription = () => {
   return (
     <div className=''>
-        <ul className='grid grid-cols-2 gap-6 justify-between text-sm'>
+        <ul className='grid grid-cols-2 gap-8 justify-between text-sm'>
             <li className='space-y-2.5'>
               <div className='w-5 h-5 bg-white mx-auto border border-gray-500'></div>
               <p className='text-center'>Available</p>

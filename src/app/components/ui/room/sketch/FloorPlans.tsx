@@ -1,10 +1,11 @@
 import RoomSidebar from "@/app/components/layout/sidebar/RoomSidebar";
 import FloorplanForm from "../../common/room/form/FloorplanForm";
 import { startTransition, useCallback, useEffect, useState } from "react";
+import { RoomTypeOptionsProps } from "@/types/room";
 import "react-datepicker/dist/react-datepicker.css";
 
 
-const FloorPlans = () => {
+const FloorPlans = ({ roomTypeOptions, bedTypeOptions }: { roomTypeOptions: RoomTypeOptionsProps[], bedTypeOptions: string[] }) => {
   const [roomData, setRoomData] = useState<string[]>([])
   const [endDateForReset, setEndDateForReset] = useState<Date | null>(null)
 
@@ -20,7 +21,7 @@ const FloorPlans = () => {
   
   return (
     <>
-      <FloorplanForm setRoomData={handleChangeRoomData} endDate={endDateForReset} setEndDate={setEndDateForReset}/>   
+      <FloorplanForm setRoomData={handleChangeRoomData} endDate={endDateForReset} setEndDate={setEndDateForReset} roomTypeOptions={roomTypeOptions} bedTypeOptions={bedTypeOptions}/>   
       <RoomSidebar roomData={roomData} />
     </>
   );
