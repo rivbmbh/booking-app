@@ -27,6 +27,12 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate, roomTypeOptions, bedT
         setSelectedRoomsData(rooms)
     }, [])
 
+    const [filterData, setFilterData] = useState<string[]>([])
+    console.info("filterData", filterData)
+    const handleFilterChange = useCallback((data: string[]) => {
+        setFilterData(data)
+    }, [])
+
     useEffect(() => {
     let totalPrice = 0
     selectedRoomsData.forEach((room) => {
@@ -93,7 +99,7 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate, roomTypeOptions, bedT
 
         setSelectedRoomsData([])// reset selected rooms when date change
         setStartDate(start);
-        setEndDate(end);
+        setEndDate!(end);
 
         if (start && end) {
             const res = await fetch("/api/room/booked", {
@@ -196,13 +202,13 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate, roomTypeOptions, bedT
                 
                 <div className="w-full min-[1170px]:w-max md:ml-2 overflow-auto px-2 pt-2 mt-8">
                     <h5 className="mb-1.5">Filter Rooms : </h5>
-                    <FilterRoomsForm roomTypeOptions={roomTypeOptions} bedTypeOptions={bedTypeOptions}/>
+                    <FilterRoomsForm roomTypeOptions={roomTypeOptions} bedTypeOptions={bedTypeOptions} onFilterChange={handleFilterChange} />
                     <div className="flex items-center gap-2 mb-2 mt-6">
                         <p className="rounded-full bg-primary w-7 h-7 text-center font-semibold text-white border-2 border-black">2</p>
                         <p className="tracking-wider text-base font-semibold">Choose Room</p>
                     </div>
                     <div className="w-full border border-gray-300 p-7 rounded-sm overflow-auto">
-                        <FloorPlan2nd endDate={endDate} resetTrigger={endDate} bookedRooms={bookedRooms ?? []} setSelectedRoomsData={handleSelectedRoomsData}/>
+                        <FloorPlan2nd endDate={endDate} resetTrigger={endDate} bookedRooms={bookedRooms ?? []} filteredRooms={filterData} setSelectedRoomsData={handleSelectedRoomsData}/>
                     </div>
                 </div>
             </div>

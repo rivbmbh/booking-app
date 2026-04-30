@@ -10,17 +10,16 @@ const RoomColorDescription = () => {
               <p className='text-center'>Available</p>
             </li>
             <li className='space-y-2.5'>
-              <div className='w-5 h-5 bg-gray-500 mx-auto border border-gray-500'></div>
+              <div className='w-5 h-5 bg-gray-400 mx-auto border border-gray-500'></div>
+              <p className='text-center'>Not Available</p>
+            </li>
+            <li className='space-y-2.5'>
+              <div className='w-5 h-5 bg-primary mx-auto border border-gray-500'></div>
               <p className='text-center'>Booked</p>
             </li>
             <li className='space-y-2.5'>
               <div className='w-5 h-5 bg-[#0459e0] mx-auto border border-gray-500'></div>
               <p className='text-center'>Selected</p>
-            </li>
-           
-            <li className='space-y-2.5'>
-              <div className='w-5 h-5 bg-red-500 mx-auto border border-gray-500'></div>
-              <p className='text-center'>Renovation</p>
             </li>
              <li className='space-y-2.5'>
               <div className='flex justify-center items-center'>

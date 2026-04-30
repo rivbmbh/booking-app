@@ -8,16 +8,18 @@ type Props = {
   endDate?: Date | null;
   resetTrigger?: Date | null;
   bookedRooms: string[];
+  filteredRooms: string[];
   setSelectedRoomsData: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-const FloorPlan2nd = ({ endDate, resetTrigger, bookedRooms, setSelectedRoomsData }: Props) => {
+const FloorPlan2nd = ({ endDate, resetTrigger, bookedRooms, filteredRooms, setSelectedRoomsData }: Props) => {
   const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
   const svgLoadedRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedDateRef = useRef<Date | null>(endDate);
   const selectedRoomsRef = useRef<string[]>([]);
   const bookedRoomsRef = useRef<string[]>(bookedRooms);
+  const filteredRoomsRef = useRef<string[]>(filteredRooms);
 
   useEffect(() => {
     selectedRoomsRef.current = selectedRooms;
@@ -36,22 +38,34 @@ const FloorPlan2nd = ({ endDate, resetTrigger, bookedRooms, setSelectedRoomsData
     if (!container) return;
 
     const rooms = container.querySelectorAll<SVGGElement>('g[id^="room-"]');
+    const isFilterActive = filteredRoomsRef.current.length > 0;
+
     rooms.forEach((room) => {
       const roomNumber = room.id.replace('room-', '');
       const isBooked = bookedRoomsRef.current.includes(roomNumber);
       const isActive = selectedRoomsRef.current.includes(room.id);
+      const isFiltered = filteredRoomsRef.current.includes(roomNumber);
+
+      room.classList.remove('active', 'booked', 'filtered', 'dimmed');
 
       if (isBooked) {
         room.classList.add('booked');
-        room.classList.remove('active');
+        // room.classList.remove('active');
       } else if (isActive) {
         room.classList.add('active');
-        room.classList.remove('booked');
-      }else{
-        room.classList.remove('active', 'booked');
+        // room.classList.remove('booked');
+      }else if(isFilterActive && isFiltered) {
+        room.classList.add('filtered');
+      }else if(isFilterActive && !isFiltered) {
+        room.classList.add('dimmed');
       }
     });
   };
+
+  useEffect(() => {
+    filteredRoomsRef.current = filteredRooms;
+    applyStyles(); // re-apply setiap kali filter berubah
+  }, [filteredRooms]);
 
   //load svg
   useEffect(() => {

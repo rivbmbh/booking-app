@@ -47,11 +47,43 @@
   }
 
   g[id^="room-"].booked rect[id^="bg"] {
-    @apply fill-gray-500;
+    @apply fill-primary;
   }
 
   g[id^="room-"].booked path[id^="label"] {
+    @apply fill-gray-100;
+  }
+
+  /* @keyframes filterPulse {
+    0%, 100% { 
+      stroke-opacity: 1;
+      stroke-width: 2;
+    }
+    50% { 
+      stroke-opacity: 0.2;
+      stroke-width: 4;
+    }
+  } */
+
+/* g[id^="room-"].filtered rect[id^="bg"] {
+  stroke: #155dfc;
+  animation: filterPulse 1.5s ease-in-out infinite;
+} */
+
+  g[id^="room-"].filtered path[id^="label"] {
+    @apply fill-black;
+  }
+
+    g[id^="room-"].dimmed {
+    @apply pointer-events-none cursor-not-allowed;
+  }
+
+  g[id^="room-"].dimmed rect[id^="bg"] {
     @apply fill-gray-400;
+  }
+
+  g[id^="room-"].dimmed path[id^="label"] {
+    @apply fill-gray-300;
   }
 
   @layer base {
