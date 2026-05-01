@@ -7,6 +7,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa6'
 import { RoomTypeProps } from '@/types/room'
 
 const RoomTypeTableClient = ({data} : {data: RoomTypeProps[]}) => {
+  console.info(data)
  const [openId, setOpenId] = useState<string | null>(null);
   const toggleDetails = (id: string) => {
     setOpenId(openId === id ? null : id);
@@ -27,9 +28,6 @@ const RoomTypeTableClient = ({data} : {data: RoomTypeProps[]}) => {
             )}
             <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
               room type
-            </th>
-            <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
-              bed type
             </th>
             <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
               capacity
@@ -73,7 +71,6 @@ const RoomTypeTableClient = ({data} : {data: RoomTypeProps[]}) => {
                 <td className="px-6 py-4">{v.id}</td>
               )}
               <td className="px-6 py-4">{v.name}</td>
-              <td className="px-6 py-4">{v.bedType}</td>
               <td className="px-6 py-4">{v.capacity}</td>
               <td className="px-6 py-4">{formatCurrency(v.price)}</td>
               {openId === v.id  && (

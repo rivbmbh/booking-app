@@ -3,7 +3,6 @@
 import { updateRoomType } from "@/lib/action";
 import { RoomTypeProps } from "@/types/room";
 import { Amenities } from "@prisma/client";
-import clsx from "clsx";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper/modules";
@@ -12,19 +11,18 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { useActionState, useRef, useState } from "react";
 import { IoCloseCircleSharp, IoCloudUploadOutline } from "react-icons/io5";
-import imageCompression from "browser-image-compression";
-import { set } from "zod";
+import SubmitButton from "../button/SubmitButton";
+
 
 const EditFormRoomType
  = ({
   amenities,
-  bedType,
   roomType
 }: {
   amenities: Amenities[];
-  bedType: string[]
   roomType: RoomTypeProps;
 }) => {
+  console.info("roomType", roomType);
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [previews, setPreviews] = useState<string[]>(roomType.image || []);
   const [existingUrls, setExistingUrls] = useState<string[]>(roomType.image || []);
@@ -114,21 +112,7 @@ const EditFormRoomType
               </span>
             </div>
           </div>
-          <div className="mb-4">
-            <select name="bedType" className="py-2 px-4 rounded-sm border border-gray-400 w-full" defaultValue={roomType.bedType}>
-              <option value="" disabled>-Choose Room Type-</option>
-              {bedType.map((data) => (
-                <option key={data} value={data}>
-                  {data}
-                </option>
-              ))}
-            </select>
-            <div aria-live="polite" aria-atomic="true">
-                <span className="text-sm text-red-500 mt-2">
-                  {state?.error?.bedType}
-                </span>
-            </div>
-          </div>
+
           <div className="mb-4">
             <textarea
               name="description"
@@ -179,7 +163,6 @@ const EditFormRoomType
           <div className="mb-4">
             <input type="hidden" name="currentImage" value={roomType.image} />
             {previews.length === 0 ? (
-              // Tampilkan upload zone jika belum ada gambar
               <label
                 htmlFor="image"
                 className="flex flex-col items-center justify-center aspect-video border-2 border-dashed rounded-md cursor-pointer"
@@ -214,7 +197,6 @@ const EditFormRoomType
                         fill
                         className="object-cover"
                       />
-                      {/* Tombol hapus per gambar */}
                       <button
                         type="button"
                         onClick={() => removeImage(i)}
@@ -226,7 +208,6 @@ const EditFormRoomType
                   ))}
                 </Swiper>
 
-                {/* Tombol tambah gambar jika belum 3 */}
                 {totalImages < 3 && (
                   <label
                     htmlFor="image"
@@ -277,18 +258,7 @@ const EditFormRoomType
             </div>
           </div>
 
-          <button
-            type="submit"
-            className={clsx(
-              "bg-orange-400 text-white w-full hover:bg-orange-500 py-2.5 px-6 md:px-1 text-lg font-semibold cursor-pointer",
-              {
-                "opacity-50 cursor-progress": isPending,
-              }
-            )}
-            disabled={isPending}
-          >
-            {isPending ? "Saving..." : "Save"}
-          </button>
+          <SubmitButton isPending={isPending}/>
         </div>
       </div>
     </form>

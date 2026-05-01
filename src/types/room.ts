@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 export type RoomTypeProps = Prisma.RoomTypeGetPayload<{
-  include: { RoomAmenities: { select: { amenitiesId: true, Amenities: { select: { name: true } } } } };
+  include: { RoomAmenities: { select: { amenitiesId: true, Amenities: { select: { id:true, name: true } } } } };
 }>;
 
 export type RoomTypeOptionsProps = Prisma.RoomTypeGetPayload<{
@@ -10,7 +10,7 @@ export type RoomTypeOptionsProps = Prisma.RoomTypeGetPayload<{
 
 
 export type RoomProps = Prisma.RoomGetPayload<{
-  include: { RoomType: true };
+  include: { RoomType: { select: { id: true,name: true } } };
 }>;
 export type RoomTypeDetailProps = Prisma.RoomTypeGetPayload<{
   include: {
@@ -41,6 +41,8 @@ export enum BedType {
   QUEEN = "QUEEN",
   TWIN = "TWIN",
   DOUBLE = "DOUBLE",
+  SUPER_KING = "SUPER_KING",
+  SINGLE = "SINGLE"
 }
 
 export type DisabledDateProps = Prisma.ReservationGetPayload<{

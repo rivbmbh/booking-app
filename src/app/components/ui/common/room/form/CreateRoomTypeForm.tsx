@@ -1,7 +1,6 @@
 "use client";
 import { saveRoomType } from "@/lib/action";
-import { Amenities, BedType } from "@prisma/client";
-import clsx from "clsx";
+import { Amenities } from "@prisma/client";
 import Image from "next/image";
 import { useActionState, useRef, useState, } from "react";
 import { IoCloseCircleSharp, IoCloudUploadOutline } from "react-icons/io5";
@@ -10,8 +9,9 @@ import { Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import SubmitButton from "../button/SubmitButton";
 
-const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], bedType: BedType[] }) => {
+const CreateRoomTypeForm = ({ amenities }: { amenities: Amenities[] }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [previews, setPreview] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -49,7 +49,7 @@ const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], be
   return (
     <form action={handleSubmit}>
       <div className="grid md:grid-cols-12 gap-5">
-        <div className="col-span-8 bg-white p-4">
+        <div className="col-span-8 bg-white rounded-sm p-4">
           <div className="mb-4">
             <input
               type="text"
@@ -63,20 +63,7 @@ const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], be
               </span>
             </div>
           </div>
-          <div className="mb-4">
-          <select name="bedType" className="py-2 px-4 rounded-sm border border-gray-400 w-full">
-            <option value="">-Choose Room Type-</option>
-            {bedType.map((type) => (
-                <option key={type} value={type}>{type}</option>
-            ))}
-          </select>
-            <div aria-live="polite" aria-atomic="true">
-              <span className="text-sm text-red-500 mt-2">
-                {state?.error?.bedType}
-              </span>
-            </div>
-          </div>
-          <div className="mb-4">
+          <div className="">
             <textarea
               name="description"
               rows={8}
@@ -113,7 +100,7 @@ const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], be
             </div>
           </div>
         </div>
-        <div className="col-span-4 bg-white p-4">
+        <div className="col-span-4 bg-white rounded-sm p-4">
           {/* general message */}
           {state?.message ? (
             <div className="mb-4 bg-red-500 p-2 rounded-l-sm rounded-br-sm">
@@ -223,18 +210,7 @@ const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], be
             </div>
           </div>
 
-          <button
-            type="submit"
-            className={clsx(
-              "bg-orange-400 text-white w-full hover:bg-orange-500 py-2.5 px-6 md:px-1 text-lg font-semibold cursor-pointer",
-              {
-                "opacity-50 cursor-progress": isPending,
-              }
-            )}
-            disabled={isPending}
-          >
-            {isPending ? "Saving..." : "Save"}
-          </button>
+          <SubmitButton isPending={isPending} />
         </div>
       </div>
     </form>

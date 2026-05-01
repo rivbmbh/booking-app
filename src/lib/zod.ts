@@ -15,8 +15,10 @@ export const RoomSchema = object({
   status: z.enum(["ACTIVE", "INACTIVE"], {
       message: "Status must be one of: ACTIVE or INACTIVE",
     }),
-
-   roomType: string().nonempty("Room type is required"),
+  bedType: z.nativeEnum(BedType, {
+    message: "Bed type must be one of: KING, QUEEN, TWIN, DOUBLE",
+  }),
+  roomType: string().nonempty("Room type is required"),
 });
 
 export const RoomTypeSchema = object({
@@ -36,9 +38,6 @@ export const RoomTypeSchema = object({
     .gt(0, "Capacity must be greater than zero"),
 
   price: coerce.number().gt(0, "Price must be greater than zero"),
-  bedType: z.nativeEnum(BedType, {
-    message: "Bed type must be one of: KING, QUEEN, TWIN, DOUBLE",
-  }),
   amenities: array(string().min(1, "Amenity cannot be empty")).nonempty(
     "Amenities are required"
   ),

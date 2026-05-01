@@ -11,7 +11,7 @@ const RoomPage = () => {
         <div className="flex gap-7 justify-between">
         <Link
           href={`/admin/room/create/`}
-          className="bg-orange-400 px-6 py-2.5 hover:bg-orange-500 text-white font-semibold active:scale-105"
+          className="bg-primary px-6 py-2.5 hover:bg-primary-hover text-white font-semibold active:scale-105"
         >
           Add Room
         </Link>

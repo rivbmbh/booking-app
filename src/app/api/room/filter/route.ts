@@ -18,10 +18,8 @@ export async function POST(req: Request) {
                 ...(roomTypeId !== "all" && {
                 roomTypeId: roomTypeId,
                 }),
-                ...(bedTypeName !== "all" && {
-                RoomType: {
-                    bedType: bedTypeName as BedType,
-                },
+                ...(bedTypeName !== "all" && {           
+                bedType: bedTypeName as BedType,         
                 }),
             },
             select: {

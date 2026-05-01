@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { addMinutes, differenceInCalendarDays } from "date-fns";
 import { isRoomNumberExists } from "./utils";
+import { BedType } from "@/types/room";
 
 export const saveRoom = async (prevState: unknown, formData: FormData) => {
 if (!formData.get("floor") || !formData.get("roomNumber")) {
@@ -18,6 +19,7 @@ if (!formData.get("floor") || !formData.get("roomNumber")) {
     roomNumber: formData.get("roomNumber"),
     floor: parseInt(formData.get("floor") as string),
     status:  formData.get("status"),
+    bedType: formData.get("bedType") as BedType,
     roomType: formData.get("roomType"),
   }
 
@@ -28,7 +30,7 @@ if (!formData.get("floor") || !formData.get("roomNumber")) {
     return { error };
   }
 
-  const { roomNumber, floor,  status, roomType } = (await validateFields).data!;  
+  const { roomNumber, floor,  status, bedType, roomType } = (await validateFields).data!;  
 
   const exists = await isRoomNumberExists(roomNumber);
 
@@ -46,6 +48,7 @@ if (!formData.get("floor") || !formData.get("roomNumber")) {
         roomNumber: roomNumber,
         floor,
         status: status as "ACTIVE" | "INACTIVE",
+        bedType: bedType as BedType,
         roomTypeId: roomType as string,
       }
     })
@@ -69,7 +72,6 @@ export const saveRoomType = async (
     description: formData.get("description"),
     capacity: formData.get("capacity"),
     price: formData.get("price"),
-    bedType: formData.get('bedType'),
     amenities: formData.getAll("amenities"),
   };
 
@@ -79,7 +81,7 @@ export const saveRoomType = async (
     return { error: validateFields.error.flatten().fieldErrors };
   }
 
-  const { name, description, capacity, price, bedType, amenities } = validateFields.data;
+  const { name, description, capacity, price, amenities } = validateFields.data;
 
   try {
     for(const file of files){
@@ -108,7 +110,6 @@ export const saveRoomType = async (
         description,
         capacity,
         price,
-        bedType,
         image: imageUrls,
         RoomAmenities: {
           createMany: {
@@ -138,6 +139,7 @@ export const updateRoom = async (
     roomNumber: formData.get("roomNumber"),
     floor: parseInt(formData.get("floor") as string),
     status:  formData.get("status"),
+    bedType: formData.get("bedType") as BedType,
     roomType: formData.get("roomType"),
   }
 
@@ -148,7 +150,7 @@ export const updateRoom = async (
     return { error };
   }
 
-  const { roomNumber, floor, status, roomType } = (await validateFields).data!;  
+  const { roomNumber, floor, status, bedType, roomType } = (await validateFields).data!;  
 
   // cek duplicate khusus update
   const exists = await isRoomNumberExists(roomNumber, roomId);
@@ -168,6 +170,7 @@ export const updateRoom = async (
         roomNumber: roomNumber,
         floor,
         status: status as "ACTIVE" | "INACTIVE",
+        bedType: bedType as BedType,
         roomTypeId: roomType as string,
       }
     })
@@ -187,7 +190,6 @@ export const updateRoomType = async (
     name: formData.get("name"),
     description: formData.get("description"),
     capacity: formData.get("capacity"),
-    bedType: formData.get('bedType'),
     price: formData.get("price"),
     amenities: formData.getAll("amenities") as string[],
   };
@@ -198,12 +200,12 @@ export const updateRoomType = async (
   }
 
   //data
-  const { name, description, capacity, bedType, price, amenities } = validateFields.data;
+  const { name, description, capacity, price, amenities } = validateFields.data;
 
   try {
     const allFiles = formData.getAll("image") as File[];
     const newFiles = allFiles.filter((file) => file.size > 0); //filter file yang diupload, karena input file tetap mengirim array walaupun tidak ada file yang dipilih 
-    let currentImages = formData.getAll("currentImage") as string[]; //ambil url gambar lama dari input hidden
+    const currentImages = formData.getAll("currentImage") as string[]; //ambil url gambar lama dari input hidden
 
     const totalImages = currentImages.length + newFiles.length;
     if(totalImages === 0) return { message: "Please upload at least one image" };
@@ -261,7 +263,6 @@ export const updateRoomType = async (
           name,
           description,
           capacity,
-          bedType,
           price,
           image: finalImageUrls,
           RoomAmenities: {
@@ -319,7 +320,6 @@ export const deleteRoomType = async (id: string, images: string[]) => {
   }
   revalidatePath("/admin/roomtype"); //auto refresh halaman agar data yang dihapus segera hilang dari UI
 };
-
 
 export const createReserve = async (
   roomTypeId: string,
@@ -437,8 +437,6 @@ export const createReserve = async (
   }
     redirect(`/checkout/${bookingId}`);
 };
-
-
 
 export const createReserveByFloorPlan = async ()=>{
   

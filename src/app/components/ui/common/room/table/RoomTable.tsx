@@ -23,6 +23,9 @@ const RoomTable = async () => {
               room type
             </th>
             <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
+              bed type
+            </th>
+            <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
               status
             </th>
             <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase">
@@ -36,6 +39,7 @@ const RoomTable = async () => {
               <td className="px-6 py-4">{room.roomNumber}</td>
               <td className="px-6 py-4">{room.floor}</td>     
               <td className="px-6 py-4">{roomTypes!.find(rt => rt.id === room.roomTypeId)?.name}</td>
+              <td className="px-6 py-4">{room.bedType}</td>
               <td className="px-6 py-4 capitalize">{room.status.toLowerCase()}</td>
               <td className="px-6 py-4 text-right">
                 <div className="flex justify-center items-center gap-1.5">
