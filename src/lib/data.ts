@@ -205,7 +205,6 @@ export const getBookingById = async (bookingId: string) => {
                     name: true,
                     price: true,
                     image: true,
-                    bedType: true
                   }
                 }
               }

@@ -206,7 +206,7 @@ const EditFormRoom = ({room, roomType, bedType}: {room: RoomProps, roomType: Roo
                     
                   {bedType.map((data) => (
                     <option defaultChecked={data === room.bedType} key={data} value={data}>
-                      {data}
+                      {data === "SUPER_KING" ? "SUPER KING" : data}
                     </option>
                   ))}
                 </select>

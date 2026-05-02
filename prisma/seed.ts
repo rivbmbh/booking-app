@@ -1,4 +1,4 @@
-import { PrismaClient, RoomStatus } from "@prisma/client";
+import { BedType, PrismaClient, RoomStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -19,10 +19,10 @@ const roomType = async (type: string) => {
 
 
 async function main() {
-  const TWIN = await roomType("Deluxe Twin")
-  const KING = await roomType("Deluxe Room")
+  const standard = await roomType("Standard")
+  const deluxe = await roomType("Deluxe")
 
-  if (!TWIN || !KING) {
+  if (!standard || !deluxe) {
     throw new Error("Room type tidak ditemukan");
   }
   const twinRooms = [
@@ -42,7 +42,8 @@ async function main() {
       roomNumber,
       floor: 2,
       status: RoomStatus.ACTIVE,
-      roomTypeId: isTwin ? TWIN.id : KING.id 
+      roomTypeId: isTwin ? standard.id : deluxe.id,
+      bedType: isTwin ? BedType.TWIN : BedType.KING
     });
   }
 

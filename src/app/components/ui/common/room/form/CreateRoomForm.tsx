@@ -202,7 +202,7 @@ const CreateRoomForm = ({roomType, bedType}: {roomType: RoomTypeDetailProps[], b
 
                 {bedType.map((data) => (
                   <option key={data} value={data}>
-                    {data}
+                    {data === "SUPER_KING" ? "SUPER KING" : data}
                   </option>
                 ))}
               </select>

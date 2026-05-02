@@ -71,7 +71,7 @@ const FilterRoomsForm = ({ roomTypeOptions, bedTypeOptions, onFilterChange }: Pr
                 <option value="all">All Bed Types</option>
                 {bedTypeOptions.map((bedType) => (
                     <option key={bedType} value={bedType}>
-                        {bedType}
+                        {bedType === "SUPER_KING" ? "SUPER KING" : bedType}
                     </option>
                 ))}
             </select>

@@ -39,7 +39,7 @@ const RoomTable = async () => {
               <td className="px-6 py-4">{room.roomNumber}</td>
               <td className="px-6 py-4">{room.floor}</td>     
               <td className="px-6 py-4">{roomTypes!.find(rt => rt.id === room.roomTypeId)?.name}</td>
-              <td className="px-6 py-4">{room.bedType}</td>
+              <td className="px-6 py-4">   {room.bedType === "SUPER_KING" ? "SUPER KING" : room.bedType}</td>
               <td className="px-6 py-4 capitalize">{room.status.toLowerCase()}</td>
               <td className="px-6 py-4 text-right">
                 <div className="flex justify-center items-center gap-1.5">
