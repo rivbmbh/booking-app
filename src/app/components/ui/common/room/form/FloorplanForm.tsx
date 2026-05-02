@@ -15,12 +15,19 @@ type Props = {
     setEndDate?: React.Dispatch<React.SetStateAction<Date | null>>;
 };
 
-const FloorplanForm = ({ setRoomData, endDate, setEndDate, roomTypeOptions, bedTypeOptions }: Props & { roomTypeOptions: RoomTypeOptionsProps[], bedTypeOptions: string[] }) => {
+type RoomCacheItem = {
+    roomNumber: string;
+    RoomType: {
+        price: number;
+    };
+};
+
+const FloorplanForm = ({ setRoomData, endDate, setEndDate, roomTypeOptions }: Props & { roomTypeOptions: RoomTypeOptionsProps[] }) => {
     const router = useRouter()
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [bookedRooms, setBookedRooms] = useState<string[] | null>([]);
     const [isLoading, setIsLoading] = useState(false)
-    const [roomCache, setRoomCache] = useState<{ [key: string]: [] }>({})
+    const [roomCache, setRoomCache] = useState<{ [key: string]: RoomCacheItem }>({});
     const [selectedRoomsData, setSelectedRoomsData] = useState<string[]>([])
     const [grandPrice, setGrandPrice] = useState("")
     const handleSelectedRoomsData = useCallback((rooms: string[]) => {
@@ -51,38 +58,38 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate, roomTypeOptions, bedT
 
     const timeout = setTimeout(() => {
         const getDataSelectedRooms = async () => {
-        try {
-            if (!selectedRoomsData || selectedRoomsData.length === 0) return;
-            if (!selectedRoomsData || selectedRoomsData.length === 0) {
-                setRoomData([]);
-                return;
-            }
-            const roomNumbers = selectedRoomsData.map((room) => room.replace("room-", ""))
-            const res = await fetch("/api/room/selected", {
-                method: "POST",
-                headers:{
-                "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ roomNumbers }),
-                signal: controller.signal
-            })
-    
-            const data = await res.json()
-            const newRooms = data.filter((room: { roomNumber: string }) => !roomCache[room.roomNumber])
-
-            setRoomCache((prev) => {
-                const newCache = { ...prev }
-                newRooms.forEach((room: { roomNumber: string }) => {
-                newCache[room.roomNumber] = room
+            try {
+                if (!selectedRoomsData || selectedRoomsData.length === 0) return;
+                if (!selectedRoomsData || selectedRoomsData.length === 0) {
+                    setRoomData([]);
+                    return;
+                }
+                const roomNumbers = selectedRoomsData.map((room) => room.replace("room-", ""))
+                const res = await fetch("/api/room/selected", {
+                    method: "POST",
+                    headers:{
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ roomNumbers }),
+                    signal: controller.signal
                 })
-                return newCache
-            })
-            setRoomData(data);
-        } catch (err) {
-            if (err.name !== "AbortError") {
-                console.error(err)
+        
+                const data = await res.json()
+                const newRooms = data.filter((room:  RoomCacheItem) => !roomCache[room.roomNumber])
+
+                setRoomCache((prev) => {
+                    const newCache = { ...prev }
+                    newRooms.forEach((room: RoomCacheItem ) => {
+                    newCache[room.roomNumber] = room
+                    })
+                    return newCache
+                })
+                setRoomData(data);
+            } catch (err) {
+            if (err instanceof Error && err.name !== "AbortError") {
+                    console.error(err);
+                }
             }
-        }
         }
         getDataSelectedRooms()
     }, 300)
@@ -163,7 +170,11 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate, roomTypeOptions, bedT
         
 
     } catch (error) {
-        alert(error.message)
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error instanceof Error ? error.message : "Failed to filter rooms"
+        });
     } finally{
         setIsLoading(false)
     }
@@ -202,7 +213,7 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate, roomTypeOptions, bedT
                 
                 <div className="w-full min-[1170px]:w-max md:ml-2 overflow-auto px-2 pt-2 mt-8">
                     <h5 className="mb-1.5">Filter Rooms : </h5>
-                    <FilterRoomsForm roomTypeOptions={roomTypeOptions} bedTypeOptions={bedTypeOptions} onFilterChange={handleFilterChange} />
+                    <FilterRoomsForm roomTypeOptions={roomTypeOptions} onFilterChange={handleFilterChange} />
                     <div className="flex items-center gap-2 mb-2 mt-6">
                         <p className="rounded-full bg-primary w-7 h-7 text-center font-semibold text-white border-2 border-black">2</p>
                         <p className="tracking-wider text-base font-semibold">Choose Room</p>

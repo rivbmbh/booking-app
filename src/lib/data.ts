@@ -110,6 +110,11 @@ export const getRoomTypeOptions = async () => {
       select:{
         id: true,
         name: true,
+        rooms: {
+          select: {
+            bedType: true
+          }
+        }
       }
     })
     return result

@@ -9,7 +9,7 @@ type Props = {
   resetTrigger?: Date | null;
   bookedRooms: string[];
   filteredRooms: string[];
-  setSelectedRoomsData: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedRoomsData: (data: string[]) => void;
 };
 
 const FloorPlan2nd = ({ endDate, resetTrigger, bookedRooms, filteredRooms, setSelectedRoomsData }: Props) => {

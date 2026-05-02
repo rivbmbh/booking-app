@@ -5,7 +5,7 @@ import Card from "../card/Card";
 import FloorPlans from "./sketch/FloorPlans";
 import { RoomTypeOptionsProps, RoomTypeProps } from "@/types/room";
 
-const RoomContent = ({rooms, roomTypeOptions, bedTypeOptions}: {rooms: RoomTypeProps[], roomTypeOptions: RoomTypeOptionsProps[], bedTypeOptions: string[]}) => {
+const RoomContent = ({rooms, roomTypeOptions}: {rooms: RoomTypeProps[], roomTypeOptions: RoomTypeOptionsProps[]}) => {
   const [view, setView] = useState("floorplan")
   return (
    <>
@@ -37,7 +37,7 @@ const RoomContent = ({rooms, roomTypeOptions, bedTypeOptions}: {rooms: RoomTypeP
       </div>
     )}
     <div className="px-0 pt-3 pb-5 md:px-8 md:pb-8 md:pt-4">
-      {view == "floorplan" && <FloorPlans roomTypeOptions={roomTypeOptions} bedTypeOptions={bedTypeOptions}/>}
+      {view == "floorplan" && <FloorPlans roomTypeOptions={roomTypeOptions} />}
     </div>
    </>
   );

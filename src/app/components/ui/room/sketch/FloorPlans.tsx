@@ -5,7 +5,7 @@ import { RoomTypeOptionsProps } from "@/types/room";
 import "react-datepicker/dist/react-datepicker.css";
 
 
-const FloorPlans = ({ roomTypeOptions, bedTypeOptions }: { roomTypeOptions: RoomTypeOptionsProps[], bedTypeOptions: string[] }) => {
+const FloorPlans = ({ roomTypeOptions }: { roomTypeOptions: RoomTypeOptionsProps[] }) => {
   const [roomData, setRoomData] = useState<string[]>([])
   const [endDateForReset, setEndDateForReset] = useState<Date | null>(null)
 
@@ -21,7 +21,7 @@ const FloorPlans = ({ roomTypeOptions, bedTypeOptions }: { roomTypeOptions: Room
   
   return (
     <>
-      <FloorplanForm setRoomData={handleChangeRoomData} endDate={endDateForReset} setEndDate={setEndDateForReset} roomTypeOptions={roomTypeOptions} bedTypeOptions={bedTypeOptions}/>   
+      <FloorplanForm setRoomData={handleChangeRoomData} endDate={endDateForReset} setEndDate={setEndDateForReset} roomTypeOptions={roomTypeOptions} />   
       <RoomSidebar roomData={roomData} />
     </>
   );

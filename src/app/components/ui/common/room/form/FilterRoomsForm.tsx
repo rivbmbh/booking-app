@@ -1,18 +1,40 @@
 import { RoomTypeOptionsProps } from "@/types/room"
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Swal from "sweetalert2";
 
 type Props = {
     roomTypeOptions: RoomTypeOptionsProps[];
-    bedTypeOptions: string[];
     onFilterChange: (data: string[]) => void;
 }
 
-const FilterRoomsForm = ({ roomTypeOptions, bedTypeOptions, onFilterChange }: Props) => {
+const FilterRoomsForm = ({ roomTypeOptions, onFilterChange }: Props) => {
     const [selectedRoomType, setSelectedRoomType] = useState("all");
     const [selectedBedType, setSelectedBedType] = useState("all");
     const [isLoading, setIsLoading] = useState(false);
 
+    // Hitung bed type options berdasarkan room type yang dipilih
+    const availableBedTypes = useMemo(() => {
+        if (selectedRoomType === "all") {
+            // Kalau "all", tampilkan semua bed type unik dari semua room type
+            const allBedTypes = roomTypeOptions.flatMap((rt) =>
+                rt.rooms.map((room) => room.bedType)
+            );
+            return [...new Set(allBedTypes)]; // hapus duplikat
+        }
+
+        // Kalau room type tertentu dipilih, tampilkan bed type dari room type itu saja
+        const selected = roomTypeOptions.find((rt) => rt.id === selectedRoomType);
+        if (!selected) return [];
+
+        const bedTypes = selected.rooms.map((room) => room.bedType);
+        return [...new Set(bedTypes)]; // hapus duplikat
+    }, [selectedRoomType, roomTypeOptions]);
+
+    // Reset bed type ketika room type berubah
+    const handleRoomTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedRoomType(e.target.value);
+        setSelectedBedType("all"); // ← reset bed type
+    };
 
     const handleApplyFilter = async () => {
         if(selectedRoomType === "all" && selectedBedType === "all"){
@@ -45,7 +67,7 @@ const FilterRoomsForm = ({ roomTypeOptions, bedTypeOptions, onFilterChange }: Pr
             Swal.fire({
                 icon: "error",
                 title: "Error",
-                text: error.message || "Failed to filter rooms"
+                text: error instanceof Error ? error.message : "Failed to filter rooms"
             });
         }
         setIsLoading(false);
@@ -59,7 +81,7 @@ const FilterRoomsForm = ({ roomTypeOptions, bedTypeOptions, onFilterChange }: Pr
 
     return (
         <div className="flex flex-wrap justify-evenly sm:justify-start gap-2 mb-8 md:mb-4 bg-gray-100 rounded-sm items-center my-auto py-4 px-3">
-            <select name="room_type"className="bg-white h-10 px-2 placeholder:text-sm placeholder:text-gray-600 outline-none ring-0 border border-gray-300 rounded-md w-max active:ring-2 active:ring-primary focus:ring-2 focus:ring-primary transition-all duration-200 ease-in-out" value={selectedRoomType} onChange={(e) => setSelectedRoomType(e.target.value)}>
+            <select name="room_type"className="bg-white h-10 px-2 placeholder:text-sm placeholder:text-gray-600 outline-none ring-0 border border-gray-300 rounded-md w-max active:ring-2 active:ring-primary focus:ring-2 focus:ring-primary transition-all duration-200 ease-in-out" value={selectedRoomType} onChange={handleRoomTypeChange}>
                 <option value="all">All Room Types</option>
                 {roomTypeOptions.map((roomType) => (
                     <option key={roomType.id} value={roomType.id}>
@@ -69,7 +91,7 @@ const FilterRoomsForm = ({ roomTypeOptions, bedTypeOptions, onFilterChange }: Pr
             </select>
             <select name="bed_type"className="bg-white h-10 px-2 placeholder:text-sm placeholder:text-gray-600 outline-none ring-0 border border-gray-300 rounded-md w-max active:ring-2 active:ring-primary focus:ring-2 focus:ring-primary transition-all duration-200 ease-in-out" value={selectedBedType} onChange={(e) => setSelectedBedType(e.target.value)}>
                 <option value="all">All Bed Types</option>
-                {bedTypeOptions.map((bedType) => (
+                {availableBedTypes.map((bedType) => (
                     <option key={bedType} value={bedType}>
                         {bedType === "SUPER_KING" ? "SUPER KING" : bedType}
                     </option>
