@@ -104,6 +104,22 @@ export const getRoomType = async () => {
   }
 };
 
+export const getRoomAmenities = async () => {
+  try {
+    const result = await prisma.amenities.findMany({
+      orderBy: { createdAt: "desc"},
+      select:{
+        id: true,
+        name: true,
+        createdAt: true
+      }
+    })
+    return result
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export const getRoomTypeOptions = async () => {
   try {
     const result = await prisma.roomType.findMany({

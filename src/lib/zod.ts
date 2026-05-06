@@ -93,3 +93,28 @@ phone: z
   })
   .optional(),
 });
+
+const AmenityNameSchema = z
+  .string()
+  .min(1, "Amenity name is required.")
+  .max(100, "Amenity name must be less than 100 characters.")
+  .trim()
+
+export const BatchAmenitiesSchema = z.object({
+  amenities: z
+    .array(AmenityNameSchema)
+    .min(1, "At least 1 amenity is required.")
+    .max(5, "Maximum 5 amenities at a time.")
+    .refine(
+      items => new Set(items.map(i => i.toLowerCase())).size === items.length,
+      { message: "Duplicate amenity names are not allowed." }
+    ),
+})
+
+export const UpdateAmenitySchema = z.object({
+  name: AmenityNameSchema,
+})
+
+export const IdsSchema = z
+    .array(z.string().cuid("Invalid ID format."))
+    .min(1, "At least 1 ID is required.")

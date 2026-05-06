@@ -151,11 +151,27 @@ const NavLink = () => {
                           Room Type
                         </Link>
                       </li>
+                      <li>
+                        <Link
+                          href="/admin/roomamenities"
+                          className="block py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline"
+                        >
+                          Room Amenities
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/admin/roomtype"
+                          className="block py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline"
+                        >
+                          Floorplan
+                        </Link>
+                      </li>
                     </ul>
                     <button 
                       popoverTarget="manage-room" 
                       className="md:mx-auto py-2 px-3 text-gray-800 hover:bg-gray-100 rounded-sm md:hover:bg-transparent md:p-0 hover:font-bold active:underline uppercase flex gap-2 items-center [anchor-name:--manage-room-btn]">
-                        Manage Room            
+                        Manage        
                         <FaCaretUp
                         className="
                         transition-transform duration-200 ease-in-out

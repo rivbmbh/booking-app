@@ -1,6 +1,6 @@
 "use server";
 
-import { ContactShecma, ReserveSchema, RoomSchema, RoomTypeSchema } from "@/lib/zod";
+import { BatchAmenitiesSchema, ContactShecma, IdsSchema, ReserveSchema, RoomSchema, RoomTypeSchema, UpdateAmenitySchema } from "@/lib/zod";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { del, put } from "@vercel/blob";
@@ -125,6 +125,52 @@ export const saveRoomType = async (
   }
   redirect("/admin/roomtype");
 };
+
+export const saveRoomAmenitiesBatch = async (
+  prevState: unknown,
+  formData: FormData
+) => {
+  const raw = formData.getAll("amenities") as string[]
+
+  const parsed = BatchAmenitiesSchema.safeParse({ amenities: raw })
+
+  if (!parsed.success) {
+    return {
+      error: {
+        amenities: parsed.error.issues[0].message,
+      },
+    }
+  }
+
+  const { amenities } = parsed.data
+
+  try {
+    const existing = await prisma.amenities.findMany({
+      where: {
+        name: { in: amenities, mode: "insensitive" },
+      },
+      select: { name: true },
+    })
+
+    if (existing.length > 0) {
+      const names = existing.map(e => e.name).join(", ")
+      return {
+        error: { amenities: `These amenities already exist: ${names}` },
+      }
+    }
+
+    await prisma.amenities.createMany({
+      data: amenities.map(name => ({ name })),
+    })
+
+    revalidatePath("/admin/roomamenities")
+    return { success: true }
+
+  } catch (error) {
+    console.error(error)
+    return { error: { amenities: "Something went wrong. Please try again." } }
+  }
+}
 
 export const updateRoom = async (
   roomId: string,
@@ -285,6 +331,51 @@ export const updateRoomType = async (
   redirect("/admin/roomtype ");
 };
 
+export const updateAmenity = async (
+  id: string,
+  prevState: unknown,
+  formData: FormData
+) => {
+  const parsed = UpdateAmenitySchema.safeParse({
+    name: formData.get("amenities"),
+  })
+
+  if (!parsed.success) {
+    return {
+      error: {
+        amenities: parsed.error.issues[0].message,
+      },
+    }
+  }
+
+  const { name } = parsed.data
+
+  try {
+    const existing = await prisma.amenities.findFirst({
+      where: {
+        name: { equals: name, mode: "insensitive" },
+        NOT: { id },
+      },
+    })
+
+    if (existing) {
+      return { error: { amenities: "Amenity name already exists." } }
+    }
+
+    await prisma.amenities.update({
+      where: { id },
+      data: { name },
+    })
+
+    revalidatePath("/admin/roomamenities")
+    return { success: true }
+
+  } catch (error) {
+    console.error(error)
+    return { error: { amenities: "Failed to update amenity. Please try again." } }
+  }
+}
+
 export const deleteRoom = async (id: string) => {
   try {
     //hapus data room by id 
@@ -320,6 +411,43 @@ export const deleteRoomType = async (id: string, images: string[]) => {
   }
   revalidatePath("/admin/roomtype"); //auto refresh halaman agar data yang dihapus segera hilang dari UI
 };
+
+export const deleteAmenities = async (ids: string[]) => {
+  const parsed = IdsSchema.safeParse(ids)
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: parsed.error.issues[0].message,
+    }
+  }
+
+  try {
+    const related = await prisma.roomAmenities.findMany({
+      where: { amenitiesId: { in: parsed.data } },
+      select: { Amenities: { select: { name: true } } },
+    })
+
+    if (related.length > 0) {
+      const usedNames = [...new Set(related.map(r => r.Amenities.name))]
+      return {
+        success: false,
+        error: `These amenities are still in use: ${usedNames.join(", ")}`,
+      }
+    }
+
+    const result = await prisma.amenities.deleteMany({
+      where: { id: { in: parsed.data } },
+    })
+
+    revalidatePath("/admin/roomamenities")
+    return { success: true, count: result.count }
+
+  } catch (error) {
+    console.error(error)
+    return { success: false, error: "Cannot delete amenities. Please try again." }
+  }
+}
 
 export const createReserve = async (
   roomTypeId: string,
