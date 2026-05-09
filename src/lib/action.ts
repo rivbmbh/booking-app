@@ -461,45 +461,12 @@ export const createReserve = async (
   if (!session || !session.user || !session.user.id)
     redirect(`/signin?redirect_url=room/${roomTypeId}`);
 
-  //cek ketersediaan kamar untuk tanggal yang dipilih
-  const available = await prisma.room.findFirst({
-    where: {
-      roomTypeId,
-      Reservations: {
-        none: {
-          OR: [
-            {
-              status: "CONFIRMED",
-              AND: [
-                { startDate: { lt: endDate } },
-                { endDate: { gt: startDate } }
-              ]
-            },
-            {
-              status: "PENDING",
-              expiresAt: { gt: new Date() },
-              AND: [
-                { startDate: { lt: endDate } },
-                { endDate: { gt: startDate } }
-              ]
-            }
-          ]
-        }
-      }
-    },
-  });
-  console.info(available)
-  //jika tidak ada kamar yang tersedia untuk tanggal yang dipilih, kembalikan pesan error
-  if (!available) {
-    return { message: "Sorry, no available room for the selected dates, please choose another date" };
-  }
-
-  //validasi input menggunakan zod
   const rawData = {
     name: formData.get("name"),
     phone: formData.get("phone"),
   };
-
+  
+  //validasi input menggunakan zod
   const validateFields = ReserveSchema.safeParse(rawData);
 
   if (!validateFields.success) {
@@ -517,10 +484,43 @@ export const createReserve = async (
   let bookingId;
   try {
     await prisma.$transaction(async (tx) => {
-      await tx.user.update({
-        where: { id: session.user.id },
-        data: { phone },
+      //cek ketersediaan kamar untuk tanggal yang dipilih
+      const available = await prisma.room.findFirst({
+        where: {
+          roomTypeId,
+          Reservations: {
+            none: {
+              OR: [
+                {
+                  status: "CONFIRMED",
+                  AND: [
+                    { startDate: { lt: endDate } },
+                    { endDate: { gt: startDate } }
+                  ]
+                },
+                {
+                  status: "PENDING",
+                  expiresAt: { gt: new Date() },
+                  AND: [
+                    { startDate: { lt: endDate } },
+                    { endDate: { gt: startDate } }
+                  ]
+                }
+              ]
+            }
+          }
+        },
       });
+
+      if (!available) throw new Error("NO_ROOM_AVAILABLE");
+      
+      const user = await tx.user.findUnique({ where: { id: session.user.id } });
+      if(!user?.phone){
+        await tx.user.update({
+          where: { id: session.user.id },
+          data: { phone },
+        });
+      }
 
       const booking = await tx.booking.create({
         data: {
@@ -558,10 +558,10 @@ export const createReserve = async (
 
   } catch (error) {
     console.error("Reservation error:", error);
-
-    return {
-      message: "Something went wrong while creating reservation. Please try again.",
-    };
+    if (error instanceof Error && error.message === "NO_ROOM_AVAILABLE") {
+        return { message: "Sorry, no available room for the selected dates" };
+    }
+    return { message: "Something went wrong. Please try again." };
   }
     redirect(`/checkout/${bookingId}`);
 };

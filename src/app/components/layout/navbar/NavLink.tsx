@@ -1,5 +1,6 @@
 "use client";
 
+import { UserRole } from "@prisma/client";
 import clsx from "clsx";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
@@ -113,7 +114,7 @@ const NavLink = () => {
                   My Reservation
                 </Link>
               </li>
-              {session.user.role === "admin" && (
+              {session.user.role === UserRole.admin && (
                 <>
                   <li className="relative inline-block group">
                     <ul 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./auth";
+import { UserRole } from "@prisma/client";
 
 const protectedRoutes = ["/myreservation", "/checkout", "/admin"];
 
@@ -18,7 +19,7 @@ export async function middleware(request: NextRequest) {
   }
 
   //cek apakah user yang login mencoba mengakses halaman admin
-  if (isLoggedIn && role !== "admin" && pathname.startsWith("/admin")) {
+  if (isLoggedIn && role !== UserRole.admin && pathname.startsWith("/admin")) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

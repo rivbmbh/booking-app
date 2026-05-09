@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { RoomProps } from "@/types/room";
-import { BedType } from "@prisma/client";
+import { BedType, UserRole } from "@prisma/client";
 
 
 export const getAmenities = async () => {
@@ -388,7 +388,7 @@ export const getReservation = async () => {
     !session ||
     !session.user ||
     !session.user.id ||
-    session.user.role !== "admin"
+    session.user.role !== UserRole.admin
   ) {
     throw new Error("Untauthorized Access");
   }

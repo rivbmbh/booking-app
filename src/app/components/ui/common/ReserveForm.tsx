@@ -14,7 +14,6 @@ const ReserveForm = ({
   roomType: RoomTypeDetailProps;
   disabledDate: DisabledDateProps[];
 }) => {
-  console.info(disabledDate)
   const StartDate = new Date();
   const EndDate = addDays(StartDate, 1); // satu hari setelah hari pertama (starDate)
 

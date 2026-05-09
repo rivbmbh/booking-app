@@ -19,7 +19,6 @@ model Room {
   roomNumber String @unique
   floor Int
   status RoomStatus @default(ACTIVE)
-  bedType BedType @default(KING) 
   roomTypeId String
   RoomType RoomType @relation(fields: [roomTypeId], references: [id])
   createdAt DateTime @default(now())
@@ -32,11 +31,13 @@ model RoomType {
   id String @id @default(cuid())
   name String 
   description String @db.Text
+  bedType BedType @default(KING) 
   image String[]
   price Int 
   capacity Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
   RoomAmenities RoomAmenities[]
   rooms Room[]
 }
@@ -116,7 +117,7 @@ model User {
   email         String          @unique
   emailVerified DateTime?
   image         String?
-  role String   @default("user")
+  role UserRole  @default(user)
   phone String?
   accounts Account[]
   Bookings Booking[]
@@ -156,6 +157,12 @@ model Contact{
   updatedAt DateTime @updatedAt
 }
 
+enum UserRole {
+  admin
+  user
+  superadmin
+}
+
 enum RoomStatus {
   ACTIVE
   INACTIVE
@@ -190,7 +197,6 @@ enum BedType {
   DOUBLE
   QUEEN
   KING
-  SUPER_KING
 }
 
 
