@@ -1,4 +1,5 @@
 
+import { formatDate } from '@/lib/utils';
 import { DeleteButton, EditButton } from '../button/Button'
 import { getRooms, getRoomType } from '@/lib/data'
 
@@ -23,10 +24,10 @@ const RoomTable = async () => {
               room type
             </th>
             <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
-              bed type
+              status
             </th>
             <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
-              status
+              updated at
             </th>
             <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase">
               action
@@ -39,8 +40,8 @@ const RoomTable = async () => {
               <td className="px-6 py-4">{room.roomNumber}</td>
               <td className="px-6 py-4">{room.floor}</td>     
               <td className="px-6 py-4">{roomTypes!.find(rt => rt.id === room.roomTypeId)?.name}</td>
-              <td className="px-6 py-4">   {room.bedType === "SUPER_KING" ? "SUPER KING" : room.bedType}</td>
               <td className="px-6 py-4 capitalize">{room.status.toLowerCase()}</td>
+              <td className="px-6 py-4">{formatDate(room.updatedAt.toDateString())}</td>     
               <td className="px-6 py-4 text-right">
                 <div className="flex justify-center items-center gap-1.5">
                     <EditButton id={room.id} url='/admin/room/edit'/>

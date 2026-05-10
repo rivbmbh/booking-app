@@ -19,7 +19,6 @@ if (!formData.get("floor") || !formData.get("roomNumber")) {
     roomNumber: formData.get("roomNumber"),
     floor: parseInt(formData.get("floor") as string),
     status:  formData.get("status"),
-    bedType: formData.get("bedType") as BedType,
     roomType: formData.get("roomType"),
   }
 
@@ -30,7 +29,7 @@ if (!formData.get("floor") || !formData.get("roomNumber")) {
     return { error };
   }
 
-  const { roomNumber, floor,  status, bedType, roomType } = (await validateFields).data!;  
+  const { roomNumber, floor,  status, roomType } = (await validateFields).data!;  
 
   const exists = await isRoomNumberExists(roomNumber);
 
@@ -48,7 +47,6 @@ if (!formData.get("floor") || !formData.get("roomNumber")) {
         roomNumber: roomNumber,
         floor,
         status: status as "ACTIVE" | "INACTIVE",
-        bedType: bedType as BedType,
         roomTypeId: roomType as string,
       }
     })
@@ -72,6 +70,7 @@ export const saveRoomType = async (
     description: formData.get("description"),
     capacity: formData.get("capacity"),
     price: formData.get("price"),
+    bedType: formData.get("bedType"),
     amenities: formData.getAll("amenities"),
   };
 
@@ -81,7 +80,7 @@ export const saveRoomType = async (
     return { error: validateFields.error.flatten().fieldErrors };
   }
 
-  const { name, description, capacity, price, amenities } = validateFields.data;
+  const { name, description, capacity, price, bedType, amenities } = validateFields.data;
 
   try {
     for(const file of files){
@@ -108,6 +107,7 @@ export const saveRoomType = async (
       data: {
         name,
         description,
+        bedType: bedType as BedType,
         capacity,
         price,
         image: imageUrls,
@@ -185,7 +185,6 @@ export const updateRoom = async (
     roomNumber: formData.get("roomNumber"),
     floor: parseInt(formData.get("floor") as string),
     status:  formData.get("status"),
-    bedType: formData.get("bedType") as BedType,
     roomType: formData.get("roomType"),
   }
 
@@ -196,7 +195,7 @@ export const updateRoom = async (
     return { error };
   }
 
-  const { roomNumber, floor, status, bedType, roomType } = (await validateFields).data!;  
+  const { roomNumber, floor, status, roomType } = (await validateFields).data!;  
 
   // cek duplicate khusus update
   const exists = await isRoomNumberExists(roomNumber, roomId);
@@ -216,7 +215,6 @@ export const updateRoom = async (
         roomNumber: roomNumber,
         floor,
         status: status as "ACTIVE" | "INACTIVE",
-        bedType: bedType as BedType,
         roomTypeId: roomType as string,
       }
     })
@@ -235,6 +233,7 @@ export const updateRoomType = async (
   const rawData = {
     name: formData.get("name"),
     description: formData.get("description"),
+    bedType: formData.get("bedType"),
     capacity: formData.get("capacity"),
     price: formData.get("price"),
     amenities: formData.getAll("amenities") as string[],
@@ -246,7 +245,7 @@ export const updateRoomType = async (
   }
 
   //data
-  const { name, description, capacity, price, amenities } = validateFields.data;
+  const { name, description, bedType, capacity, price, amenities } = validateFields.data;
 
   try {
     const allFiles = formData.getAll("image") as File[];
@@ -308,6 +307,7 @@ export const updateRoomType = async (
         data: {
           name,
           description,
+          bedType: bedType as BedType,
           capacity,
           price,
           image: finalImageUrls,

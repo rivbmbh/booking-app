@@ -30,6 +30,9 @@ const RoomTypeTableClient = ({data} : {data: RoomTypeProps[]}) => {
               room type
             </th>
             <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
+              bed type
+            </th>
+            <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
               capacity
             </th>
              <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
@@ -71,6 +74,7 @@ const RoomTypeTableClient = ({data} : {data: RoomTypeProps[]}) => {
                 <td className="px-6 py-4">{v.id}</td>
               )}
               <td className="px-6 py-4">{v.name}</td>
+              <td className="px-6 py-4">{v.bedType}</td>
               <td className="px-6 py-4">{v.capacity}</td>
               <td className="px-6 py-4">{formatCurrency(v.price)}</td>
               {openId === v.id  && (

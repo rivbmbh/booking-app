@@ -7,8 +7,7 @@ import SubmitButton from "../button/SubmitButton";
 
 type FloorLabel = "2nd" | "3rd" | "4th";
 
-const EditFormRoom = ({room, roomType, bedType}: {room: RoomProps, roomType: RoomTypeProps[], bedType: string[]}) => {
-  console.info("room", room);
+const EditFormRoom = ({room, roomType}: {room: RoomProps, roomType: RoomTypeProps[]}) => {
     const [selectedFloor, setSelectedFloor] = useState<FloorLabel | null>(null);
     const roomRef = useRef<HTMLInputElement | null>(null);
   
@@ -157,56 +156,6 @@ const EditFormRoom = ({room, roomType, bedType}: {room: RoomProps, roomType: Roo
                   {roomType.map((data) => (
                     <option defaultChecked={data.id === room.roomTypeId} key={data.id} value={data.id}>
                       {data.name}
-                    </option>
-                  ))}
-                </select>
-  
-                {/* Arrow icon */}
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                </div>
-              </div>
-  
-              {/* Error message */}
-              <div aria-live="polite" aria-atomic="true">
-                <span className="text-sm text-red-500 mt-2 block">
-                  {state?.error?.roomType}
-                </span>
-              </div>
-            </div>
-
-            <div className="w-full mb-4">
-              <label className="block text-sm font-medium text-gray-600 mb-1">
-                Bed Type
-              </label>
-  
-              <div className="relative">
-                <select
-                  name="bedType"
-                  defaultValue={room.bedType}
-                  className={`appearance-none w-full py-2.5 px-4 pr-10 rounded-lg border bg-white
-                  transition-all outline-none
-                  ${state?.error?.bedType
-                    ? "border-red-400 focus:ring-2 focus:ring-red-200"
-                    : "border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"}
-                  text-gray-700 invalid:text-gray-400`}
-                  required
-                >
-                  <option value="" disabled hidden>
-                    Choose Bed Type
-                  </option>
-                    
-                  {bedType.map((data) => (
-                    <option defaultChecked={data === room.bedType} key={data} value={data}>
-                      {data === "SUPER_KING" ? "SUPER KING" : data}
                     </option>
                   ))}
                 </select>

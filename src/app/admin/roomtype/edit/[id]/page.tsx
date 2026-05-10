@@ -7,12 +7,12 @@ const UpdateRoomTypePage = async ({
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const roomId = (await params).id;
-  if (!roomId) return notFound();
+  const roomTypeId = (await params).id;
+  if (!roomTypeId) return notFound();
   return (
     <div className="max-w-screen-2xl px-4 py-16 mt-10 mx-auto">
       <Suspense fallback={<p>Loading...</p>}>
-        <EditRoomType roomId={roomId} />
+        <EditRoomType roomTypeId={roomTypeId} />
       </Suspense>
     </div>
   );

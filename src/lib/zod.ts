@@ -15,9 +15,6 @@ export const RoomSchema = object({
   status: z.enum(["ACTIVE", "INACTIVE"], {
       message: "Status must be one of: ACTIVE or INACTIVE",
     }),
-  bedType: z.nativeEnum(BedType, {
-    message: "Bed type must be one of: KING, QUEEN, TWIN, DOUBLE",
-  }),
   roomType: string().nonempty("Room type is required"),
 });
 
@@ -26,7 +23,9 @@ export const RoomTypeSchema = object({
     .min(6, "Name must be at least 6 characters long")
     .max(100, "Name cannot exceed 100 characters")
     .nonempty("Name is required"),
-
+  bedType: z.nativeEnum(BedType, {
+    message: "Bed type must be one of: KING, QUEEN, TWIN, DOUBLE",
+  }),
   description: string()
     .min(30, "Description must be at least 30 characters long")
     .max(600, "Description cannot exceed 600 characters")
