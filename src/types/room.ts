@@ -8,11 +8,7 @@ export type RoomTypeOptionsProps = Prisma.RoomTypeGetPayload<{
   select: { 
     id: true, 
     name: true, 
-    rooms: {
-      select: {
-        bedType: true
-      }
-    }
+    bedType: true
   }
 }>;
 

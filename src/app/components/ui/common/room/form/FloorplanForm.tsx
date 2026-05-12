@@ -35,7 +35,6 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate, roomTypeOptions }: Pr
     }, [])
 
     const [filterData, setFilterData] = useState<string[]>([])
-    console.info("filterData", filterData)
     const handleFilterChange = useCallback((data: string[]) => {
         setFilterData(data)
     }, [])
