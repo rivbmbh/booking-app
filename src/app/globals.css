@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "react-datepicker/dist/react-datepicker.css";
+@import "swiper/css";
+@import "swiper/css/pagination";
+@import "swiper/css/navigation";
 
 @theme {
   --color-primary-hover: #8c0015;

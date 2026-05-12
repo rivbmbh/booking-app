@@ -50,7 +50,7 @@ const FloorplanForm = ({ setRoomData, endDate, setEndDate, roomTypeOptions }: Pr
     })
 
     setGrandPrice(formatCurrency(totalPrice))
-    }, [selectedRoomsData, roomCache]) // ✅ tambah roomCache sebagai dependency
+    }, [selectedRoomsData, roomCache])
 
     useEffect(() => {
     const controller = new AbortController();

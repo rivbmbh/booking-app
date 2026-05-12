@@ -8,9 +8,7 @@ import { IoCloseCircleSharp, IoCloudUploadOutline } from "react-icons/io5";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper/modules";
 import SubmitButton from "../button/SubmitButton";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
+
 
 const CreateRoomTypeForm = ({ amenities, bedType }: { amenities: Amenities[], bedType: string[] }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);

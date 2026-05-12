@@ -2,7 +2,6 @@ import RoomSidebar from "@/app/components/layout/sidebar/RoomSidebar";
 import FloorplanForm from "../../common/room/form/FloorplanForm";
 import { startTransition, useCallback, useEffect, useState } from "react";
 import { RoomTypeOptionsProps } from "@/types/room";
-import "react-datepicker/dist/react-datepicker.css";
 
 
 const FloorPlans = ({ roomTypeOptions }: { roomTypeOptions: RoomTypeOptionsProps[] }) => {
