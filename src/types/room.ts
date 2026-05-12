@@ -4,6 +4,34 @@ export type RoomTypeProps = Prisma.RoomTypeGetPayload<{
   include: { RoomAmenities: { select: { amenitiesId: true, Amenities: { select: { id:true, name: true } } } } };
 }>;
 
+export type RoomWithDetailsProps = Prisma.RoomGetPayload<{
+  include: {
+    RoomType: {
+      select: {
+        image: true;
+        name: true;
+        price: true;
+        bedType: true;
+        description: true;
+        RoomAmenities: {
+          select: {
+            Amenities: {
+              select: {
+                name: true;
+              };
+            };
+          };
+        };
+      };
+    };
+    Reservations: {
+      select: {
+        price: true;
+      };
+    };
+  };
+}>;
+
 export type RoomTypeOptionsProps = Prisma.RoomTypeGetPayload<{
   select: { 
     id: true, 

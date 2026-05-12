@@ -6,9 +6,10 @@ import { IoCaretDownOutline, IoCaretForward, IoPricetags, } from 'react-icons/io
 import ReadMore from '../../ui/common/ReadMore';
 import { FaCheckCircle } from 'react-icons/fa';
 import { formatCurrency } from '@/lib/utils';
+import { RoomWithDetailsProps } from '@/types/room';
 
 const RoomSidebar = ({roomData }: 
-{ roomData: string[] }) => {
+{ roomData: RoomWithDetailsProps[] }) => {
     const [openIndexes, setOpenIndexes] = useState<number[]>([]);
     const [openSidebar, setOpenSidebar] = useState(false)
     const toggleSidebar = () => {

@@ -20,6 +20,7 @@ export async function POST(req: Request){
                         image: true,
                         name: true,
                         price: true,
+                        bedType: true,
                         description: true,
                         RoomAmenities: {
                             select: {

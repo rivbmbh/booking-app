@@ -7,10 +7,10 @@ import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { formatCurrency } from "@/lib/utils";
 import FilterRoomsForm from "./FilterRoomsForm";
-import { RoomTypeOptionsProps } from "@/types/room";
+import { RoomTypeOptionsProps, RoomWithDetailsProps } from "@/types/room";
 
 type Props = {
-    setRoomData: (data: string[]) => void;
+    setRoomData: (data: RoomWithDetailsProps[]) => void;
     endDate?: Date | null;
     setEndDate?: React.Dispatch<React.SetStateAction<Date | null>>;
 };
