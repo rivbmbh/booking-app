@@ -3,7 +3,6 @@ import { RoomTypeProps } from "@/types/room";
 import Image from "next/image";
 import Link from "next/link";
 import { IoPeopleOutline } from "react-icons/io5";
-import ModalChooseBed from "../common/room/form/ModalChooseBed";
 
 const Card = ({ roomType }: { roomType: RoomTypeProps }) => {
   if (!roomType) return null;
