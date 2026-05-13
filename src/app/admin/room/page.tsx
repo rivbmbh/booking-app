@@ -3,7 +3,18 @@ import RoomTable from "@/app/components/ui/common/room/table/RoomTable";
 import Link from "next/link";
 import React, { Suspense } from "react";
 
-const RoomPage = () => {
+type Props = {
+  searchParams: Promise<{
+    sortBy?: string;
+    sortOrder?: string;
+    search?: string;
+    floor?: string;
+    roomTypeId?: string;
+  }>;
+};
+
+const RoomPage = async ({ searchParams }: Props) => {
+  const resolvedParams = await searchParams
   return (
     <div className="max-w-screen-2xl px-4 py-16 mt-10 mx-auto">
       <div className="flex items-center justify-between">
@@ -18,7 +29,7 @@ const RoomPage = () => {
         </div>
       </div>
       <Suspense fallback={<p>Loading data...</p>}>
-        <RoomTable />
+        <RoomTable searchParams={resolvedParams} />
       </Suspense>
     </div>
   );

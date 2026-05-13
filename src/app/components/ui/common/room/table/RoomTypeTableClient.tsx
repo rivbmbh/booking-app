@@ -1,7 +1,7 @@
 "use client"
 import { formatCurrency, formatDate } from '@/lib/utils'
 import Image from 'next/image'
-import { DeleteButton, EditButton } from '../button/Button'
+import { DeleteButton, EditButton } from '../button/Buttons'
 import { useState } from 'react'
 import { FaEye, FaEyeSlash } from 'react-icons/fa6'
 import { RoomTypeProps } from '@/types/room'

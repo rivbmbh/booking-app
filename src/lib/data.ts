@@ -17,17 +17,36 @@ export const getAmenities = async () => {
   }
 };
 
-export const getRooms = async () : Promise<RoomProps[]> => {
+export const getRooms = async (
+  sortBy: string = "updatedAt",
+  sortOrder: string = "desc",
+  search: string = "",
+  floor: string = "all",
+  roomTypeId: string = "all"
+): Promise<RoomProps[]> => {
   try {
+    const validSortFields = ["updatedAt", "roomNumber", "floor", "status"];
+    const field = validSortFields.includes(sortBy) ? sortBy : "updatedAt";
+    const order = sortOrder === "asc" ? "asc" : "desc";
+
     const result = await prisma.room.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        RoomType: true,
-      }
+      orderBy: { [field]: order },
+      where: {
+        ...(search && {
+          roomNumber: { contains: search }
+        }),
+        ...(floor !== "all" && {
+          floor: parseInt(floor)
+        }),
+        ...(roomTypeId !== "all" && {
+          roomTypeId
+        }),
+      },
+      include: { RoomType: true },
     });
     return result;
   } catch (error) {
-    console.info(error);
+    console.error(error);
     return [];
   }
 };
