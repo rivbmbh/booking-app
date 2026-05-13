@@ -43,9 +43,9 @@ const SearchFilterBar = ({ roomTypeOptions }: Props) => {
         className="border border-gray-300 rounded-md py-2 px-2 tracking-wider font-normal focus:outline-none focus:ring-2 focus:ring-primary text-gray-500 uppercase text-sm"
       >
         <option value="all">All Floors</option>
-        <option value="1">Floor 1</option>
         <option value="2">Floor 2</option>
         <option value="3">Floor 3</option>
+        <option value="4">Floor 4</option>
       </select>
       <select
         name="roomTypes"
