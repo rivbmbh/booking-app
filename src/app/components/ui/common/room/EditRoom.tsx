@@ -14,7 +14,7 @@ const EditRoom = async ({ roomId }: { roomId: string }) => {
     <div>
       <div className="flex items-end gap-2 mb-3">
         <PreviousButton />
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">Edit a Room</h1>
+      <h1 className="text-3xl font-bold text-gray-800">Edit a Room</h1>
       </div>
       <EditFormRoom room={room} roomType={roomType} />
     </div>

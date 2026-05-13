@@ -4,19 +4,47 @@ import z, { array, coerce, object, string } from "zod";
 export const RoomSchema = object({
   roomNumber: string()
     .min(1, "Room number must be at least 1 character long")
-    .max(100, "Room number cannot exceed 100 characters")
     .nonempty("Room number is required"),
-    
   floor: coerce
     .number()
     .int("Floor must be an integer")
     .gt(0, "Floor must be greater than zero"),
-  
   status: z.enum(["ACTIVE", "INACTIVE"], {
-      message: "Status must be one of: ACTIVE or INACTIVE",
-    }),
+    message: "Status must be one of: ACTIVE or INACTIVE",
+  }),
   roomType: string().nonempty("Room type is required"),
-});
+}).superRefine((data, ctx) => {
+  const num = parseInt(data.roomNumber)
+  
+  if (isNaN(num)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Room number must be a number",
+      path: ["roomNumber"],
+    })
+    return
+  }
+
+  const floorFromRoom = Math.floor(num / 100)  // lantai dari roomNumber
+  const roomNum = num % 100                     // nomor urut kamar
+
+  // cek apakah lantai dari roomNumber sesuai dengan floor yang dipilih
+  if (floorFromRoom !== data.floor) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `Room number must start with ${data.floor} (e.g. ${data.floor}01-${data.floor}50)`,
+      path: ["roomNumber"],
+    })
+  }
+
+  if (roomNum < 1 || roomNum > 50) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `Room number must be in range ${data.floor}01-${data.floor}50`,
+      path: ["roomNumber"],
+    })
+  }
+})
 
 export const RoomTypeSchema = object({
   name: string()
