@@ -112,7 +112,8 @@ export const getRoomType = async () => {
         },
         rooms: {
           select: { 
-            id: true 
+            id: true,
+            status: true
           },
         }
       }

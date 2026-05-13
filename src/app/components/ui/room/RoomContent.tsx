@@ -4,9 +4,13 @@ import { useState } from "react";
 import Card from "../card/Card";
 import FloorPlans from "./sketch/FloorPlans";
 import { RoomTypeOptionsProps, RoomTypeProps } from "@/types/room";
+import { RoomStatus } from "@prisma/client";
 
-const RoomContent = ({rooms, roomTypeOptions}: {rooms: RoomTypeProps[], roomTypeOptions: RoomTypeOptionsProps[]}) => {
-  const [view, setView] = useState("floorplan")
+const RoomContent = ({roomTypes, roomTypeOptions}: {roomTypes: RoomTypeProps[], roomTypeOptions: RoomTypeOptionsProps[]}) => {
+  const [view, setView] = useState("card")
+  const availableRooms = roomTypes.filter((room) =>
+  room.rooms.some((r) => r.status === RoomStatus.ACTIVE)
+)
   return (
    <>
    {/* toogle view */}
@@ -31,9 +35,13 @@ const RoomContent = ({rooms, roomTypeOptions}: {rooms: RoomTypeProps[], roomType
 
     {view == "card" && (
       <div className="grid gap-5 md:grid-cols-3 px-8 pb-8 pt-4">
-          {rooms.map((room) => (
-              <Card key={room.id} roomType={room}/>
-          ))}
+          {availableRooms.length > 0 ? (
+            availableRooms.map((room) => (
+              <Card key={room.id} roomType={room} />
+            ))
+          ) : (
+            <p className="text-gray-500 col-span-3 text-center">No rooms available</p>
+          )}
       </div>
     )}
     <div className="px-0 pt-3 pb-5 md:px-8 md:pb-8 md:pt-4">
