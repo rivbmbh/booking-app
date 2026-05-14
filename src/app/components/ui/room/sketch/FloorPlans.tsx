@@ -1,26 +1,20 @@
 import RoomSidebar from "@/app/components/layout/sidebar/RoomSidebar";
-import FloorplanForm from "../../common/room/form/FloorplanForm";
-import { startTransition, useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { RoomTypeOptionsProps, RoomWithDetailsProps } from "@/types/room";
+import FloorplanForm from "../../common/room/form/floorplanform";
 
 
 const FloorPlans = ({ roomTypeOptions }: { roomTypeOptions: RoomTypeOptionsProps[] }) => {
   const [roomData, setRoomData] = useState<RoomWithDetailsProps[]>([])
-  const [endDateForReset, setEndDateForReset] = useState<Date | null>(null)
 
   const handleChangeRoomData = useCallback((data: RoomWithDetailsProps[]) => {
     setRoomData(data)
   }, [])
-
-  useEffect(() => {
-    startTransition(() => {
-      setRoomData([]);
-    });
-  }, [endDateForReset]);
-  
+ 
   return (
     <>
-      <FloorplanForm setRoomData={handleChangeRoomData} endDate={endDateForReset} setEndDate={setEndDateForReset} roomTypeOptions={roomTypeOptions} />   
+      {/* <FloorplanForm setRoomData={handleChangeRoomData} endDate={endDateForReset} setEndDate={setEndDateForReset} roomTypeOptions={roomTypeOptions} />    */}
+      <FloorplanForm setRoomData={handleChangeRoomData} roomTypeOptions={roomTypeOptions} />
       <RoomSidebar roomData={roomData} />
     </>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { updateRoomType } from "@/lib/action";
-import { RoomTypeProps } from "@/types/room";
+import { RoomTypeByIdProps } from "@/types/room";
 import { Amenities } from "@prisma/client";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -17,13 +17,15 @@ const EditFormRoomType
   bedType
 }: {
   amenities: Amenities[];
-  roomType: RoomTypeProps;
+  roomType: RoomTypeByIdProps;
   bedType: string[]
 }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [previews, setPreviews] = useState<string[]>(roomType.image || []);
   const [existingUrls, setExistingUrls] = useState<string[]>(roomType.image || []);
   const [newFiles, setNewFiles] = useState<File[]>([]);
+
+  console.info(roomType)
 
   const handlePreview = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(e.target.files || [])
