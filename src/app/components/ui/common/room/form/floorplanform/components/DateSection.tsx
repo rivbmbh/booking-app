@@ -1,4 +1,4 @@
-import RoomColorDescription from "@/app/components/ui/room/sketch/RoomColorDescription";
+import RoomColorDescription from "@/app/components/ui/room/RoomColorDescription";
 import { DatePicker } from "react-datepicker";
 import SectionLabel from "./SectionLabel";
 

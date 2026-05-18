@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Card from "../card/Card";
-import FloorPlans from "./sketch/FloorPlans";
+import FloorPlans from "./floorplans/FloorPlans";
 import { RoomTypeOptionsProps, RoomTypeProps } from "@/types/room";
 import { RoomStatus } from "@prisma/client";
 

@@ -1,4 +1,4 @@
-import FloorPlan2nd from "@/app/components/ui/room/sketch/floorplans/Floor2nd";
+import FloorPlan2nd from "@/app/components/ui/room/floorplans/floorplan2nd";
 import { RoomTypeOptionsProps } from "@/types/room";
 import FilterRoomsForm from "../../FilterRoomsForm";
 import SectionLabel from "./SectionLabel";
