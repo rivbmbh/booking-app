@@ -159,6 +159,27 @@ export const getBedType = async () => {
   return Object.values(BedType);
 };
 
+// export const getRoomBedTypes = async () => {
+//   try {
+//     const rooms = await prisma.room.findMany({
+//       select: {
+//         roomNumber: true,
+//         RoomType: {
+//           select: {
+//             bedType: true,
+//           }
+//         }
+//       },
+//     });
+//     return rooms.reduce((acc, room) => {
+//     acc[room.roomNumber] = room.RoomType.bedType.toLowerCase();
+//     return acc;
+//   }, {} as Record<string, string>);
+//   } catch (error) {
+//     console.info(error);
+//   }
+// }
+
 export const getRoomTypeById = async (roomId: string) => {
   try {
     const result = await prisma.roomType.findUnique({
