@@ -52,7 +52,7 @@ const MyReserveList = async () => {
           </div>
           <div className="flex flex-col mb-4  items-start bg-white md:flex-row md:w-full">
             <Image
-              src={reservation.Room.RoomType?.image}
+              src={reservation.Room.RoomType?.image[0]}
               width={500}
               height={300}
               className="object-cover w-full h-60 md:h-auto md:w-1/3 md:rounded-none"
