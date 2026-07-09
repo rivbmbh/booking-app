@@ -1,6 +1,7 @@
 import { formatCurrency, formatDate } from '@/lib/utils'
 import Image from 'next/image'
 import CountdownPaid from './CountdownPaid';
+import { BookingStatus } from '@prisma/client';
 
 type props = {
     roomType?: string,
@@ -8,13 +9,13 @@ type props = {
     startDate?: Date | string,
     endDate?: Date | string,
     price?: number,
-    paymentStatus?: string,
+    bookingStatus?: string,
     roomNumber?: string,
     expiresAt?: Date,
     // extraAmenities?: number
 }
 
-const CardReservation = ({roomType, image, startDate, endDate, price, paymentStatus, roomNumber, expiresAt}: props) => {
+const CardReservation = ({roomType, image, startDate, endDate, price, bookingStatus, roomNumber, expiresAt}: props) => {
 
     function calculateDuration(startDate: string, endDate: string): number {
         const start = new Date(startDate);
@@ -93,11 +94,15 @@ const CardReservation = ({roomType, image, startDate, endDate, price, paymentSta
                         </tr>
                     </tbody>
                 </table>
-                {paymentStatus !== 'PAID' && (
-                    <div className="absolute bottom-8 left-0 sm:left-5 flex justify-center w-full -rotate-12 sm:rotate-0">
-                        <Image src="/CONFIRMED.png" width={320} height={100} alt="payment status" />
-                    </div>
-                )}
+            {bookingStatus === BookingStatus.CONFIRMED ? (
+            <div className="absolute bottom-8 left-0 sm:left-5 flex justify-center w-full -rotate-12 sm:rotate-0">
+                <Image src="/CONFIRMED.png" width={320} height={100} alt="payment status" />
+            </div>
+            ) : bookingStatus === BookingStatus.CANCELLED || bookingStatus === BookingStatus.EXPIRED ? (
+            <div className="absolute bottom-8 left-0 sm:left-5 flex justify-center w-full -rotate-12 sm:rotate-0">
+                <Image src="/CANCEL.png" width={320} height={100} alt="payment status" />
+            </div>
+            ) : null}
             </div>
         </div>
     )

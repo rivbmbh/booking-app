@@ -54,7 +54,7 @@ const ListReservation = async () => {
                   startDate={reservation.startDate.toISOString()}
                   endDate={reservation.endDate.toISOString()}
                   price={reservation.price}
-                  paymentStatus={item.Payment?.status}
+                  bookingStatus={item.status}
                   roomNumber={reservation.Room.roomNumber}
                   expiresAt={reservation.expiresAt}
                 />

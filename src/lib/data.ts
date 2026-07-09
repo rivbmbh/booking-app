@@ -244,17 +244,20 @@ export const getRoomTypeDetailById = async (roomId: string) => {
 };
 
 export const getBookingById = async (bookingId: string) => {
-  if(!bookingId){
-    throw new Error("ID undefined")
+  if (!bookingId) {
+    throw new Error("ID undefined");
   }
 
   try {
-    const result = await prisma.booking.findMany({
+    const result = await prisma.booking.findUnique({
       where: {
-        id: bookingId
+        id: bookingId,
       },
       include: {
         Reservations: {
+          where: {
+            status: "CONFIRMED", // ← hanya tampilkan reservation yang aktif
+          },
           include: {
             Room: {
               include: {
@@ -263,31 +266,28 @@ export const getBookingById = async (bookingId: string) => {
                     name: true,
                     price: true,
                     image: true,
-                  }
-                }
-              }
-            }
-          }
+                  },
+                },
+              },
+            },
+          },
         },
         User: {
           select: {
             name: true,
             email: true,
-            phone: true
-          }
+            phone: true,
+          },
         },
-        Payment: true
+        Payment: true,
       },
-      orderBy: {
-        updatedAt: "asc"
-      }
-    })
+    });
 
-    return result
+    return result;
   } catch (error) {
-    console.info(error)
+    console.info(error);
   }
-}
+};
 
 export const getReservationById = async (id: string) => {
   try {
