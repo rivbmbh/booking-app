@@ -98,9 +98,13 @@ const CardReservation = ({roomType, image, startDate, endDate, price, bookingSta
             <div className="absolute bottom-8 left-0 sm:left-5 flex justify-center w-full -rotate-12 sm:rotate-0">
                 <Image src="/CONFIRMED.png" width={320} height={100} alt="payment status" />
             </div>
-            ) : bookingStatus === BookingStatus.CANCELLED || bookingStatus === BookingStatus.EXPIRED ? (
+            ) : bookingStatus === BookingStatus.CANCELLED ? (
             <div className="absolute bottom-8 left-0 sm:left-5 flex justify-center w-full -rotate-12 sm:rotate-0">
                 <Image src="/CANCEL.png" width={320} height={100} alt="payment status" />
+            </div>
+            ) :  bookingStatus === BookingStatus.EXPIRED ? (
+            <div className="absolute bottom-8 left-0 sm:left-5 flex justify-center w-full -rotate-12 sm:rotate-0">
+                <Image src="/EXPIRED.png" width={320} height={100} alt="payment status" />
             </div>
             ) : null}
             </div>

@@ -25,7 +25,7 @@ const CheckoutDetail = async ({ bookingId }: { bookingId: string }) => {
         {/* Jika expired/cancelled tampilkan banner peringatan */}
         {isExpiredOrCancelled && (
           <div className="w-full px-4 py-3 rounded-lg mb-6 text-center">
-            <Image src="/headache.png" alt="Expired Booking" width={100} height={100} className="mx-auto" />
+            <Image src="/sad-icon.webp" alt="Expired Booking" width={100} height={100} className="mx-auto" />
             <p className="font-bold text-lg">Booking {booking.status}</p>
             <p className="text-sm">Payment time has expired. Please create a new booking.</p>
           </div>
