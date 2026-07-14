@@ -1,19 +1,12 @@
 
 import RoomTable from "@/app/components/ui/common/room/table/RoomTable";
+import { SearchParamsProps } from "@/types/room";
 import Link from "next/link";
 import React, { Suspense } from "react";
 
-type Props = {
-  searchParams: Promise<{
-    sortBy?: string;
-    sortOrder?: string;
-    search?: string;
-    floor?: string;
-    roomTypeId?: string;
-  }>;
-};
 
-const RoomPage = async ({ searchParams }: Props) => {
+
+const RoomPage = async ({ searchParams }: SearchParamsProps) => {
   const resolvedParams = await searchParams
   return (
     <div className="max-w-screen-2xl px-4 py-16 mt-10 mx-auto">

@@ -1,74 +1,101 @@
-import { getReservation } from "@/lib/data";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import Image from "next/image";
+import React from 'react'
+import { getReservation, getRoomTypeOptions } from '@/lib/data';
+import { formatDate } from '@/lib/utils';
+import SearchFilterBar from '../room/form/SearchFilterBar';
+import SortButton from '../room/button/SortButton';
+import { BookingStatus } from '@prisma/client';
 
-const ReservationList = async () => {
-  const reservation = await getReservation();
-  if (!reservation?.length) return <p>No Reservation Found</p>;
+type Props = {
+  searchParams: {
+    sortBy?: string;
+    sortOrder?: string;
+    search?: string;
+    floor?: string;
+    roomTypeId?: string;
+  };
+};
+
+const ReservationList = async ({ searchParams }: Props) => {
+  const {
+    sortBy = "updatedAt",
+    sortOrder = "desc",
+    search = "",
+    floor = "all",
+    roomTypeId = "all",
+  } = await searchParams;
+
+  const [reservation, roomTypeOptions] = await Promise.all([
+    getReservation(sortBy, sortOrder, search, floor, roomTypeId),
+    getRoomTypeOptions(),
+  ]);
+
   return (
     <div className="bg-white p-4 mt-5 shadow-sm">
-      <table className="w-full divide-y divide-gray-200">
-        <thead>
-          <tr>
-            <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
-              image
-            </th>
-            <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
-              name
-            </th>
-            <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
-              arrival
-            </th>
-            <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
-              departure
-            </th>
-            <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
-              room name
-            </th>
-            <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
-              price
-            </th>
-            <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
-              created at
-            </th>
-            <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase">
-              status
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200 ">
-          {reservation.map((data) => (
-            <tr key={data.id} className="hover:bg-gray-100">
-              <td className="px-6 py-4">
-                <div className="h-20 w-32 relative">
-                  <Image
-                    src={data.Room.image}
-                    fill
-                    sizes="20vw"
-                    alt="room image"
-                    className="object-cover"
-                  />
-                </div>
-              </td>
-              <td className="px-6 py-4">{data.User.name}</td>
-              <td className="px-6 py-4">
-                {formatDate(data.startDate.toISOString())}
-              </td>
-              <td className="px-6 py-4">
-                {formatDate(data.endDate.toISOString())}
-              </td>
-              <td className="px-6 py-4">{data.Room.name}</td>
-              <td className="px-6 py-4">{formatCurrency(data.price)}</td>
-              <td className="px-6 py-4">
-                {formatDate(data.createdAt.toISOString())}
-              </td>
-              <td className="px-6 py-4 text-right">
-                <span className="capitalize">{data.Payment?.status}</span>
-              </td>
+      <div className="bg-white p-4 mt-5 shadow-sm w-full overflow-auto">
+        <SearchFilterBar roomTypeOptions={roomTypeOptions ?? []} />
+        <table className="w-full divide-y divide-gray-200">
+          <thead>
+            <tr>
+              <th className="px-1 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">Name</th>
+              <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">Room Type</th>
+              <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
+                <SortButton label="Floor" field="floor" />
+              </th>
+              <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
+                <SortButton label="Room Number" field="roomNumber" />
+              </th>
+              <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
+                <SortButton label="Arrival" field="startDate" />
+              </th>
+              <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">
+                <SortButton label="Departure" field="endDate" />
+              </th>
+              <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase text-left">Payment Status</th>
+              <th className="px-6 py-3 w-32 text-sm font-bold text-gray-700 uppercase">Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {!reservation?.length ? (
+              <tr>
+                <td colSpan={8} className="text-center text-gray-500 py-10">
+                  No reservations match your filter.
+                </td>
+              </tr>
+            ) : (
+              reservation.map((res) => (
+                <tr key={res.id} className="hover:bg-gray-100">
+                  <td className="px-6 py-4">{res.guestName ?? res.Booking?.User?.name}</td>
+                  <td className="px-6 py-4">{res.Room?.RoomType?.name}</td>
+                  <td className="px-6 py-4">{res.Room?.floor}</td>
+                  <td className="px-6 py-4">{res.Room?.roomNumber}</td>
+                  <td className="px-6 py-4">{formatDate(res.startDate.toISOString())}</td>
+                  <td className="px-6 py-4">{formatDate(res.endDate.toISOString())}</td>
+                  <td
+                    className={`px-6 py-4 uppercase tracking-widest ${
+                      res.Booking?.status === BookingStatus.CONFIRMED || res.Booking?.status === BookingStatus.PENDING
+                        ? ""
+                        : "text-primary font-semibold"
+                    }`}
+                  >
+                    {res.Booking?.Payment?.status ?? "-"}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-center items-center gap-1.5">
+                      <button className="underline active:scale-105 text-black font-semibold text-sm tracking-widest">
+                        Detail
+                      </button>
+                      <span className="text-gray-800 px-2">|</span>
+                      <button className="underline hover:text-primary-hover active:scale-105 text-primary font-semibold text-sm tracking-widest">
+                        Cancel
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

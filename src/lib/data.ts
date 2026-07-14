@@ -70,7 +70,7 @@ export const getAvailableRooms = async (startDate: Date, endDate: Date) => {
   try {
     const availableRooms = await prisma.room.findMany({
       where: {
-        Reservation: {
+        Reservations: {
           none: {
             status: {
               in: ["PENDING", "CONFIRMED"]
@@ -392,13 +392,17 @@ export const getReservationByUserId = async () => {
 
 export const getRevenueAndReserve = async () => {
   try {
-    const result = await prisma.reservation.aggregate({
+    const result = await prisma.booking.aggregate({
       _count: true,
-      _sum: { price: true },
-      where: { Payment: { status: { not: "failure" } } },
+      _sum: { totalPrice: true },
+      where: {
+        Payment: {
+          status: { not: "failed" },
+        },
+      },
     });
     return {
-      revenue: result._sum.price || 0,
+      revenue: result._sum.totalPrice || 0,
       reserve: result._count,
     };
   } catch (error) {
@@ -408,19 +412,28 @@ export const getRevenueAndReserve = async () => {
 
 export const getTotalCustomers = async () => {
   try {
-    const result = await prisma.reservation.findMany({
+    const result = await prisma.booking.findMany({
       distinct: ["userId"],
-      where: { Payment: { status: { not: "failure" } } },
+      where: {
+        Payment: {
+          status: { not: "failed" },
+        },
+      },
       select: { userId: true },
     });
-    console.info(result);
-    return result;
+    return result.length; // jumlah customer unik
   } catch (error) {
     console.info(error);
   }
 };
 
-export const getReservation = async () => {
+export const getReservation = async (
+  sortBy: string = "createdAt",
+  sortOrder: string = "desc",
+  search: string = "",
+  floor: string = "all",
+  roomTypeId: string = "all"
+) => {
   const session = await auth();
   if (
     !session ||
@@ -428,36 +441,51 @@ export const getReservation = async () => {
     !session.user.id ||
     session.user.role !== UserRole.admin
   ) {
-    throw new Error("Untauthorized Access");
+    throw new Error("Unauthorized Access");
   }
 
   try {
+    const validSortFields = ["createdAt", "updatedAt", "startDate", "endDate", "status"];
+    const field = validSortFields.includes(sortBy) ? sortBy : "createdAt";
+    const order = sortOrder === "asc" ? "asc" : "desc";
+
     const result = await prisma.reservation.findMany({
+      orderBy: { [field]: order },
+      where: {
+        ...((floor !== "all" || roomTypeId !== "all") && {
+          Room: {
+            ...(floor !== "all" && { floor: parseInt(floor) }),
+            ...(roomTypeId !== "all" && { roomTypeId: roomTypeId }),
+          },
+        }),
+        ...(search && {
+          OR: [
+            { guestName: { contains: search, mode: "insensitive" } },
+            { Room: { roomNumber: { contains: search, mode: "insensitive" } } },
+            { Room: { RoomType: { name: { contains: search, mode: "insensitive" } } } },
+            { Booking: { User: { name: { contains: search, mode: "insensitive" } } } },
+          ],
+        }),
+      },
       include: {
         Room: {
-         include: {
-          RoomType:{
-            select: {
-            name: true,
-            image: true,
-            price: true,
-          },
-          }
-         }
-        },
-        User: {
-          select: {
-            name: true,
-            email: true,
-            phone: true,
+          include: {
+            RoomType: {
+              select: { name: true, image: true, price: true },
+            },
           },
         },
-        Payment: true,
+        Booking: {
+          include: {
+            User: { select: { name: true, email: true, phone: true } },
+            Payment: true,
+          },
+        },
       },
-      orderBy: { createdAt: "desc" },
     });
     return result;
   } catch (error) {
-    console.info(error);
+    console.error(error);
+    return [];
   }
 };

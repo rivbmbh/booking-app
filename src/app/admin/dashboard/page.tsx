@@ -7,7 +7,17 @@ export const metadata: Metadata = {
   title: "Dashboard",
 };
 
-const DashboardPage = () => {
+type Props = {
+  searchParams: {
+    sortBy?: string;
+    sortOrder?: string;
+    search?: string;
+    floor?: string;
+    roomTypeId?: string;
+  };
+};
+
+const DashboardPage = async ({searchParams}: Props) => {
   return (
     <div className="max-w-screen-2xl px-4 py-16 mt-10 mx-auto">
       <h1 className="text-4xl font-bold text-gray-800">Dashboard</h1>
@@ -15,7 +25,7 @@ const DashboardPage = () => {
         <DashBoardCards />
       </Suspense>
       <Suspense fallback={<p>Loading...</p>}>
-        <ReservationList />
+        <ReservationList searchParams={searchParams} />
       </Suspense>
     </div>
   );

@@ -13,7 +13,7 @@ const DashBoardCards = async () => {
   return (
     <div className="grid md:grid-cols-3 gap-5 pb-10 mt-4">
       <div className="flex items-center bg-white border rounded-md overflow-hidden shadow-sm">
-        <div className="p-4 bg-green-400">
+        <div className="p-4 bg-primary">
           <LuChartArea className="size-12 text-white" />
         </div>
         <div className="px-4 text-gray-700">
@@ -22,7 +22,7 @@ const DashBoardCards = async () => {
         </div>
       </div>
       <div className="flex items-center bg-white border rounded-md overflow-hidden shadow-sm">
-        <div className="p-4 bg-green-400">
+        <div className="p-4 bg-primary">
           <LuShoppingCart className="size-12 text-white" />
         </div>
         <div className="px-4 text-gray-700">
@@ -31,12 +31,12 @@ const DashBoardCards = async () => {
         </div>
       </div>
       <div className="flex items-center bg-white border rounded-md overflow-hidden shadow-sm">
-        <div className="p-4 bg-green-400">
+        <div className="p-4 bg-primary">
           <LuUsers className="size-12 text-white" />
         </div>
         <div className="px-4 text-gray-700">
           <h3 className="text-sm tracking-wider">Total Customers</h3>
-          <p>{customer.length}</p>
+          <p>{customer}</p>
         </div>
       </div>
     </div>

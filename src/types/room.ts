@@ -117,3 +117,13 @@ export type DisabledDateProps = Prisma.ReservationGetPayload<{
     endDate: true;
   };
 }>;
+
+export type SearchParamsProps = {
+  searchParams: Promise<{
+    sortBy?: string;
+    sortOrder?: string;
+    search?: string;
+    floor?: string;
+    roomTypeId?: string;
+  }>;
+};
