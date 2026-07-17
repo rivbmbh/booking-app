@@ -4,6 +4,7 @@ import { formatDate } from '@/lib/utils';
 import SearchFilterBar from '../room/form/SearchFilterBar';
 import SortButton from '../room/button/SortButton';
 import { BookingStatus } from '@prisma/client';
+import CancelReservation from '../room/button/CancelReservation';
 
 type Props = {
   searchParams: {
@@ -85,9 +86,7 @@ const ReservationList = async ({ searchParams }: Props) => {
                         Detail
                       </button>
                       <span className="text-gray-800 px-2">|</span>
-                      <button className="underline hover:text-primary-hover active:scale-105 text-primary font-semibold text-sm tracking-widest">
-                        Cancel
-                      </button>
+                      <CancelReservation id={res.id} />
                     </div>
                   </td>
                 </tr>

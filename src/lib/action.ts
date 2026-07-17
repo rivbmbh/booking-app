@@ -9,6 +9,7 @@ import { auth } from "@/auth";
 import { addMinutes, differenceInCalendarDays } from "date-fns";
 import { isRoomNumberExists } from "./utils";
 import { BedType } from "@/types/room";
+import { BookingStatus, PaymentStatus, ReservationStatus } from "@prisma/client";
 
 export const saveRoom = async (prevState: unknown, formData: FormData) => {
 if (!formData.get("floor") || !formData.get("roomNumber")) {
@@ -571,19 +572,51 @@ export const createReserveByFloorPlan = async ()=>{
 }
 
 export const cancelReservation = async (reservationId: string) => {
-  await prisma.$transaction([
-    prisma.reservation.update({
-      where: { id: reservationId },
-      data: { status:  "CANCELLED"}
-    }),
+  const reservation = await prisma.reservation.findUnique({
+    where: { id: reservationId },
+    select: { bookingId: true },
+  });
 
-    prisma.payment.updateMany({
-      where: {reservationId},
-      data: {status: "cancelled"}
-    })
-  ])
-  revalidatePath("/myreservation")
-}
+  if (!reservation) {
+    throw new Error("Reservation not found");
+  }
+
+  const { bookingId } = reservation;
+
+  await prisma.$transaction(async (tx) => {
+    // 1. Cancel reservation yang diminta
+    await tx.reservation.update({
+      where: { id: reservationId },
+      data: { status: ReservationStatus.CANCELLED },
+    });
+
+    // 2. Cek apakah masih ada reservation lain dalam booking ini yang belum cancelled
+    const activeReservationsCount = await tx.reservation.count({
+      where: {
+        bookingId,
+        status: { not: ReservationStatus.CANCELLED },
+      },
+    });
+
+    // 3. Kalau semua reservation dalam booking ini sudah cancelled, baru cancel booking & payment
+    if (activeReservationsCount === 0) {
+      await tx.booking.update({
+        where: { id: bookingId },
+        data: { status: BookingStatus.CANCELLED },
+      });
+
+      await tx.payment.updateMany({
+        where: {
+          bookingId,
+          status: { not: PaymentStatus.cancelled },
+        },
+        data: { status: PaymentStatus.cancelled },
+      });
+    }
+  });
+
+  revalidatePath("/myreservation");
+};
 
 export const ContactMessage = async (
   previewState: unknown,
