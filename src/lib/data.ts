@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { RoomProps } from "@/types/room";
-import { BedType, UserRole } from "@prisma/client";
+import { BedType, BookingStatus, UserRole } from "@prisma/client";
 
 
 export const getAmenities = async () => {
@@ -256,7 +256,7 @@ export const getBookingById = async (bookingId: string) => {
       include: {
         Reservations: {
           where: {
-            status: "CONFIRMED", // ← hanya tampilkan reservation yang aktif
+            status: BookingStatus.PENDING // ← hanya tampilkan reservation yang aktif
           },
           include: {
             Room: {

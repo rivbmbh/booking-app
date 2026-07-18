@@ -543,7 +543,7 @@ export const createReserve = async (
           endDate,
           price,
           status: "PENDING",
-          expiresAt: addMinutes(new Date(), 1),
+          expiresAt: addMinutes(new Date(), 5),
         },
       });
 
