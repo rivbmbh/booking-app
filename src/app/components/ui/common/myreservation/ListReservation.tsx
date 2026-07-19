@@ -63,6 +63,7 @@ const ListReservation = async () => {
                     price={reservation.price}
                     bookingStatus={bookingItem.status}
                     roomNumber={reservation.Room.roomNumber}
+                    paymentStatus={bookingItem.status}
                     expiresAt={reservation.expiresAt}
                   />
                 ))}

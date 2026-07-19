@@ -12,10 +12,11 @@ type props = {
     bookingStatus?: string,
     roomNumber?: string,
     expiresAt?: Date,
+    paymentStatus?: "PENDING" | "CONFIRMED" | "CANCELLED" | "EXPIRED"
     // extraAmenities?: number
 }
 
-const CardReservation = ({roomType, image, startDate, endDate, price, bookingStatus, roomNumber, expiresAt}: props) => {
+const CardReservation = ({roomType, image, startDate, endDate, price, bookingStatus, roomNumber, expiresAt, paymentStatus}: props) => {
 
     function calculateDuration(startDate: string, endDate: string): number {
         const start = new Date(startDate);
@@ -33,7 +34,7 @@ const CardReservation = ({roomType, image, startDate, endDate, price, bookingSta
                 <div className="">
                     <div className="flex justify-between items-center">
                         <h4 className="font-bold text-lg">{roomType}</h4>
-                        <CountdownPaid expiresAt={expiresAt || new Date()}/>
+                        <CountdownPaid expiresAt={expiresAt || new Date()} status={paymentStatus || "PENDING"}/>
                     </div>
 
                     <div className="w-full mx-auto h-0.5 bg-gray-200 relative inline-flex mb-2"></div>
