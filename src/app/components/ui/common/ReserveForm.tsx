@@ -14,6 +14,7 @@ const ReserveForm = ({
   roomType: RoomTypeDetailProps;
   disabledDate: DisabledDateProps[];
 }) => {
+  console.log("disabledDate", disabledDate);
   const StartDate = new Date();
   const EndDate = addDays(StartDate, 1); // satu hari setelah hari pertama (starDate)
 
@@ -32,6 +33,7 @@ const ReserveForm = ({
     setEndDate(date ?? EndDate);
   }
 
+  // Menentukan tanggal yang tidak dapat dipilih
   const excludeDates = useMemo(
     () =>
       disabledDate.map((item) => ({

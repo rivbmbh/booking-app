@@ -3,6 +3,7 @@ import { paymentProps } from "@/types/payment";
 import { BookingStatus, ReservationStatus } from "@prisma/client";
 import crypto from "crypto";
 import { NextResponse } from "next/server";
+import { sendOrderSummaryEmail } from "@/lib/mail/sendOrderSummary";
 
 export const POST = async (request: Request) => {
   try {
@@ -35,7 +36,6 @@ export const POST = async (request: Request) => {
 
     if (!existingBooking) {
       console.warn(`Booking ${bookingId} not found — likely a Midtrans test notification, ignoring.`);
-      // Tetap balas 200 supaya Midtrans (dan dashboard test) menganggap ini sukses diterima
       return NextResponse.json({ message: "Booking not found, notification ignored" }, { status: 200 });
     }
 
@@ -65,6 +65,41 @@ export const POST = async (request: Request) => {
       });
 
       responseData = transaction;
+
+      // Ambil data lengkap booking untuk keperluan PDF & email
+      const bookingDetail = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        include: {
+          User: true,
+          Reservations: {
+            include: { Room: { include: { RoomType: true } } },
+          },
+        },
+      });
+
+      if (bookingDetail?.User?.email && bookingDetail.Reservations.length > 0) {
+        const firstReservation = bookingDetail.Reservations[0];
+        try {
+          await sendOrderSummaryEmail({
+            to: bookingDetail.User.email,
+            bookingId: bookingDetail.id,
+            guestName: firstReservation.guestName ?? bookingDetail.User.name ?? "Guest",
+            roomTypeName: firstReservation.Room.RoomType.name,
+            startDate: firstReservation.startDate.toLocaleDateString("id-ID"),
+            endDate: firstReservation.endDate.toLocaleDateString("id-ID"),
+            totalPrice: bookingDetail.totalPrice,
+            paymentMethod: paymentType ?? "-",
+            roomNumber: firstReservation.Room.roomNumber ?? "-",
+            totalGuests: firstReservation.Room.RoomType.capacity ?? 2,
+            phone: bookingDetail.User.phone ?? "-",
+          });
+        } catch (emailError) {
+          // Jangan sampai kegagalan kirim email bikin webhook gagal / retry terus
+          console.error("Failed to send order summary email:", emailError);
+        }
+      } else {
+        console.warn(`Booking ${bookingId} has no user email or reservations, skipping email.`);
+      }
     } else if (transactionStatus === "cancel" || transactionStatus === "deny") {
       responseData = await prisma.payment.update({
         where: { bookingId },
@@ -80,7 +115,6 @@ export const POST = async (request: Request) => {
     return NextResponse.json({ responseData }, { status: 200 });
   } catch (error) {
     console.error("Notification handler error:", error);
-    // Tetap balas 200 ke Midtrans supaya tidak retry terus-menerus untuk error yang bukan disebabkan mereka
     return NextResponse.json({ error: "Internal error" }, { status: 200 });
   }
 };
