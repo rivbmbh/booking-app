@@ -1,5 +1,5 @@
 import { renderToBuffer } from "@react-pdf/renderer";
-import OrderSummaryPDF from "./OrderSummaryPDF";
+import OrderSummaryPDF, { ReservationItem } from "./OrderSummaryPDF";
 import { getBookingDetailById } from "../data";
 
 export async function generateOrderSummaryPdf(bookingId: string) {
@@ -15,21 +15,27 @@ export async function generateOrderSummaryPdf(bookingId: string) {
         throw new Error("Booking has no reservations");
     }
 
-    const firstReservation = bookingDetail.Reservations[0];
+    const reservations: ReservationItem[] = bookingDetail.Reservations.map((res) => ({
+        roomTypeName: res.Room.RoomType.name,
+        roomNumber: res.Room.roomNumber,
+        guestName: res.guestName ?? bookingDetail.User.name ?? "Guest",
+        guestPhone: res.guestPhone ?? bookingDetail.User.phone ?? "-",
+        startDate: res.startDate.toLocaleDateString("id-ID"),
+        endDate: res.endDate.toLocaleDateString("id-ID"),
+        totalGuests: res.Room.RoomType.capacity, // sesuaikan kalau ada field jumlah tamu aktual per reservation
+        price: res.price,
+    }));
+  
+    // const firstReservation = bookingDetail.Reservations[0];
 
     const pdfBuffer = await renderToBuffer(
         <OrderSummaryPDF
         bookingId={bookingDetail.id}
-        guestName={firstReservation.guestName ?? bookingDetail.User.name ?? "Guest"}
-        roomTypeName={firstReservation.Room.RoomType.name}
-        // roomImageUrl={firstReservation.Room.RoomType.image[0]}
-        startDate={firstReservation.startDate.toLocaleDateString("id-ID")}
-        endDate={firstReservation.endDate.toLocaleDateString("id-ID")}
-        totalPrice={bookingDetail.totalPrice}
-        paymentMethod={bookingDetail.Payment?.method ?? "-"}
-        roomNumber={firstReservation.Room.roomNumber}
+        orderedByName={bookingDetail.User.name ?? "Guest"}
         phoneNumber={bookingDetail.User.phone ?? "-"}
-        totalGuests={firstReservation.Room.RoomType.capacity}
+        paymentMethod={bookingDetail.Payment?.method ?? "-"}
+        totalPrice={bookingDetail.totalPrice}
+        reservations={reservations}
         />
     );
 

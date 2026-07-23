@@ -1,12 +1,5 @@
-// lib/pdf/OrderSummaryPDF.tsx
-import { Document, Page, Text, View, StyleSheet, Image, Font, Link } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, Image, Link } from "@react-pdf/renderer";
 import { formatCurrency } from "../utils";
-
-// Optional: pakai font custom biar lebih rapi (kalau tidak, skip bagian ini)
-Font.register({
-  family: "Helvetica-Bold",
-  src: "https://cdn.jsdelivr.net/npm/@canvas-fonts/helvetica-bold/Helvetica-Bold.ttf",
-});
 
 const styles = StyleSheet.create({
   page: {
@@ -60,8 +53,23 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 12,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 1,
     color: "#111827",
+  },
+  roomBadge: {
+    backgroundColor: "#f3f4f6",
+    color: "#374151",
+    fontSize: 9,
+    fontWeight: "bold",
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 3,
+    marginLeft: 6,
+  },
+  cardHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
   },
   row: {
     flexDirection: "row",
@@ -69,6 +77,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   label: {
+    marginTop: 2,
     color: "#6b7280",
   },
   value: {
@@ -109,62 +118,59 @@ const styles = StyleSheet.create({
     marginTop: 4,
     color: "#9ca3af",
   },
-  roomImage: {
-    width: "100%",
-    height: 140,
-    objectFit: "cover",
-    borderRadius: 6,
-    marginBottom: 16,
-  },
-    link: {
+  link: {
     color: "#2563eb",
     textDecoration: "underline",
     fontSize: 9,
   },
 });
 
-type OrderSummaryPDFProps = {
-  bookingId: string;
-  guestName: string;
+export type ReservationItem = {
   roomTypeName: string;
-  // roomImageUrl?: string; // 👈 tambahan untuk gambar kamar
+  roomNumber: string;
+  guestName?: string;
+  guestPhone?: string;
   startDate: string;
   endDate: string;
-  totalPrice: number;
+  totalGuests?: number;
+  price: number;
+};
+
+type OrderSummaryPDFProps = {
+  bookingId: string;
+  orderedByName: string;
+  phoneNumber?: string;
   paymentMethod: string;
-  roomNumber?: string; // optional, bisa diisi jika ada
-  phoneNumber?: string; // optional, bisa diisi jika ada
-  totalGuests?: number; // optional, bisa diisi jika ada
+  totalPrice: number;
+  reservations: ReservationItem[]; // 👈 sekarang array, bukan single object
 };
 
 const OrderSummaryPDF = ({
   bookingId,
-  guestName,
-  roomTypeName,
-  startDate,
-  endDate,
-  totalPrice,
-  paymentMethod,
-  roomNumber,
+  orderedByName,
   phoneNumber,
-  totalGuests,
+  paymentMethod,
+  totalPrice,
+  reservations,
 }: OrderSummaryPDFProps) => (
   <Document>
-    <Page size="A4" style={styles.page}>
+    <Page size="A4" style={styles.page} wrap>
       {/* Header dengan logo */}
-      <View style={styles.header}>
+      <View style={styles.header} fixed>
         <View>
           <Text style={styles.headerText}>Order Summary</Text>
-          <Text style={styles.headerSubtext}>Booking Date: {new Date().toLocaleDateString("id-ID")}</Text>
+          <Text style={styles.headerSubtext}>
+            Booking Date: {new Date().toLocaleDateString("id-ID")}
+          </Text>
         </View>
-          <Image style={styles.logo} src="https://zv35rsaixcn4ha4e.public.blob.vercel-storage.com/large-bg-black.png" />
+        <Image
+          style={styles.logo}
+          src="https://zv35rsaixcn4ha4e.public.blob.vercel-storage.com/large-bg-black.png"
+        />
       </View>
 
       <View style={styles.body}>
         <Text style={styles.statusBadge}>PAYMENT CONFIRMED</Text>
-
-        {/* Gambar kamar (opsional) */}
-        {/* {roomImageUrl && <Image style={styles.roomImage} src={roomImageUrl} />} */}
 
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Booking Details</Text>
@@ -173,38 +179,57 @@ const OrderSummaryPDF = ({
             <Text style={styles.value}>{bookingId}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Guest Name</Text>
-            <Text style={styles.value}>{guestName}</Text>
+            <Text style={styles.label}>Ordered by</Text>
+            <Text style={styles.value}>{orderedByName}</Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Phone Number</Text>
             <Text style={styles.value}>{phoneNumber}</Text>
           </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Total Rooms</Text>
+            <Text style={styles.value}>{reservations.length > 1 ? `${reservations.length} rooms` : `${reservations.length} room`}</Text>
+          </View>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Stay Information</Text>
-          <View style={styles.row}>
-            <Text style={styles.label}>Room Type</Text>
-            <Text style={styles.value}>{roomTypeName}</Text>
+        {/* Loop semua reservation, 1 card per kamar, terurut ke bawah */}
+        {reservations.map((res, index) => (
+          <View style={styles.card} key={index} wrap={false}>
+            <View style={styles.cardHeaderRow}>
+              <Text style={styles.sectionTitle}>Room {index + 1}</Text>
+              <Text style={styles.roomBadge}>{res.roomTypeName}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.label}>Guest Name</Text>
+              <Text style={styles.value}>{res.guestName}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.label}>Guest Phone</Text>
+              <Text style={styles.value}>{res.guestPhone}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.label}>Room Number</Text>
+              <Text style={styles.value}>{res.roomNumber}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.label}>Check-in</Text>
+              <Text style={styles.value}>{res.startDate}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.label}>Check-out</Text>
+              <Text style={styles.value}>{res.endDate}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.label}>Capacity</Text>
+              <Text style={styles.value}>{res.totalGuests ?? "-"}</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.row}>
+              <Text style={styles.label}>Room Price</Text>
+              <Text style={styles.value}>{formatCurrency(res.price)}</Text>
+            </View>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Room Number</Text>
-            <Text style={styles.value}>{roomNumber}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Check-in</Text>
-            <Text style={styles.value}>{startDate}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Check-out</Text>
-            <Text style={styles.value}>{endDate}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Total Guests</Text>
-            <Text style={styles.value}>{totalGuests}</Text>
-          </View>
-        </View>
+        ))}
 
         <View style={styles.card}>
           <View style={styles.row}>
@@ -222,10 +247,11 @@ const OrderSummaryPDF = ({
           <Text style={styles.footerText}>
             Thank you for choosing EXO Hotel as your accommodation. We hope you have a comfortable stay and enjoy our services!
           </Text>
-          <Text style={styles.footerText}>If you need any assistance or experience any issues, please feel free to&nbsp;
-          <Link src="https://wa.me/6281242622241" style={styles.link}>
-            contact us via WhatsApp
-          </Link>
+          <Text style={styles.footerText}>
+            If you need any assistance or experience any issues, please feel free to&nbsp;
+            <Link src="https://wa.me/6281242622241" style={styles.link}>
+              contact us via WhatsApp
+            </Link>
           </Text>
           <Link src="https://www.exohotel.com" style={styles.footerURLText}>
             www.exohotel.com
