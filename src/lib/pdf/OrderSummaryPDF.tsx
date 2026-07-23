@@ -127,28 +127,27 @@ type OrderSummaryPDFProps = {
   bookingId: string;
   guestName: string;
   roomTypeName: string;
-  roomImageUrl?: string; // 👈 tambahan untuk gambar kamar
+  // roomImageUrl?: string; // 👈 tambahan untuk gambar kamar
   startDate: string;
   endDate: string;
   totalPrice: number;
   paymentMethod: string;
   roomNumber?: string; // optional, bisa diisi jika ada
+  phoneNumber?: string; // optional, bisa diisi jika ada
   totalGuests?: number; // optional, bisa diisi jika ada
-  phone?: string; // optional, bisa diisi jika ada
 };
 
 const OrderSummaryPDF = ({
   bookingId,
   guestName,
   roomTypeName,
-  roomImageUrl,
   startDate,
   endDate,
   totalPrice,
   paymentMethod,
   roomNumber,
+  phoneNumber,
   totalGuests,
-  phone,
 }: OrderSummaryPDFProps) => (
   <Document>
     <Page size="A4" style={styles.page}>
@@ -179,7 +178,7 @@ const OrderSummaryPDF = ({
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Phone Number</Text>
-            <Text style={styles.value}>{phone}</Text>
+            <Text style={styles.value}>{phoneNumber}</Text>
           </View>
         </View>
 

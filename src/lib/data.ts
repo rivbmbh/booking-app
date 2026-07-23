@@ -289,6 +289,30 @@ export const getBookingById = async (bookingId: string) => {
   }
 };
 
+export const getBookingDetailById = async (bookingId: string) => {
+  try {
+    const result = await prisma.booking.findUnique({
+      where: { id: bookingId },
+      include: {
+        User: true,
+        Payment: true,
+        Reservations: {
+          include: {
+            Room: {
+              include: {
+                RoomType: true
+              }
+            }
+          }
+        }
+      }
+    });
+    return result;
+  } catch (error) {
+    console.info(error);
+  }
+}
+
 export const getReservationById = async (id: string) => {
   try {
     const result = await prisma.reservation.findUnique({

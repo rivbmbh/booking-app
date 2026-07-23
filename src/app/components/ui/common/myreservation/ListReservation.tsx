@@ -46,9 +46,6 @@ const ListReservation = async () => {
                   >
                     Pay this booking
                   </Link>
-                  <button className="text-primary underline hover:text-primary-hover active:scale-105">
-                    Download Receipt
-                  </button>
                 </div>
               )}
 

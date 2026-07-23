@@ -13,10 +13,10 @@ const AboutPage = () => {
     <div>
       <HeaderSection title="About us" subTitle="Lorem ipsum dolor sitamet." />
       <div className="max-w-screen-2xl mx-auto py-20 px-4">
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-3">
           <Image
             src={`/hero2.jpg`}
-            width={650}
+            width={850}
             height={579}
             alt="About Image"
           />
@@ -24,13 +24,13 @@ const AboutPage = () => {
             <h1 className="text-5xl font-semibold text-gray-900 mb-4">
               Who We Are
             </h1>
-            <Image
+            {/* <Image
               src="/line-heading.svg"
               alt="Line"
               width={10}
               height={10}
               className="text-primary"
-            />
+            /> */}
             <p className="text-gray-700 py-5">
               Lorem ipsum dolor sit, amet consectetur adipisicing elit. Alias
               natus expedita necessitatibus nemo quae, eius asperiores quasi

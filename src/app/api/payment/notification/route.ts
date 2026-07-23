@@ -8,7 +8,6 @@ import { sendOrderSummaryEmail } from "@/lib/mail/sendOrderSummary";
 export const POST = async (request: Request) => {
   try {
     const data: paymentProps = await request.json();
-    console.log("Payment Notification Data:", data);
 
     const bookingId = data.order_id;
     const transactionStatus = data.transaction_status;
@@ -78,23 +77,9 @@ export const POST = async (request: Request) => {
       });
 
       if (bookingDetail?.User?.email && bookingDetail.Reservations.length > 0) {
-        const firstReservation = bookingDetail.Reservations[0];
         try {
-          await sendOrderSummaryEmail({
-            to: bookingDetail.User.email,
-            bookingId: bookingDetail.id,
-            guestName: firstReservation.guestName ?? bookingDetail.User.name ?? "Guest",
-            roomTypeName: firstReservation.Room.RoomType.name,
-            startDate: firstReservation.startDate.toLocaleDateString("id-ID"),
-            endDate: firstReservation.endDate.toLocaleDateString("id-ID"),
-            totalPrice: bookingDetail.totalPrice,
-            paymentMethod: paymentType ?? "-",
-            roomNumber: firstReservation.Room.roomNumber ?? "-",
-            totalGuests: firstReservation.Room.RoomType.capacity ?? 2,
-            phone: bookingDetail.User.phone ?? "-",
-          });
+          await sendOrderSummaryEmail(bookingDetail.id, bookingDetail.User.email);
         } catch (emailError) {
-          // Jangan sampai kegagalan kirim email bikin webhook gagal / retry terus
           console.error("Failed to send order summary email:", emailError);
         }
       } else {
