@@ -23,19 +23,19 @@ const RoomColorDescription = () => {
             </li>
             <li className='space-y-2.5'>
               <div className='flex justify-center items-center'>
-              <Image src="/bedtype/single.png" alt="Single Bed" width={14} height={16} />
+              <Image src="/bedtype/single.webp" alt="Single Bed" width={14} height={16} />
               </div>
               <p className='text-center'>Single Bed</p>
             </li>
             <li className='space-y-2.5'>
               <div className='flex justify-center items-center'>
-              <Image src="/bedtype/king.png" alt="King Bed" width={26} height={26} />
+              <Image src="/bedtype/king.webp" alt="King Bed" width={26} height={26} />
               </div>
               <p className='text-center'>King/Queen Bed</p>
             </li>
             <li className='space-y-2.5'>
               <div className='flex justify-center items-center'>
-              <Image src="/bedtype/twin.png" alt="Double Bed" width={30} height={30} />
+              <Image src="/bedtype/twin.webp" alt="Double Bed" width={30} height={30} />
               </div>
               <p className='text-center'>Double/Twin Bed</p>
             </li>

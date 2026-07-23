@@ -13,7 +13,7 @@ export const LoginGoogleButton = ({ redirectUrl }: { redirectUrl: string }) => {
     >
       <button className="relative hover:bg-gray-200 w-full h-12 text-gray-900 py-1 px-2 text-base rounded-full cursor-pointer font-medium border border-gray-300 active:scale-105">
         <Image
-          src="/icons8-google-96.svg"
+          src="/google-icon.svg"
           width={38}
           height={38}
           alt="google icon"

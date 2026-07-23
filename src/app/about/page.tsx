@@ -15,7 +15,7 @@ const AboutPage = () => {
       <div className="max-w-screen-2xl mx-auto py-20 px-4">
         <div className="grid md:grid-cols-2 gap-3">
           <Image
-            src={`/hero2.jpg`}
+            src={`/images/hero2.webp`}
             width={850}
             height={579}
             alt="About Image"

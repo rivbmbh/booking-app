@@ -7,7 +7,7 @@ const Hero = () => {
       <div className="bg-black/40 absolute inset-0 z-10"></div>
       <div className="absolute inset-0">
         <Image
-          src={`/hero4.jpg`}
+          src={`/images/hero4.webp`}
           className="object-cover object-center"
           alt="hero image"
           fill

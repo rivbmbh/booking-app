@@ -97,15 +97,15 @@ const CardReservation = ({roomType, image, startDate, endDate, price, bookingSta
                 </table>
             {bookingStatus === BookingStatus.CONFIRMED ? (
             <div className="absolute bottom-8 left-0 sm:left-5 flex justify-center w-full -rotate-12 sm:rotate-0">
-                <Image src="/CONFIRMED.png" width={320} height={100} alt="payment status" />
+                <Image src="/label/CONFIRMED.webp" width={320} height={100} alt="payment status" />
             </div>
             ) : bookingStatus === BookingStatus.CANCELLED ? (
             <div className="absolute bottom-8 left-0 sm:left-5 flex justify-center w-full -rotate-12 sm:rotate-0">
-                <Image src="/CANCEL.png" width={320} height={100} alt="payment status" />
+                <Image src="/label/CANCEL.webp" width={320} height={100} alt="payment status" />
             </div>
             ) :  bookingStatus === BookingStatus.EXPIRED ? (
             <div className="absolute bottom-8 left-0 sm:left-5 flex justify-center w-full -rotate-12 sm:rotate-0">
-                <Image src="/EXPIRED.png" width={320} height={100} alt="payment status" />
+                <Image src="/label/EXPIRED.webp" width={320} height={100} alt="payment status" />
             </div>
             ) : null}
             </div>
