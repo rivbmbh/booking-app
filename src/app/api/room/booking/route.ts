@@ -18,6 +18,8 @@ export async function POST(req: Request) {
         }
     })
 
+    const userId = session.user.id
+
     if(!roomIds || roomIds.length === 0){
         return Response.json({message: "No rooms selected"}, { status: 400})
     }
@@ -96,7 +98,7 @@ export async function POST(req: Request) {
 
             const booking = await tx.booking.create({
                 data: {
-                    userId: session.user.id,
+                    userId: userId,
                     startDate: new Date(startDate),
                     endDate: new Date(endDate),
                     totalPrice,
@@ -127,10 +129,11 @@ export async function POST(req: Request) {
         })
 
         return Response.json({ bookingId: result.id });
-    } catch (error) {
+        } catch (error) {
+        const message = error instanceof Error ? error.message : "Something went wrong";
         return Response.json(
-            { message: error.message },
+            { message },
             { status: 400 }
-    );
-    }
+        );
+        }
 }

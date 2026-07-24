@@ -5,7 +5,6 @@ import SearchFilterBar from '../room/form/SearchFilterBar';
 import SortButton from '../room/button/SortButton';
 import { BookingStatus } from '@prisma/client';
 import CancelReservation from '../room/button/CancelReservation';
-import { FaFilePdf } from 'react-icons/fa6';
 import DownloadOrderSummaryButton from '../DownloadOrderSummaryButton';
 
 type Props = {
@@ -84,9 +83,6 @@ const ReservationList = async ({ searchParams }: Props) => {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-center items-center gap-1.5">
-                      {/* <button className="underline active:scale-105 text-black font-semibold text-sm tracking-widest">
-                        <FaFilePdf className="size-4" />
-                      </button> */}
                       <DownloadOrderSummaryButton bookingId={res.bookingId} />
                       <span className="text-gray-800 px-2">|</span>
                       <CancelReservation id={res.id} />
